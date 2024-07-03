@@ -13,11 +13,18 @@ RM=rm -f
 MKDIR_P=mkdir -p
 
 # Compilation flags
-CFLAGS=-g -Wall -Wextra -Werror -std=c++98 #-fsanitize=address
+CFLAGS=-g -Wall -Wextra -Werror -std=c++98 -I$(HEADER_DIR)#-fsanitize=address
+
+# Header files directory
+HEADER_DIR = inc/
 
 # Source files and object files
-SRCS=main.cpp
-OBJS=$(addprefix build/,$(SRCS:.cpp=.o))
+SRCS_DIR = src/
+SRC_FILES = main.cpp processMethods.cpp Webserv.cpp
+SRCS=$(addprefix $(SRCS_DIR),$(SRC_FILES))
+
+#Objects
+OBJS=$(addprefix build/,$(notdir $(SRCS:.cpp=.o)))
 DEPS=$(OBJS:.o=.d)
 
 # Output binary name
@@ -42,10 +49,9 @@ $(NAME): $(OBJS)
 # Automatically generate dependencies
 -include $(DEPS)
 
-build/%.o: %.cpp
-	@echo -e "${YELLOW}🔨 Compiling $<...${NC}"
-	$(CXX) $(CFLAGS) -MMD -MP -c $< -o $@
-	@echo -e "${GREEN}✅ Compiled $< to $@.${NC}"
+$(OBJS): build/%.o : $(SRCS_DIR)%.cpp
+	@echo -e "${YELLOW}Compiling $< into $@...${NC}"
+	$(CXX) $(CFLAGS) -c $< -o $@
 
 clean:
 	@echo -e "${RED}🧹 Cleaning up...${NC}"
