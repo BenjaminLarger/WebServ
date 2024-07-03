@@ -6,16 +6,16 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:23:15 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/03 12:40:45 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/03 17:05:05 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #pragma once
 
-#ifndef WEBSERV_HPP
-#define WEBSERV_HPP
+#ifndef CONFIGURATION_FILE_HPP
+#define CONFIGURATION_FILE_HPP
 
-#include "Dependcies.hpp"
+#include "Dependencies.hpp"
 
 // ************************************************************************** //
 //                               Class                                		  //
@@ -24,13 +24,13 @@
 
 class LocationConfig
 {
-
 	private:
-		std::string					root;
-		int							index;
-		std::vector<std::string>	allowedMethods;
+		
 			
 	public:
+		std::string					root;
+		std::string					index;
+		std::vector<std::string>	allowedMethods;
 /* 		class InvalidNameForm : public std::exception
 		{
 			const char* what() const throw()
@@ -43,14 +43,15 @@ class LocationConfig
 class ServerConfig {
 
 private:
-	unsigned int				port;
-	std::string					serverName;
-	std::map<int, std::string>	errorPages;
-	std::string					host;
-	unsigned int				maxBodySize;
+	unsigned int							port;
+	std::string								serverName;
+	std::map<int, std::string>				errorPages;
+	std::map<std::string, LocationConfig>	locations;
+	std::string								host;
+	//unsigned int							maxBodySize;
 
 public:
-	void	parsConfigFile(char *filename);
+	static ServerConfig	parsConfigFile(char *filename);
 
 	const int			&getServerFD(void) const;
 	const unsigned int	&getPort(void) const;

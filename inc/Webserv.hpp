@@ -3,7 +3,7 @@
 #ifndef WEBSERV_HPP
 #define WEBSERV_HPP
 
-#include "Dependcies.hpp"
+#include "Dependencies.hpp"
 #include "ConfigurationFile.hpp"
 
 // ************************************************************************** //

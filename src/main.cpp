@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 09:46:47 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/03 11:50:15 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/03 17:23:02 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -99,13 +99,16 @@ void serverListeningLoop(int server_fd)
 
 int main(int argc, char **argv)
 {
+	ServerConfig	file;
+
 	try
 	{
 		(void)argv;
 		if (argc != 2)
 			throw (std::out_of_range(ARG));
 
-		Webserv	start(8080);
+		file = file.parsConfigFile(argv[1]);
+		//Webserv	start(8080);
 	}
 	catch(const std::exception& e)
 	{
