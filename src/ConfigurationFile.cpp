@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:48:15 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/03 19:04:50 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/04 10:46:05 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -30,13 +30,20 @@ ServerConfig	ServerConfig::parsConfigFile(char *filename)
 		std::string			key;
 		
 		isLine >> key;
-		std::cout << "line = " << line << std::endl;
-		std::cout << "key = " << key << std::endl << std::endl;
-		if (key == "server") //skip server {
+		std::cout << "----------------------------------------------\n";
+		std::cout << BLUE << "line = " << line << std::endl;
+		std::cout << ORANGE << "key = " << key << RESET << std::endl;
+		if (key == "server")
 		{
-			//std::getline(file, line);
+			isLine >> key;
+			std::cout << ORANGE << "key = " << key << ", key len = " << strlen(key.c_str()) << RESET << std::endl;
 		}
-		else if (key[0] == '#') //skip comments
+		if (key == "{")
+		{
+			isLine >> key;
+			std::cout << ORANGE << "key = " << key << RESET << std::endl;
+		}
+		if (key[0] == '#')
 			continue ;
 		else if (key == "listen")
 		{
@@ -60,32 +67,60 @@ ServerConfig	ServerConfig::parsConfigFile(char *filename)
 		else if (key == "location")
 		{
 			isLine >> currentLocation;
-			currentLocation = currentLocation.substr(1, currentLocation.length() - 1);
-			std::cout << RED << currentLocation << RESET << std::endl;
+			std::cout << "cur location " << YELLOW << currentLocation << RESET << std::endl;
+			//currentLocation = currentLocation.substr(1, currentLocation.length() - 1);
 			std::getline(file, line);
 			std::istringstream	isLine(line);
 			isLine >> key;
-			std::cout << MAGENTA << key << RESET << std::endl;
-			//while (true) (if line or next_line has '{')
+			while (true) //(if line or next_line has '{')
+			{
+				std::cout << MAGENTA << "key = " << key << RESET << std::endl;
 				if (key == "root")
 				{
 					isLine >> serverConfig.locations[currentLocation].root;
 					std::cout << "current location root = " << YELLOW  << serverConfig.locations[currentLocation].root << RESET << std::endl;
 				}
-				else if (key == "index")
+				if (key == "index")
 				{
-					isLine >> serverConfig.locations[currentLocation].index;
+					std::istringstream	isLine(line);
+					std::string	index;
+					isLine >> index;
+					isLine >> index;
+					std::cout << "index = " << index << std::endl;
+					serverConfig.locations[currentLocation].index = index;
 					std::cout << "current location index = " << YELLOW  << serverConfig.locations[currentLocation].index << RESET << std::endl;
 				}
 				else if (key == "allow_methods")
 				{
+					std::cout << RED << "in loop\n" << RESET;
+					std::istringstream	isLine(line);
 					std::string	method;
-					while (isLine >> method)
+					isLine >> method;
+					while (true)
 					{
-						serverConfig.locations[currentLocation].allowedMethods.push_back(method);			
+						if (method == "allow_methods")
+							isLine >> method;
+						if (method[strlen(method.c_str()) - 1] == ',' || method[strlen(method.c_str()) - 1] == ';' || method[strlen(method.c_str()) - 1] == ';' || method[strlen(method.c_str()) - 1] == '}' || method[strlen(method.c_str()) - 1] == ' ')
+							method[strlen(method.c_str()) - 1] = '\0';
+						std::cout << "method = " << YELLOW << method << RESET << std::endl;	
+						if (strncmp(method.c_str(), "POST", 4) && strncmp(method.c_str(), "GET", 3) && strncmp(method.c_str(), "DELETE", 6))
+							break ;
+						serverConfig.locations[currentLocation].allowedMethods.push_back(method);
 						std::cout << "current location allowed method = " << YELLOW  << method << RESET << std::endl;
+						std::string prevMethod = method;
+						isLine >> method;
+						std::cout << "prev method = " << RED << prevMethod << ", method = " << method << RESET << std::endl;
+						if (method == prevMethod)
+							break ;
+						std::cout << "method = " << MAGENTA << method << RESET << std::endl;
 					}
 				}
+				else if (key[0] == '}')
+					break ;
+				std::getline(file, line);
+				std::istringstream	isLine(line);
+				isLine >> key;
+			}
 			//if line has '}' break (if first line '{')
 			std::cout << RED << line << RESET << std::endl;
 			
