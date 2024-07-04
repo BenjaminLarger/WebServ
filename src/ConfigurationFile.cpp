@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:48:15 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/04 10:46:05 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/04 17:22:09 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -45,6 +45,12 @@ ServerConfig	ServerConfig::parsConfigFile(char *filename)
 		}
 		if (key[0] == '#')
 			continue ;
+		else if (key == "client_max_body_size")
+		{
+			isLine >> serverConfig.maxBodySize;
+			//serverConfig.maxBodySize = strtoul(key.c_str(), NULL, 10);
+			std::cout << "Max body size = " << YELLOW << serverConfig.maxBodySize << RESET << std::endl;
+		}
 		else if (key == "listen")
 		{
 			isLine >> serverConfig.port;
@@ -80,7 +86,7 @@ ServerConfig	ServerConfig::parsConfigFile(char *filename)
 					isLine >> serverConfig.locations[currentLocation].root;
 					std::cout << "current location root = " << YELLOW  << serverConfig.locations[currentLocation].root << RESET << std::endl;
 				}
-				if (key == "index")
+				else if (key == "index")
 				{
 					std::istringstream	isLine(line);
 					std::string	index;
@@ -89,6 +95,19 @@ ServerConfig	ServerConfig::parsConfigFile(char *filename)
 					std::cout << "index = " << index << std::endl;
 					serverConfig.locations[currentLocation].index = index;
 					std::cout << "current location index = " << YELLOW  << serverConfig.locations[currentLocation].index << RESET << std::endl;
+				}
+				else if (key == "return")
+				{
+					//to implement (redirection)
+				}
+				else if (key == "autoindex")
+				{
+					std::string	autoIndexNature;
+					isLine >> autoIndexNature;
+					if (autoIndexNature == "on")
+						serverConfig.locations[currentLocation].autoIndex = true;
+					else
+						serverConfig.locations[currentLocation].autoIndex = false;
 				}
 				else if (key == "allow_methods")
 				{

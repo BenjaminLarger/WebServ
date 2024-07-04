@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:23:15 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/03 17:05:05 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/04 17:19:04 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -31,6 +31,7 @@ class LocationConfig
 		std::string					root;
 		std::string					index;
 		std::vector<std::string>	allowedMethods;
+		bool						autoIndex;
 /* 		class InvalidNameForm : public std::exception
 		{
 			const char* what() const throw()
@@ -48,7 +49,7 @@ private:
 	std::map<int, std::string>				errorPages;
 	std::map<std::string, LocationConfig>	locations;
 	std::string								host;
-	//unsigned int							maxBodySize;
+	unsigned int							maxBodySize;
 
 public:
 	static ServerConfig	parsConfigFile(char *filename);
