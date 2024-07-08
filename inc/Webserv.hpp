@@ -15,6 +15,7 @@ class Webserv
 
 private:
 	const char *filename;
+	ServerConfig config;
 	unsigned int port;
 	int serverFD;
 	int optval;
@@ -30,7 +31,7 @@ public:
 	const int &getServerFD(void) const;
 	const unsigned int &getPort(void) const;
 
-	std::vector<ServerConfig> config;
+	// std::vector<ServerConfig> config;
 
 	void countAndParseServer(const char *filename);
 };

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:23:15 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/04 17:19:04 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/08 18:17:19 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -21,41 +21,34 @@
 //                               Class                                		  //
 // ************************************************************************** //
 
-
 class LocationConfig
 {
-	private:
-		
-			
-	public:
-		std::string					root;
-		std::string					index;
-		std::vector<std::string>	allowedMethods;
-		bool						autoIndex;
-/* 		class InvalidNameForm : public std::exception
-		{
-			const char* what() const throw()
-			{
-				return ("The name form is unknown.");
-			}
-		}; */
+private:
+public:
+	std::string root;
+	std::string index;
+	std::vector<std::string> allowedMethods;
+	bool autoIndex;
 };
 
-class ServerConfig {
+class ServerConfig
+{
 
 private:
-	unsigned int							port;
-	std::string								serverName;
-	std::map<int, std::string>				errorPages;
-	std::map<std::string, LocationConfig>	locations;
-	std::string								host;
-	unsigned int							maxBodySize;
+	unsigned int port;
+	std::string serverName;
+	std::map<int, std::string> errorPages;
+	std::map<std::string, LocationConfig> locations;
+	std::string host;
+	unsigned int maxBodySize;
 
 public:
-	static ServerConfig	parsConfigFile(char *filename);
+	ServerConfig(const char *filename);
+	ServerConfig();
+	ServerConfig parsConfigFile(char *filename);
 
-	const int			&getServerFD(void) const;
-	const unsigned int	&getPort(void) const;
+	const int &getServerFD(void) const;
+	const unsigned int &getPort(void) const;
 };
 
 #endif
