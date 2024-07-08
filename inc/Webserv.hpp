@@ -31,12 +31,16 @@ public:
 
 	std::vector<ServerConfig> config;
 
-	void countServer(char *filename);
+	void countAndParseServer(char *filename);
 };
 
 /* ---------------------UTILS FUNCTIONS */
 void processClientInput(const char *clientInput, int server_fd, int clientFD);
-int set_nonblocking(int fd);
+int setNonBlocking(int fd);
 void serverListeningLoop(int server_fd);
+std::vector<pollfd> initializePollFDSWithServerSocket(int serverFD);
+void monitorSocketEvents(std::vector<pollfd> &fds, int serverFD);
+struct pollfd setNewTempFDStruct(int newSocket);
+void processConnectionData(int serverFD, std::vector<pollfd> &fds, size_t &i);
 
 #endif

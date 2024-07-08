@@ -6,66 +6,18 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 10:06:22 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/08 14:11:09 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/08 17:06:01 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #include "Webserv.hpp"
-
-void Webserv::countServer(char *filename)
-{
-	std::ifstream file(filename);
-	int openCurlyBraceCount = 0;
-	int closeCurlyBraceCount = 0;
-	size_t pos;
-
-	this->numberOfServers = 0;
-
-	if (!file.is_open())
-		throw(std::runtime_error("Could not open the configuration file!"));
-
-	for (std::string line; std::getline(file, line);)
-	{
-		std::istringstream isLine(line);
-		std::string key;
-		isLine >> key;
-		std::cout << key << std::endl;
-		if (key == "server")
-		{
-			openCurlyBraceCount = 0;
-			closeCurlyBraceCount = 0;
-			this->numberOfServers++;
-			pos = line.find('{');
-			if (pos != std::string::npos)
-				openCurlyBraceCount++;
-			pos = line.find('}');
-			if (pos != std::string::npos)
-				closeCurlyBraceCount++;
-			for (std::string line; std::getline(file, line) && openCurlyBraceCount != closeCurlyBraceCount;)
-			{
-				std::istringstream isLine(line);
-				std::cout << ORANGE << "server count = " << this->numberOfServers << ", open brace count = " << openCurlyBraceCount << ", closed brace count = " << closeCurlyBraceCount << RESET << std::endl;
-				std::cout << MAGENTA << "line : " << line << RESET << std::endl;
-				pos = line.find('{');
-				if (pos != std::string::npos)
-					openCurlyBraceCount++;
-				pos = line.find('}');
-				if (pos != std::string::npos)
-					closeCurlyBraceCount++;
-			}
-		}
-	}
-	if (closeCurlyBraceCount != openCurlyBraceCount)
-		throw(std::runtime_error("parsing config: unclosed brace!"));
-	std::cout << YELLOW << "server count = " << this->numberOfServers << RESET << std::endl;
-}
 
 /* --------------CONSTRUCTORS */
 Webserv::Webserv(unsigned int _port, char *filename) : port(_port), serverFD(socket(AF_INET, SOCK_STREAM, 0)), optval(1)
 {
 	std::ifstream file(filename);
 
-	countServer(filename);
+	countAndParseServer(filename);
 	if (!file.is_open())
 		throw(std::runtime_error("Could not open the configuration file!"));
 
@@ -76,7 +28,7 @@ Webserv::Webserv(unsigned int _port, char *filename) : port(_port), serverFD(soc
 	{
 		throw(std::range_error("socket failed!"));
 	}
-	if (set_nonblocking(serverFD) < 0)
+	if (setNonBlocking(serverFD) < 0)
 	{
 		close(serverFD);
 		throw(std::range_error("set_nonblocking failed!"));
@@ -111,7 +63,7 @@ Webserv::Webserv(void) : port(8080), serverFD(socket(AF_INET, SOCK_STREAM, 0)), 
 	{
 		throw(std::range_error("socket failed!"));
 	}
-	if (set_nonblocking(serverFD) < 0)
+	if (setNonBlocking(serverFD) < 0)
 	{
 		close(serverFD);
 		throw(std::range_error("set_nonblocking failed!"));
