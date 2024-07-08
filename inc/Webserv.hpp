@@ -26,7 +26,9 @@ public:
 
 	const int			&getServerFD(void) const;
 	const unsigned int	&getPort(void) const;
-	
+
+	//std::vector<ServerConfig>		config;
+
 
 };
 

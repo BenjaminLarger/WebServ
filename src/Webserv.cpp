@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 10:06:22 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/03 10:49:06 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/07 16:05:14 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -72,12 +72,6 @@ Webserv::Webserv(void) : port(8080), serverFD(socket(AF_INET, SOCK_STREAM, 0)), 
 	{
 		close(serverFD);
 		throw(std::range_error("bind failed"));
-    }
-
-	if (listen(serverFD, 10) < 0)
-	{
-		close(serverFD);
-		throw(std::range_error("listen failed!"));
     }
 
 	if (listen(serverFD, 10) < 0)

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 09:46:47 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/04 15:55:13 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/08 11:51:17 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -16,10 +16,20 @@
 #define PORT 8081
 #define MAX_CLIENTS 100
 
+/* 
+@param: int fd - File descriptor for which to set non-blocking mode.
+@description: Sets the file descriptor specified by 'fd' to non-blocking mode.
+	This is achieved by retrieving the current flags of 'fd' using F_GETFL,
+	then modifying these flags to include O_NONBLOCK, and finally setting the 
+	modified flags back on 'fd' using F_SETFL. If any step fails, the function 
+	returns -1 to indicate an error.
+@return: int - Returns 0 on success, or -1 on failure.
+*/
 int set_nonblocking(int fd)
 {
     int flags = fcntl(fd, F_GETFL, 0);
-    if (flags < 0) return -1;
+    if (flags < 0)
+		return -1;
     return fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }
 
@@ -35,10 +45,10 @@ void serverListeningLoop(int server_fd)
     while (true)
 	{
         int poll_count = poll(fds.data(), fds.size(), -1);
-        if (poll_count < 0) {
-            perror("poll failed");
+        if (poll_count < 0)
+		{
             close(server_fd);
-            exit(EXIT_FAILURE);
+			throw (std::runtime_error("poll failed"));
         }
         for (size_t i = 0; i < fds.size(); ++i) {
             if (fds[i].revents & POLLIN) {
@@ -55,9 +65,8 @@ void serverListeningLoop(int server_fd)
                             }
 							else
 							{
-                                perror("accept failed");
                                 close(server_fd);
-                                exit(EXIT_FAILURE);
+								throw (std::runtime_error("accept failed"));
                             }
                         }
                         std::cout << "New connection accepted: " << new_socket << std::endl;
@@ -75,16 +84,17 @@ void serverListeningLoop(int server_fd)
                     char buffer[1024];
                     memset(buffer, 0, sizeof(buffer));
                     int bytes_read = read(fds[i].fd, buffer, sizeof(buffer));
-                    if (bytes_read <= 0) {
-                        if (bytes_read == 0) {
+                    if (bytes_read <= 0)
+					{
+                        if (bytes_read == 0)
                             std::cout << "Connection closed: " << fds[i].fd << std::endl;
-                        } else {
-                            perror("read failed");
-                        }
+						else
+							throw (std::runtime_error("read failed"));;
                         close(fds[i].fd);
                         fds.erase(fds.begin() + i);
                         --i;
-                    } else
+                    }
+					else
 					{
                         std::cout << "Received data: " << buffer << std::endl;
                         // Echo the data back to the client
@@ -107,8 +117,8 @@ int main(int argc, char **argv)
 		if (argc != 2)
 			throw (std::out_of_range(ARG));
 
-		file = file.parsConfigFile(argv[1]);
-		//Webserv	start(8080);
+		//file = file.parsConfigFile(argv[1]);
+		Webserv	start(8080);
 	}
 	catch(const std::exception& e)
 	{
