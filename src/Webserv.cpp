@@ -6,14 +6,14 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 10:06:22 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/08 17:06:01 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/08 17:44:22 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #include "Webserv.hpp"
 
 /* --------------CONSTRUCTORS */
-Webserv::Webserv(unsigned int _port, char *filename) : port(_port), serverFD(socket(AF_INET, SOCK_STREAM, 0)), optval(1)
+Webserv::Webserv(const char *_filename) : filename(_filename), port(8080), serverFD(socket(AF_INET, SOCK_STREAM, 0)), optval(1)
 {
 	std::ifstream file(filename);
 
@@ -57,8 +57,14 @@ Webserv::Webserv(unsigned int _port, char *filename) : port(_port), serverFD(soc
 	serverListeningLoop(serverFD);
 }
 
-Webserv::Webserv(void) : port(8080), serverFD(socket(AF_INET, SOCK_STREAM, 0)), optval(1)
+Webserv::Webserv(void) : filename(DEFAULT_CONFIG_PATH), port(8080), serverFD(socket(AF_INET, SOCK_STREAM, 0)), optval(1)
 {
+	std::ifstream file(filename);
+
+	countAndParseServer(filename);
+	if (!file.is_open())
+		throw(std::runtime_error("Could not open the configuration file!"));
+
 	if (serverFD < 0)
 	{
 		throw(std::range_error("socket failed!"));

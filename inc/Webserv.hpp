@@ -14,6 +14,7 @@ class Webserv
 {
 
 private:
+	const char *filename;
 	unsigned int port;
 	int serverFD;
 	int optval;
@@ -21,7 +22,7 @@ private:
 
 public:
 	Webserv();
-	Webserv(unsigned int _port, char *filename);
+	Webserv(const char *filename);
 	Webserv(const Webserv &other);
 	~Webserv(void);
 	const Webserv &operator=(const Webserv &other);
@@ -31,7 +32,7 @@ public:
 
 	std::vector<ServerConfig> config;
 
-	void countAndParseServer(char *filename);
+	void countAndParseServer(const char *filename);
 };
 
 /* ---------------------UTILS FUNCTIONS */
@@ -42,5 +43,6 @@ std::vector<pollfd> initializePollFDSWithServerSocket(int serverFD);
 void monitorSocketEvents(std::vector<pollfd> &fds, int serverFD);
 struct pollfd setNewTempFDStruct(int newSocket);
 void processConnectionData(int serverFD, std::vector<pollfd> &fds, size_t &i);
+void serverListeningLoop(int serverFD);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:12:10 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/08 17:25:58 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/08 17:45:18 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -36,7 +36,7 @@ int setNonBlocking(int fd)
 	curly brace per server,
 	counts the number of server and save inside the class as numberOfServers.
 */
-void Webserv::countAndParseServer(char *filename)
+void Webserv::countAndParseServer(const char *filename)
 {
 	std::ifstream file(filename);
 	int openCurlyBraceCount = 0;
@@ -149,5 +149,52 @@ void processConnectionData(int serverFD, std::vector<pollfd> &fds, size_t &i)
 		std::cout << "Received data: " << buffer << std::endl;
 		// Echo the data back to the client
 		processClientInput(buffer, serverFD, fds[i].fd);
+	}
+}
+
+void serverListeningLoop(int serverFD)
+{
+	std::vector<pollfd> fds = initializePollFDSWithServerSocket(serverFD);
+
+	while (true)
+	{
+		monitorSocketEvents(fds, serverFD);
+		for (size_t i = 0; i < fds.size(); ++i)
+		{
+			// evaluates to true if the i-th file descriptor has incoming data available for reading.
+			if (fds[i].revents & POLLIN)
+			{
+				if (fds[i].fd == serverFD)
+				{
+					// Accept new connections
+					while (true)
+					{
+						int newSocket = accept(serverFD, NULL, NULL);
+						if (newSocket < 0)
+						{
+							if (errno == EWOULDBLOCK || errno == EAGAIN)
+							{
+								// No more incoming connections
+								break;
+							}
+							else
+							{
+								close(serverFD);
+								throw(std::runtime_error("accept failed"));
+							}
+						}
+						std::cout << "New connection accepted: " << newSocket << std::endl;
+						setNonBlocking(newSocket);
+						struct pollfd newTempFD = setNewTempFDStruct(newSocket);
+						fds.push_back(newTempFD);
+					}
+				}
+				else
+				{
+					// Handle data from an existing connection
+					processConnectionData(serverFD, fds, i);
+				}
+			}
+		}
 	}
 }
