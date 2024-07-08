@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/08 17:43:49 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/08 18:32:50 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -52,7 +52,6 @@
 #define GREY "\033[1;30m"
 
 // ---------------------MESSAGES
-#define ARG "Program must only take one configuration file as parameter!"
-#define DEFAULT_CONFIG_PATH "configuration_files/server.conf"
+#define DEFAULT_CONFIG_PATH "configuration_files/simple.conf"
 
 #endif
