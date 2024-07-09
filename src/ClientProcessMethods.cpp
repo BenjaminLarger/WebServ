@@ -6,20 +6,11 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 08:37:10 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/09 16:55:53 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/09 17:05:08 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #include "ClientPetition.hpp"
-
-void processGetMethod(int serverFD, int clientFD)
-{
-	(void)serverFD;
-	(void)clientFD;
-	std::cout << GREEN << "GET HTTML method instructions received!" << std::endl;
-	write(clientFD, "GET client info\n", 14);
-	std::cout << RESET;
-}
 
 void processPutMethod(int serverFD, int clientFD)
 {

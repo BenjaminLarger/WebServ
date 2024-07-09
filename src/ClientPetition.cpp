@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/09 16:37:28 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/09 17:03:38 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -71,17 +71,22 @@ GET::GET(Webserv server, int serverFD, int clientFD, std::string &clientInput)
 
 	std::cout << MAGENTA << clientInput << RESET << std::endl;
 	isLine >> key;
-	std::cout << BLUE << "key = " << key << RESET << std::endl;
 	isLine >> this->pathToRessource;
 	isLine >> this->HTTPversion;
-	isLine >> key; // Host
-	std::cout << BLUE << "key = " << key << RESET << std::endl;
+	// END OF FIRST LINE
+
+	// START PARSING HEADER AND BODY
+	isLine >> key; // Header
 
 	// Read client input => Using flag ? using a "readline"
 	if (key == "Host:" || key == "User-Agent:" || key == "Accept:")
 		findHeader(key, isLine);
-	std::cout << "host = " << this->host << std::endl;
 	write(clientFD, "GET client info\n", 14);
+	std::cout << "pathToRessource = " << YELLOW << this->pathToRessource << RESET << std::endl;
+	std::cout << "HTTPversion = " << YELLOW << this->HTTPversion << RESET << std::endl;
+	std::cout << "host = " << YELLOW << this->host << RESET << std::endl;
+	std::cout << "userAgent = " << YELLOW << this->userAgent << RESET << std::endl;
+	std::cout << "accept = " << YELLOW << this->accept << RESET << std::endl;
 	clientInput.erase();
 	std::cout << RESET;
 }
