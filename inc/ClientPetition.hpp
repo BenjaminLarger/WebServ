@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ClientPetition.hpp                                         :+:      :+:    :+:   */
+/*   ClientPetition.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/09 11:23:27 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/09 11:27:24 by blarger          ###   ########.fr       */
+/*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
+/*   Updated: 2024/07/09 18:24:21 by demre            ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #pragma once
 
@@ -21,22 +21,22 @@ class GET : public Webserv
 {
 
 private:
-	// Request line
-	std::string pathToRessource;
-	std::string HTTPversion;
-	// Header
-	std::string host;
-	std::string userAgent;
-	std::string accept;
-	// Body
-	std::string body;
+  // Request line
+  std::string pathToRessource;
+  std::string HTTPversion;
+  // Header
+  std::string host;
+  std::string userAgent;
+  std::string accept;
+  // Body
+  std::string body;
 
 public:
-	GET(Webserv _server, int serverFD, int clientFD, std::string &clientInput);
-	GET();
-	~GET(void);
+  GET(Webserv _server, int serverFD, int clientFD, std::string &clientInput);
+  GET();
+  ~GET(void);
 
-	void findHeader(std::string &key, std::istringstream &isLine);
+  void findHeader(std::string &key, std::istringstream &isLine);
 };
 
 #endif

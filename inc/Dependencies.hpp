@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   Dependencies.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/09 15:32:24 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/09 18:16:20 by demre            ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #pragma once
 
@@ -16,26 +16,25 @@
 #define DEPENDENCIES_HPP
 
 // ---------------------INCLUDE
-#include <ostream>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <iostream>
-#include <poll.h>
+#include <algorithm>
 #include <cerrno>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
-#include <vector>
+#include <fcntl.h>
 #include <fstream>
-#include <sstream>
-#include <string>
+#include <iostream>
 #include <map>
+#include <netinet/in.h>
+#include <ostream>
+#include <poll.h>
 #include <sstream>
 #include <stdexcept>
-#include <algorithm>
+#include <string>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <vector>
 
 // ---------------------COLORS
 #define RESET "\033[0m"
