@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 08:37:10 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/09 13:25:17 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/09 16:55:53 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -39,17 +39,22 @@ void processDeleteMethod(int serverFD, int clientFD)
 	write(clientFD, "DELETE client info\n", 17);
 }
 
-void Webserv::processClientInput(const char *clientInput, int serverFD, int clientFD)
+void Webserv::processClientInput(std::string clientInput, int serverFD, int clientFD, std::string &staticBuffer)
 {
-	if (clientInput[0] == 'G' && clientInput[1] == 'E' && clientInput[2] == 'T' && clientInput[3] == ' ')
+	staticBuffer += clientInput;
+
+	if (staticBuffer[0] == 'G' && staticBuffer[1] == 'E' && staticBuffer[2] == 'T' && staticBuffer[3] == ' ')
 	{
 		// processGetMethod(serverFD, clientFD);
-		GET method(*this, serverFD, clientFD, clientInput);
+		GET method(*this, serverFD, clientFD, staticBuffer);
 	}
-	else if (clientInput[0] == 'P' && clientInput[1] == 'U' && clientInput[2] == 'T' && clientInput[3] == ' ')
+	else if (staticBuffer[0] == 'P' && staticBuffer[1] == 'U' && staticBuffer[2] == 'T' && staticBuffer[3] == ' ')
 		processPutMethod(serverFD, clientFD);
-	else if (clientInput[0] == 'D' && clientInput[1] == 'E' && clientInput[2] == 'L' && clientInput[3] == 'E' && clientInput[4] == 'T' && clientInput[5] == 'E' && clientInput[6] == ' ')
+	else if (staticBuffer[0] == 'D' && staticBuffer[1] == 'E' && staticBuffer[2] == 'L' && clientInput[3] == 'E' && clientInput[4] == 'T' && clientInput[5] == 'E' && clientInput[6] == ' ')
 		processDeleteMethod(serverFD, clientFD);
 	else
-		std::cout << RED << "Unknown instruction received!" << RESET << std::endl;
+	{
+		staticBuffer.erase();
+		std::cout << RED << "Unknown instruction received!" << " staticBuffer = " << staticBuffer << RESET << std::endl;
+	}
 }

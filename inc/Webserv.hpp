@@ -35,8 +35,8 @@ public:
 	std::vector<pollfd> initializePollFDSWithServerSocket(int serverFD);
 	void monitorSocketEvents(std::vector<pollfd> &fds, int serverFD);
 	struct pollfd setNewTempFDStruct(int newSocket);
-	void processConnectionData(int serverFD, std::vector<pollfd> &fds, size_t &i);
-	void processClientInput(const char *clientInput, int serverFD, int clientFD);
+	void processConnectionData(int serverFD, std::vector<pollfd> &fds, size_t &i, std::map<size_t, std::string> &buffers);
+	void processClientInput(std::string clientInput, int serverFD, int clientFD, std::string &staticBuffer);
 
 	// std::vector<ServerConfig> config;
 

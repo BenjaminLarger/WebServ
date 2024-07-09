@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:12:10 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/09 13:04:37 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/09 16:07:00 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -128,11 +128,12 @@ struct pollfd Webserv::setNewTempFDStruct(int newSocket)
 	a non-blocking manner, allowing the server to handle multiple
 	clients simultaneously.
  */
-void Webserv::processConnectionData(int serverFD, std::vector<pollfd> &fds, size_t &i)
+void Webserv::processConnectionData(int serverFD, std::vector<pollfd> &fds, size_t &i, std::map<size_t, std::string> &buffers)
 {
 	char buffer[1024];
 	// memset(buffer, 0, sizeof(buffer));
 	int bytes_read = read(fds[i].fd, buffer, sizeof(buffer));
+	buffer[bytes_read] = '\0';
 	if (bytes_read <= 0)
 	{
 		if (bytes_read == 0)
@@ -148,13 +149,14 @@ void Webserv::processConnectionData(int serverFD, std::vector<pollfd> &fds, size
 	{
 		std::cout << "Received data: " << buffer << std::endl;
 		// Echo the data back to the client
-		processClientInput(buffer, serverFD, fds[i].fd);
+		processClientInput(buffer, serverFD, fds[i].fd, buffers[i]);
 	}
 }
 
 void Webserv::serverListeningLoop(int serverFD)
 {
 	std::vector<pollfd> fds = initializePollFDSWithServerSocket(serverFD);
+	std::map<size_t, std::string> buffers;
 
 	while (true)
 	{
@@ -187,12 +189,14 @@ void Webserv::serverListeningLoop(int serverFD)
 						this->setNonBlocking(newSocket);
 						struct pollfd newTempFD = setNewTempFDStruct(newSocket);
 						fds.push_back(newTempFD);
+						static std::string buffer;
+						buffers[i] = buffer;
 					}
 				}
 				else
 				{
 					// Handle data from an existing connection
-					processConnectionData(serverFD, fds, i);
+					processConnectionData(serverFD, fds, i, buffers);
 				}
 			}
 		}

@@ -32,7 +32,7 @@ private:
 	std::string body;
 
 public:
-	GET(Webserv _server, int serverFD, int clientFD, std::string clientInput);
+	GET(Webserv _server, int serverFD, int clientFD, std::string &clientInput);
 	GET();
 	~GET(void);
 
