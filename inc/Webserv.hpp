@@ -10,7 +10,7 @@
 //                               Class                                		  //
 // ************************************************************************** //
 
-class Webserv
+class Webserv : public ServerConfig
 {
 
 private:
@@ -23,13 +23,20 @@ private:
 
 public:
 	Webserv();
-	Webserv(const char *filename);
-	Webserv(const Webserv &other);
+	Webserv(const char *filename, ServerConfig config);
 	~Webserv(void);
 	const Webserv &operator=(const Webserv &other);
 
 	const int &getServerFD(void) const;
 	const unsigned int &getPort(void) const;
+
+	int setNonBlocking(int fd);
+	void serverListeningLoop(int serverFD);
+	std::vector<pollfd> initializePollFDSWithServerSocket(int serverFD);
+	void monitorSocketEvents(std::vector<pollfd> &fds, int serverFD);
+	struct pollfd setNewTempFDStruct(int newSocket);
+	void processConnectionData(int serverFD, std::vector<pollfd> &fds, size_t &i);
+	void processClientInput(const char *clientInput, int serverFD, int clientFD);
 
 	// std::vector<ServerConfig> config;
 
@@ -37,13 +44,5 @@ public:
 };
 
 /* ---------------------UTILS FUNCTIONS */
-void processClientInput(const char *clientInput, int server_fd, int clientFD);
-int setNonBlocking(int fd);
-void serverListeningLoop(int server_fd);
-std::vector<pollfd> initializePollFDSWithServerSocket(int serverFD);
-void monitorSocketEvents(std::vector<pollfd> &fds, int serverFD);
-struct pollfd setNewTempFDStruct(int newSocket);
-void processConnectionData(int serverFD, std::vector<pollfd> &fds, size_t &i);
-void serverListeningLoop(int serverFD);
 
 #endif

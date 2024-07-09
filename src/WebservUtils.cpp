@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:12:10 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/08 17:45:18 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/09 13:04:37 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -23,7 +23,7 @@
 	returns -1 to indicate an error.
 @return: int - Returns 0 on success, or -1 on failure.
 */
-int setNonBlocking(int fd)
+int Webserv::setNonBlocking(int fd)
 {
 	int flags = fcntl(fd, F_GETFL, 0);
 	if (flags < 0)
@@ -92,7 +92,7 @@ void Webserv::countAndParseServer(const char *filename)
 	the fds vector to see if any of the file descriptors are
 	ready for the specified operation (POLLIN in this case).
 */
-std::vector<pollfd> initializePollFDSWithServerSocket(int serverFD)
+std::vector<pollfd> Webserv::initializePollFDSWithServerSocket(int serverFD)
 {
 	std::vector<pollfd> fds;
 	struct pollfd temp_fd;
@@ -103,7 +103,7 @@ std::vector<pollfd> initializePollFDSWithServerSocket(int serverFD)
 	return (fds);
 }
 
-void monitorSocketEvents(std::vector<pollfd> &fds, int serverFD)
+void Webserv::monitorSocketEvents(std::vector<pollfd> &fds, int serverFD)
 {
 	int pollCount = poll(fds.data(), fds.size(), -1);
 	if (pollCount < 0)
@@ -113,7 +113,7 @@ void monitorSocketEvents(std::vector<pollfd> &fds, int serverFD)
 	}
 }
 
-struct pollfd setNewTempFDStruct(int newSocket)
+struct pollfd Webserv::setNewTempFDStruct(int newSocket)
 {
 	struct pollfd newTempFD;
 
@@ -128,7 +128,7 @@ struct pollfd setNewTempFDStruct(int newSocket)
 	a non-blocking manner, allowing the server to handle multiple
 	clients simultaneously.
  */
-void processConnectionData(int serverFD, std::vector<pollfd> &fds, size_t &i)
+void Webserv::processConnectionData(int serverFD, std::vector<pollfd> &fds, size_t &i)
 {
 	char buffer[1024];
 	// memset(buffer, 0, sizeof(buffer));
@@ -152,7 +152,7 @@ void processConnectionData(int serverFD, std::vector<pollfd> &fds, size_t &i)
 	}
 }
 
-void serverListeningLoop(int serverFD)
+void Webserv::serverListeningLoop(int serverFD)
 {
 	std::vector<pollfd> fds = initializePollFDSWithServerSocket(serverFD);
 
@@ -184,7 +184,7 @@ void serverListeningLoop(int serverFD)
 							}
 						}
 						std::cout << "New connection accepted: " << newSocket << std::endl;
-						setNonBlocking(newSocket);
+						this->setNonBlocking(newSocket);
 						struct pollfd newTempFD = setNewTempFDStruct(newSocket);
 						fds.push_back(newTempFD);
 					}

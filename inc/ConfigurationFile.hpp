@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:23:15 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/08 18:17:19 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/09 10:33:46 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -28,7 +28,7 @@ public:
 	std::string root;
 	std::string index;
 	std::vector<std::string> allowedMethods;
-	bool autoIndex;
+	bool autoindexOn;
 };
 
 class ServerConfig
@@ -49,6 +49,12 @@ public:
 
 	const int &getServerFD(void) const;
 	const unsigned int &getPort(void) const;
+
+	std::map<int, std::string> findErrorPage(std::istringstream &isLine);
+	void findLocation(std::string &line, ServerConfig &config, std::ifstream &file, std::string currentLocation);
 };
+
+/* ---------------------UTILS FUNCTIONS */
+// Configuration file parsing
 
 #endif

@@ -1,5 +1,8 @@
 # WEBSERVER README
 
+## Utils commands
+Check Port Availability: Use netstat -tuln | grep <port>
+
 ## Configuration file parsing
 
 ### Rules

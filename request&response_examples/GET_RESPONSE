@@ -1,0 +1,17 @@
+#Status Line
+HTTP/1.1 200 OK
+
+#Header
+Content-Type: text/html
+Content-Length: 138
+
+#Body
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Example Page</title>
+</head>
+<body>
+    <h1>Welcome to Example.com!</h1>
+</body>
+</html>
