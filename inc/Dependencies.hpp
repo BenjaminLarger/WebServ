@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/08 18:32:50 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/10 12:57:06 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -16,26 +16,27 @@
 #define DEPENDENCIES_HPP
 
 // ---------------------INCLUDE
-#include <ostream>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <iostream>
-#include <poll.h>
+#include <algorithm>
 #include <cerrno>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
+#include <fcntl.h>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <netinet/in.h>
+#include <ostream>
+#include <poll.h>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include <string>
-#include <map>
-#include <sstream>
-#include <stdexcept>
-#include <algorithm>
 
 // ---------------------COLORS
 #define RESET "\033[0m"
