@@ -1,19 +1,19 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ClientPetition.hpp                                 :+:      :+:    :+:   */
+/*   GET.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/07/09 18:24:21 by demre            ###   ########.fr       */
+/*   Updated: 2024/07/10 11:21:18 by blarger          ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #pragma once
 
-#ifndef CLIENT_PETITION_HPP
-#define CLIENT_PETITION_HPP
+#ifndef GET_HPP
+#define GET_HPP
 
 #include "Webserv.hpp"
 
@@ -37,6 +37,8 @@ public:
   ~GET(void);
 
   void findHeader(std::string &key, std::istringstream &isLine);
+  void	sendResponse(int clientFD);
+  std::string	createResponseBody(void);
 };
 
 #endif
