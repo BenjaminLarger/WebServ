@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/10 14:58:07 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/10 15:23:24 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,11 +86,11 @@ void GET::sendResponse(int clientFD)
   //The format of an HTTP response is defined by the HTTP specification (RFC 2616 for HTTP/1.1).
   //Body: The actual content (e.g., HTML, JSON).
   if (this->pathToRessource == "/silence")
-    responseBody = extractHtmlContent("html_content/body/silence.html");
+    responseBody = extractHtmlContent("public/body/silence.html");
   else if (this->pathToRessource == "/")
-    responseBody = extractHtmlContent("html_content/body/main.html");
+    responseBody = extractHtmlContent("public/body/main.html");
   else
-    responseBody = extractHtmlContent("html_content/error_pages/404.html");
+    responseBody = extractHtmlContent("public/error_pages/404.html");
   //Here it is convenient to use ostring to concatenate
   std::ostringstream response;
   //Status Line: Specifies the HTTP version, status code, and status message.
