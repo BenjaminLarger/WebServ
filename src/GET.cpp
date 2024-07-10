@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
@@ -6,11 +6,25 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/10 13:06:36 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/10 14:58:07 by blarger          ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "GET.hpp"
+
+//-----> use a map container to associate a string key found with a function that set  object value (eg: key = "Host:" || function = setHost(std::string value) {this->host = value})
+/* bool findHeader(const std::map<std::string,function> &headers,
+                const std::string &targetHeader)
+{
+  for (size_t i = 0; i < headers.size(); ++i)
+  { // Loop through all headers
+    if (headers[i] == targetHeader)
+    {              // Check if the current header matches the target
+      return true; // Header found
+    }
+  }
+  return false; // Header not found
+} */
 
 void GET::findHeader(std::string &key, std::istringstream &isLine)
 {
@@ -54,39 +68,45 @@ int countJumpLine(std::string str)
   return (count);
 }
 
-std::string GET::extractHtmlContent(const std::string& filePath)
+std::string GET::extractHtmlContent(const std::string &filePath)
 {
-    std::ifstream file(filePath.c_str());
-    if (!file.is_open())
-        throw std::runtime_error("Could not open file: " + filePath);
+  std::ifstream file(filePath.c_str());
+  if (!file.is_open())
+    throw std::runtime_error("Could not open file: " + filePath);
 
-    std::stringstream buffer;
-    buffer << file.rdbuf();
+  std::stringstream buffer;
+  buffer << file.rdbuf();
 
-    return buffer.str();
+  return buffer.str();
 }
 
-void	GET::sendResponse(int clientFD)
+void GET::sendResponse(int clientFD)
 {
-	//The format of an HTTP response is defined by the HTTP specification (RFC 2616 for HTTP/1.1).
-	//Body: The actual content (e.g., HTML, JSON).
-	std::string	responseBody = extractHtmlContent("html_content/body/main.html");
-	//Here it is convenient to use ostring to concatenate
-	std::ostringstream	response;
-	//Status Line: Specifies the HTTP version, status code, and status message.
-	response << "HTTP/1.1 200 OK\r\n";
-	//Headers: Metadata about the response.
-	response << "Content-Type : " << responseBody.size() << "\r\n";
-	response << "Connection close\r\n";
-	response << "\r\n";
-	response << responseBody;
+  std::string responseBody;
+  //The format of an HTTP response is defined by the HTTP specification (RFC 2616 for HTTP/1.1).
+  //Body: The actual content (e.g., HTML, JSON).
+  if (this->pathToRessource == "/silence")
+    responseBody = extractHtmlContent("html_content/body/silence.html");
+  else if (this->pathToRessource == "/")
+    responseBody = extractHtmlContent("html_content/body/main.html");
+  else
+    responseBody = extractHtmlContent("html_content/error_pages/404.html");
+  //Here it is convenient to use ostring to concatenate
+  std::ostringstream response;
+  //Status Line: Specifies the HTTP version, status code, and status message.
+  response << "HTTP/1.1 200 OK\r\n";
+  //Headers: Metadata about the response.
+  response << "Content-Type : " << responseBody.size() << "\r\n";
+  response << "Connection close\r\n";
+  response << "\r\n";
+  response << responseBody;
 
-	std::string	responseStr = response.str();
-	//send function is similar to write, but it is specific to socket.
-	//Supports additional flags to modify behavior (e.g., MSG_NOSIGNAL to prevent sending a SIGPIPE signal).
-	//Syntax: ssize_t send(int sockfd, const void *buf, size_t len, int flags);
-	if (send(clientFD, responseStr.c_str(), responseStr.size(), 0) == -1)
-		throw (std::runtime_error("fail sending the message"));
+  std::string responseStr = response.str();
+  //send function is similar to write, but it is specific to socket.
+  //Supports additional flags to modify behavior (e.g., MSG_NOSIGNAL to prevent sending a SIGPIPE signal).
+  //Syntax: ssize_t send(int sockfd, const void *buf, size_t len, int flags);
+  if (send(clientFD, responseStr.c_str(), responseStr.size(), 0) == -1)
+    throw(std::runtime_error("fail sending the message"));
 }
 
 GET::GET(Webserv server, int serverFD, int clientFD, std::string &clientInput)
@@ -96,7 +116,8 @@ GET::GET(Webserv server, int serverFD, int clientFD, std::string &clientInput)
   (void)serverFD;
   (void)clientFD;
 
-	std::cout << RED << countJumpLine(clientInput) << " jumplines in client request!" << RESET << std::endl;
+  std::cout << RED << countJumpLine(clientInput)
+            << " jumplines in client request!" << RESET << std::endl;
   if (countJumpLine(clientInput) <= 3)
     return;
   std::istringstream isLine(clientInput);
@@ -127,13 +148,12 @@ GET::GET(Webserv server, int serverFD, int clientFD, std::string &clientInput)
   clientInput.erase();
   try
   {
-	  sendResponse(clientFD);
+    sendResponse(clientFD);
   }
-  catch(const std::exception& e)
+  catch (const std::exception &e)
   {
-	std::cerr << RED << e.what() << RESET <<'\n';
+    std::cerr << RED << e.what() << RESET << '\n';
   }
-  
 }
 
 GET::GET(){};
