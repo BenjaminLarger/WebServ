@@ -1,0 +1,4 @@
+Some questions about the code:
+
+	-	I dont understand the functionality os the buffer map that is used in the serverListeningLoop (WebservUtils.cpp),
+		couse then you declare another buffer and you just use this second one.
