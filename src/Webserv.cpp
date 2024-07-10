@@ -40,13 +40,13 @@ Webserv::Webserv(const char *_filename, ServerConfig config) : filename(_filenam
 	if (setsockopt(serverFD, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)//Configuration of the socket to avoid the "Address already in use" error
 		throw(std::range_error("setsockopt(SO_REUSEADDR) failed"));
 
-	if (bind(serverFD, (struct sockaddr *)&address, sizeof(address)) < 0)
+	if (bind(serverFD, (struct sockaddr *)&address, sizeof(address)) < 0)//Associate the server socket with a specific adress and port
 	{
 		close(serverFD);
 		throw(std::range_error("bind failed"));
 	}
 
-	if (listen(serverFD, 10) < 0)
+	if (listen(serverFD, 10) < 0)//Server is listenning
 	{
 		close(serverFD);
 		throw(std::range_error("listen failed!"));
