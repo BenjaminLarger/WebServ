@@ -6,11 +6,12 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/10 15:23:24 by demre            ###   ########.fr       */
+/*   Updated: 2024/07/10 16:39:19 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GET.hpp"
+#include "CGI.hpp"
 
 //-----> use a map container to associate a string key found with a function that set  object value (eg: key = "Host:" || function = setHost(std::string value) {this->host = value})
 /* bool findHeader(const std::map<std::string,function> &headers,
@@ -77,36 +78,36 @@ std::string GET::extractHtmlContent(const std::string &filePath)
   std::stringstream buffer;
   buffer << file.rdbuf();
 
-  return buffer.str();
+  return (buffer.str());
 }
 
-void GET::sendResponse(int clientFD)
+void GET::sendResponse(int clientFD, std::string responseBody)
 {
-  std::string responseBody;
   //The format of an HTTP response is defined by the HTTP specification (RFC 2616 for HTTP/1.1).
-  //Body: The actual content (e.g., HTML, JSON).
-  if (this->pathToRessource == "/silence")
-    responseBody = extractHtmlContent("public/body/silence.html");
-  else if (this->pathToRessource == "/")
-    responseBody = extractHtmlContent("public/body/main.html");
-  else
-    responseBody = extractHtmlContent("public/error_pages/404.html");
   //Here it is convenient to use ostring to concatenate
   std::ostringstream response;
   //Status Line: Specifies the HTTP version, status code, and status message.
   response << "HTTP/1.1 200 OK\r\n";
   //Headers: Metadata about the response.
-  response << "Content-Type : " << responseBody.size() << "\r\n";
-  response << "Connection close\r\n";
+  response << "Content-Type: text/html\r\n";
+  response << "Content-Length : " << responseBody.size() << "\r\n";
   response << "\r\n";
   response << responseBody;
 
   std::string responseStr = response.str();
+  // std::cout << "responseStr: \n" << responseStr << std::endl;
   //send function is similar to write, but it is specific to socket.
   //Supports additional flags to modify behavior (e.g., MSG_NOSIGNAL to prevent sending a SIGPIPE signal).
   //Syntax: ssize_t send(int sockfd, const void *buf, size_t len, int flags);
-  if (send(clientFD, responseStr.c_str(), responseStr.size(), 0) == -1)
-    throw(std::runtime_error("fail sending the message"));
+
+  int bytesSent = send(clientFD, responseStr.c_str(), responseStr.size(), 0);
+  while (bytesSent < (int)responseStr.size() && bytesSent != 0)
+  {
+    if (bytesSent == -1)
+      throw(std::runtime_error("fail sending the message"));
+    bytesSent = send(clientFD, responseStr.c_str(), responseStr.size(), 0);
+  }
+  close(clientFD);
 }
 
 GET::GET(Webserv server, int serverFD, int clientFD, std::string &clientInput)
@@ -118,7 +119,7 @@ GET::GET(Webserv server, int serverFD, int clientFD, std::string &clientInput)
 
   std::cout << RED << countJumpLine(clientInput)
             << " jumplines in client request!" << RESET << std::endl;
-  if (countJumpLine(clientInput) <= 3)
+  if (countJumpLine(clientInput) < 3)
     return;
   std::istringstream isLine(clientInput);
   std::string key;
@@ -146,9 +147,26 @@ GET::GET(Webserv server, int serverFD, int clientFD, std::string &clientInput)
   std::cout << "accept = " << YELLOW << this->accept << RESET << std::endl;
   std::cout << RESET;
   clientInput.erase();
+
   try
   {
-    sendResponse(clientFD);
+    // getResponseBody()
+    // Body: The actual content (e.g., HTML, JSON).
+    std::string responseBody;
+    std::cout << "pathToRessource: " << pathToRessource << std::endl;
+    if (this->pathToRessource.find(".php") != std::string::npos)
+      responseBody = executePhp(this->pathToRessource);
+    else
+    {
+      if (this->pathToRessource == "/silence")
+        responseBody = extractHtmlContent("public/body/silence.html");
+      else if (this->pathToRessource == "/")
+        responseBody = extractHtmlContent("public/body/main.html");
+      else
+        responseBody = extractHtmlContent("public/error_pages/404.html");
+    }
+    sendResponse(clientFD, responseBody);
+    // std::cout << "response sent." << std::endl;
   }
   catch (const std::exception &e)
   {
