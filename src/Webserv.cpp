@@ -12,7 +12,7 @@
 
 #include "Webserv.hpp"
 
-/* --------------CONSTRUCTORS */
+/* --------------CONSTRUCTORS */																													//IPV4	//TCP Protocol
 Webserv::Webserv(const char *_filename, ServerConfig config) : filename(_filename), /* config(filename) */ port(config.getPort()), serverFD(socket(AF_INET, SOCK_STREAM, 0)), optval(1)
 {
 	std::ifstream file(filename);
@@ -33,11 +33,11 @@ Webserv::Webserv(const char *_filename, ServerConfig config) : filename(_filenam
 	}
 
 	struct sockaddr_in address;
-	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(port);
+	address.sin_family = AF_INET;//IPV4 adress family
+	address.sin_addr.s_addr = INADDR_ANY;//Hear from default 0.0.0.0
+	address.sin_port = htons(port);//htons convert the port bytes order to the net one
 
-	if (setsockopt(serverFD, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
+	if (setsockopt(serverFD, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)//Configuration of the socket to avoid the "Address already in use" error
 		throw(std::range_error("setsockopt(SO_REUSEADDR) failed"));
 
 	if (bind(serverFD, (struct sockaddr *)&address, sizeof(address)) < 0)
