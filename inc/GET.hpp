@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/07/10 11:21:18 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/10 13:00:52 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -39,6 +39,7 @@ public:
   void findHeader(std::string &key, std::istringstream &isLine);
   void	sendResponse(int clientFD);
   std::string	createResponseBody(void);
+  std::string extractHtmlContent(const std::string& filePath);
 };
 
 #endif

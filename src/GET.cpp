@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/10 11:57:54 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/10 13:06:36 by blarger          ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -54,38 +54,23 @@ int countJumpLine(std::string str)
   return (count);
 }
 
-std::string	GET::createResponseBody(void)
+std::string GET::extractHtmlContent(const std::string& filePath)
 {
-std::string	responseBody =	"<!DOCTYPE html>\n"
-                                "<html lang='en'>\n"
-                                "<head>\n"
-                                "	<meta charset='UTF-8'>\n"
-                                "	<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n"
-                                "	<title>Cool Page</title>\n"
-                                "	<style>\n"
-                                "		body { font-family: 'Courier New', monospace; background-color: #000000; color: #00FF00; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }\n"
-                                "		h1 { font-size: 3rem; text-transform: uppercase; }\n"
-                                "		p { font-size: 2rem; text-transform: uppercase; }\n"
-                                "		.container { text-align: center; }\n"
-                                "		img { max-width: 100%; height: auto; }\n"
-                                "	</style>\n"
-                                "</head>\n"
-                                "<body>\n"
-                                "	<div class='container'>\n"
-                                "		<h1>Hello 42!</h1>\n"
-                                "		<p>#BornToCode</p>\n"
-                                // Insert your image link here
-                                "		<a href='https://ibb.co/R4CMvMD'><img src='https://raw.githubusercontent.com/BenjaminLarger/BenjaminLarger/main/walk.gif' alt='aniversario42' border='0'></a>\n"                                
-                                "	</div>\n"                                
-                                "</body>\n"
-                                "</html>\n";
-    return (responseBody);								
+    std::ifstream file(filePath.c_str());
+    if (!file.is_open())
+        throw std::runtime_error("Could not open file: " + filePath);
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+
+    return buffer.str();
 }
+
 void	GET::sendResponse(int clientFD)
 {
 	//The format of an HTTP response is defined by the HTTP specification (RFC 2616 for HTTP/1.1).
 	//Body: The actual content (e.g., HTML, JSON).
-	std::string	responseBody =	createResponseBody();
+	std::string	responseBody = extractHtmlContent("html_content/body/main.html");
 	//Here it is convenient to use ostring to concatenate
 	std::ostringstream	response;
 	//Status Line: Specifies the HTTP version, status code, and status message.
