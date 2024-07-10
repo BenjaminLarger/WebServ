@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   GET.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/07/10 13:00:52 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/10 14:43:20 by demre            ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #pragma once
 
@@ -37,9 +37,9 @@ public:
   ~GET(void);
 
   void findHeader(std::string &key, std::istringstream &isLine);
-  void	sendResponse(int clientFD);
-  std::string	createResponseBody(void);
-  std::string extractHtmlContent(const std::string& filePath);
+  void sendResponse(int clientFD, std::string responseBody);
+  std::string createResponseBody(void);
+  std::string extractHtmlContent(const std::string &filePath);
 };
 
 #endif
