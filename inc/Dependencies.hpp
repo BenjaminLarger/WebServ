@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   Dependencies.hpp                                   :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/10 12:57:06 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/11 10:40:22 by blarger          ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #pragma once
 
@@ -23,6 +23,7 @@
 #include <cstring>
 #include <fcntl.h>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <map>
 #include <netinet/in.h>
@@ -35,8 +36,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <vector>
-#include <fstream>
-#include <sstream>
 
 // ---------------------COLORS
 #define RESET "\033[0m"

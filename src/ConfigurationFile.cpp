@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ConfigurationFile.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:48:15 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/09 18:14:58 by demre            ###   ########.fr       */
+/*   Updated: 2024/07/11 11:14:44 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,37 +30,37 @@ ServerConfig::ServerConfig(const char *filename)
     std::string key;
 
     isLine >> key;
-    std::cout << "----------------------------------------------\n";
-    std::cout << BLUE << "line = " << line << std::endl;
-    std::cout << ORANGE << "key = " << key << RESET << std::endl;
+    //std::cout << "----------------------------------------------\n";
+    //std::cout << BLUE << "line = " << line << std::endl;
+    //std::cout << ORANGE << "key = " << key << RESET << std::endl;
     if (key == "server")
     {
       isLine >> key;
-      std::cout << ORANGE << "key = " << key
-                << ", key len = " << strlen(key.c_str()) << RESET << std::endl;
+      //std::cout << ORANGE << "key = " << key
+      //<< ", key len = " << strlen(key.c_str()) << RESET << std::endl;
     }
     if (key == "{")
     {
       isLine >> key;
-      std::cout << ORANGE << "key = " << key << RESET << std::endl;
+      //std::cout << ORANGE << "key = " << key << RESET << std::endl;
     }
     if (key[0] == '#')
       continue;
     else if (key == "client_max_body_size")
     {
       isLine >> this->maxBodySize;
-      std::cout << "Max body size = " << YELLOW << this->maxBodySize << RESET
-                << std::endl;
+      //std::cout << "Max body size = " << YELLOW << this->maxBodySize << RESET
+      //<< std::endl;
     }
     else if (key == "listen")
     {
       isLine >> this->port;
-      std::cout << "port = " << YELLOW << this->port << RESET << std::endl;
+      //std::cout << "port = " << YELLOW << this->port << RESET << std::endl;
     }
     else if (key == "server_name")
     {
       isLine >> this->host;
-      std::cout << "host = " << YELLOW << this->host << RESET << std::endl;
+      //std::cout << "host = " << YELLOW << this->host << RESET << std::endl;
     }
     else if (key == "error_page")
       this->errorPages = findErrorPage(isLine);
