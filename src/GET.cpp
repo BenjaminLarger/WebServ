@@ -3,58 +3,62 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/10 16:39:19 by demre            ###   ########.fr       */
+/*   Updated: 2024/07/11 11:39:09 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GET.hpp"
 #include "CGI.hpp"
 
-//-----> use a map container to associate a string key found with a function that set  object value (eg: key = "Host:" || function = setHost(std::string value) {this->host = value})
-/* bool findHeader(const std::map<std::string,function> &headers,
-                const std::string &targetHeader)
+void GET::setAccept(const std::string &_accept) { this->accept = _accept; }
+void GET::setHost(const std::string &_host) { this->host = _host; }
+void GET::setUserAgent(const std::string &_userAgent)
 {
-  for (size_t i = 0; i < headers.size(); ++i)
-  { // Loop through all headers
-    if (headers[i] == targetHeader)
-    {              // Check if the current header matches the target
-      return true; // Header found
-    }
-  }
-  return false; // Header not found
-} */
-
+  this->userAgent = _userAgent;
+}
+//-----> use a map container to associate a string key found with a function that set  object value (eg: key = "Host:" || function = setHost(std::string value) {this->host = value})
 void GET::findHeader(std::string &key, std::istringstream &isLine)
 {
   std::string newKey;
-  if (key == "Host:")
-  {
-    isLine >> this->host;
-    isLine >> newKey;
-    if (key != newKey)
-      findHeader(newKey, isLine);
+  typedef void (GET::*HeaderSetter)(const std::string &);
+  std::map<std::string, HeaderSetter> headersMap;
+
+  headersMap["Host:"] = &GET::setHost;
+  headersMap["User-Agent:"] = &GET::setUserAgent;
+  headersMap["Accept:"] = &GET::setAccept;
+
+  std::map<std::string, HeaderSetter>::iterator it = headersMap.begin();
+
+  while (it != headersMap.end())
+  { // Loop through all headers
+    if (it->first == key)
+    {
+      std::cout << GREEN << "Header found ! " << key << std::endl;
+      isLine >> newKey;
+      std::cout << ORANGE << "new key = " << newKey << std::endl;
+      while (isLine.peek() != '\n' && isLine.peek() != 13
+             && isLine.peek() != EOF)
+      {
+        std::string temp;
+        isLine >> temp;
+        newKey += temp;
+      }
+      std::cout << RED << "new key = " << newKey << std::endl;
+      if (key != newKey)
+      {
+        (this->*(it->second))(newKey);
+        isLine >> newKey;
+        findHeader(newKey, isLine);
+      }
+    }
+    ++it;
   }
-  else if (key == "User-Agent:")
-  {
-    isLine >> this->userAgent;
-    std::cout << YELLOW << "userAgent = " << this->host << RESET << std::endl;
-    isLine >> newKey;
-    std::cout << YELLOW << "key = " << key << RESET << std::endl;
-    if (key != newKey)
-      findHeader(newKey, isLine);
-  }
-  else if (key == "Accept:")
-  {
-    isLine >> this->accept;
-    std::cout << YELLOW << "accept = " << this->accept << RESET << std::endl;
-    isLine >> newKey;
-    std::cout << YELLOW << "key = " << key << RESET << std::endl;
-    if (key != newKey)
-      findHeader(newKey, isLine);
-  }
+  isLine >> newKey;
+  if (key != newKey)
+    findHeader(newKey, isLine);
 }
 
 int countJumpLine(std::string str)
@@ -117,8 +121,8 @@ GET::GET(Webserv server, int serverFD, int clientFD, std::string &clientInput)
   (void)serverFD;
   (void)clientFD;
 
-  std::cout << RED << countJumpLine(clientInput)
-            << " jumplines in client request!" << RESET << std::endl;
+  // std::cout << RED << countJumpLine(clientInput)
+  //         << " jumplines in client request!" << RESET << std::endl;
   if (countJumpLine(clientInput) < 3)
     return;
   std::istringstream isLine(clientInput);
@@ -134,8 +138,9 @@ GET::GET(Webserv server, int serverFD, int clientFD, std::string &clientInput)
   isLine >> key; // Header
 
   // Read client input => Using flag ? using a "readline"
-  if (key == "Host:" || key == "User-Agent:" || key == "Accept:")
-    findHeader(key, isLine);
+  /* if (key == "Host:" || key == "User-Agent:" || key == "Accept:")
+     */
+  findHeader(key, isLine);
   //write(clientFD, "GET client info\n", 14);
   std::cout << "pathToRessource = " << YELLOW << this->pathToRessource << RESET
             << std::endl;

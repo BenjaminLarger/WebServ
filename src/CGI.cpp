@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGI.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/07/10 15:47:30 by demre            ###   ########.fr       */
+/*   Updated: 2024/07/11 10:24:08 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ std::string executePhp(std::string phpFile)
     char *argv[] = {(char *)"php", (char *)phpFilePath.c_str(), NULL};
     execve("/usr/bin/php", argv, NULL);
 
-    perror("execve");
+    perror("execve");//cannot use perror
     return ("");
   }
   else // Read the output from the read end of the pipe in parent process
