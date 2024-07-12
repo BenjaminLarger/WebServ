@@ -1,7 +1,6 @@
 #include "../inc/POST.hpp"
 #include "../inc/Dependencies.hpp"
 
-<<<<<<< HEAD
 void	POST::extractBody() {
 // Read body
 	char	*buffer = new char[contentLength + 1];
@@ -74,30 +73,5 @@ POST::POST(Webserv _server, int serverFD, int clientFD, std::string &clientInput
 }
 
 POST::~POST(void) {
-
 }
-=======
-POST::POST(Webserv _server, int serverFD, int clientFD,
-           std::string &clientInput)
-    : requestStream(clientInput)
-{
 
-  (void)_server;
-  (void)serverFD;
-  (void)clientFD;
-
-  std::string line;
-  std::cout << clientInput << std::endl;
-}
-/* while (std::getline(this->requestStream, line) && line != "\r")
-{
-  if (line.find("Content-Length:") != std::string::npos)
-  {
-    std::istringstream isLine(line);
-    std::string key;
-    isLine >> key;
-    isLine >> this->contentLength;
-  }
-} */
-POST::~POST(void) {}
->>>>>>> 44803e072505d48c91e144563a5466867171da7c
