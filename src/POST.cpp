@@ -1,21 +1,35 @@
 #include "../inc/POST.hpp"
 #include "../inc/Dependencies.hpp"
 
-void	POST::extractBody() {
-// Read body
-	char	*buffer = new char[contentLength + 1];
+//Send form data to a URL and get a response back
 
-	requestStream.read(buffer, contentLength);
-	buffer[contentLength] = '\0';
-	body = buffer;
-	delete[] buffer;
-	std::cout << "body: " << body << std::endl;
+void	POST::extractBody(int clientFD) {
+// Read body
+	if (contentLength > 0)
+	{
+		char	*buffer = new char[contentLength + 1];
+
+		//Reads the content of the body from the actual position of the stream
+		requestStream.read(buffer, contentLength);
+		buffer[contentLength] = '\0';
+		//Converts the buffer to a string to make it easier to manipulate
+		body = buffer;
+		delete[] buffer;
+		std::cout << "body: " << body << std::endl;
+		// 200 = code for success received, OK = brief description of the status, text/plain = type of the response
+		std::string	response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n";
+		response += "POST data received.\n";
+		send(clientFD, response.c_str(), response.size(), 0);
+	}
+	else
+		sendErrorResponse(clientFD, "411", "Length required");
+	close(clientFD);
 }
 
-void	POST::extractHeaders(std::string &clientInput) {
+void	POST::extractHeaders() {
 	std::string	line;
-	this->requestStream.str(clientInput);
 
+	//Reads line by line until it finds an empty line
 	while (std::getline(requestStream, line) && line != "\r") {
 		size_t colonPos = line.find(":");
 		if (colonPos != std::string::npos) {
@@ -39,16 +53,16 @@ void	POST::extractHeaders(std::string &clientInput) {
 	std::cout << "host: " << this->host << std::endl;
 }
 
-void	POST::extractFirstLine(std::string &clientInput) {
+void	POST::extractFirstLine() {
 	std::string	line;
 
-	this->requestStream.str(clientInput);//This is going to be in the constructor when clientInput is passed as parameter
 	this->requestStream >> line;
 	this->requestStream >> this->pathToRessource;
 	this->requestStream >> this->HTTPversion;
 	std::cout  << "path-to-resource: " << this->pathToRessource << RESET << std::endl;
 	std::cout  << "HTTP: " << this->HTTPversion << RESET << std::endl;
 	requestStream.clear();
+	requestStream.seekg(0);
 }
 
 //We extract all the content of a POST request
@@ -58,18 +72,12 @@ POST::POST(Webserv _server, int serverFD, int clientFD, std::string &clientInput
 	(void)_server;
 	(void)serverFD;
 	(void)clientFD;
+	this->requestStream.str(clientInput);
 	std::string line;
-
-	// Read headers
-	clientInput = "POST /submit-form HTTP/1.1\r\n"
-					"Host: localhost:8080\r\n"
-					"Content-Type: application/x-www-form-urlencoded\r\n"
-					"Content-Length: 16\r\n"
-					"\r\n"
-					"name=John&age=30";
-	extractFirstLine(clientInput);
-	extractHeaders(clientInput);
-	extractBody();
+	std::cout << std::endl << "--------POST request---------" << std::endl;
+	extractFirstLine();
+	extractHeaders();
+	extractBody(clientFD);
 }
 
 POST::~POST(void) {

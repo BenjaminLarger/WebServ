@@ -4,6 +4,7 @@
 #define POST_HPP
 
 #include "Webserv.hpp"
+#include "ErrorUtils.hpp"
 
 class POST : public Webserv
 {
@@ -21,9 +22,9 @@ class POST : public Webserv
 		// Body
 		std::string							body;
 
-		void	extractFirstLine(std::string &clientInput);
-		void	extractHeaders(std::string &clientInput);
-		void	extractBody();
+		void	extractFirstLine();
+		void	extractHeaders();
+		void	extractBody(int clientFD);
 	public:
 		POST(Webserv _server, int serverFD, int clientFD, std::string &clientInput);
 		POST();
