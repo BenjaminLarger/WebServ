@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/11 11:39:09 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/30 15:47:55 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void GET::sendResponse(int clientFD, std::string responseBody)
       throw(std::runtime_error("fail sending the message"));
     bytesSent = send(clientFD, responseStr.c_str(), responseStr.size(), 0);
   }
-  close(clientFD);
+  //close(clientFD);
 }
 
 GET::GET(Webserv server, int serverFD, int clientFD, std::string &clientInput)

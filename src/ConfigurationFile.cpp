@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:48:15 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/11 11:14:44 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/30 15:57:42 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ ServerConfig::ServerConfig(const char *filename)
 
   for (std::string line; std::getline(file, line);)
   {
+	//Here we gonna read and parse the whole configuration file
     std::istringstream isLine(line);
     std::string key;
 

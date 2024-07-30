@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   WebservUtils.cpp                                   :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:12:10 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/10 10:19:09 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/30 18:28:42 by blarger          ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "Webserv.hpp"
 
@@ -103,12 +103,16 @@ std::vector<pollfd> Webserv::initializePollFDSWithServerSocket(int serverFD)
   temp_fd.fd = serverFD;
   temp_fd.events = POLLIN;
   temp_fd.revents = 0;
+  (void)temp_fd;
   fds.push_back(temp_fd);
   return (fds);
 }
 
 void Webserv::monitorSocketEvents(std::vector<pollfd> &fds, int serverFD)
 {
+  /* The poll() function shall identify those file descriptors on
+	which an application can read or write data, or on which certain
+	events have occurred */
   int pollCount = poll(fds.data(), fds.size(), -1);
   if (pollCount < 0)
   {
@@ -166,6 +170,7 @@ void Webserv::serverListeningLoop(int serverFD)
 
   while (true)
   {
+    //Check if there is a new client connection
     monitorSocketEvents(fds, serverFD);
     for (size_t i = 0; i < fds.size(); ++i)
     {
@@ -173,6 +178,7 @@ void Webserv::serverListeningLoop(int serverFD)
       // available for reading.
       if (fds[i].revents & POLLIN)
       {
+        //There is a new event detected
         if (fds[i].fd == serverFD)
         {
           // Accept new connections
@@ -181,7 +187,9 @@ void Webserv::serverListeningLoop(int serverFD)
             int newSocket = accept(serverFD, NULL, NULL);
             if (newSocket < 0)
             {
-              if (errno == EWOULDBLOCK || errno == EAGAIN)
+              if (errno == EWOULDBLOCK
+                  || errno
+                         == EAGAIN) //We cannot check errno value => find another way to break the loop
               {
                 // No more incoming connections
                 break;
@@ -193,10 +201,14 @@ void Webserv::serverListeningLoop(int serverFD)
               }
             }
             std::cout << "New connection accepted: " << newSocket << std::endl;
+            //Set the newly created socket (newSocket) to non-blocking mode
             this->setNonBlocking(newSocket);
+            //enable the server to monitor the new socket
             struct pollfd newTempFD = setNewTempFDStruct(newSocket);
-            fds.push_back(newTempFD);
-            static std::string buffer;
+            fds.push_back(
+                newTempFD); // We might have to drop this socket when the connection is closed ?
+            static std::string
+                buffer; // Here we use a static buffer to keep the previous information (needed in methods)
             buffers[i] = buffer;
           }
         }

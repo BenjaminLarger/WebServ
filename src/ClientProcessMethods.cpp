@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 08:37:10 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/11 10:21:41 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/30 15:42:29 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,23 +37,16 @@ void Webserv::processClientInput(std::string clientInput, int serverFD,
 {
   staticBuffer += clientInput;
 
-  if (staticBuffer[0] == 'G' && staticBuffer[1] == 'E' && staticBuffer[2] == 'T'
-      && staticBuffer[3] == ' ')
+  if (!strncmp("GET ", staticBuffer.c_str(), 4))
   {
     // processGetMethod(serverFD, clientFD);
     GET method(*this, serverFD, clientFD, staticBuffer);
   }
-  else if (staticBuffer[0] == 'P' && staticBuffer[1] == 'U'
-           && staticBuffer[2] == 'T' && staticBuffer[3] == ' ')
+  else if (!strncmp("PUT ", staticBuffer.c_str(), 4))
     processPutMethod(serverFD, clientFD);
-  else if (staticBuffer[0] == 'D' && staticBuffer[1] == 'E'
-           && staticBuffer[2] == 'L' && clientInput[3] == 'E'
-           && clientInput[4] == 'T' && clientInput[5] == 'E'
-           && clientInput[6] == ' ')
+  else if (!strncmp("DELETE ", staticBuffer.c_str(), 7))
     processDeleteMethod(serverFD, clientFD);
-  else if (staticBuffer[0] == 'P' && staticBuffer[1] == 'O'
-           && staticBuffer[2] == 'S' && clientInput[3] == 'T'
-           && clientInput[4] == ' ')
+  else if (!strncmp("POST ", staticBuffer.c_str(), 5))
     POST method(*this, serverFD, clientFD, staticBuffer);
   else
   {
