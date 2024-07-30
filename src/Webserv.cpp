@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 10:06:22 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/10 10:21:13 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/30 14:12:08 by demre            ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "Webserv.hpp"
 
@@ -27,12 +27,12 @@ Webserv::Webserv(const char *_filename, ServerConfig config)
   } */
   if (serverFD < 0)
   {
-    throw(std::range_error("socket failed!"));
+    throw(std::range_error("Failed to create socket."));
   }
   if (setNonBlocking(serverFD) < 0)
   {
     close(serverFD);
-    throw(std::range_error("set_nonblocking failed!"));
+    throw(std::range_error("Failed to set non blocking."));
   }
 
   struct sockaddr_in address;
@@ -47,13 +47,13 @@ Webserv::Webserv(const char *_filename, ServerConfig config)
   if (bind(serverFD, (struct sockaddr *)&address, sizeof(address)) < 0)
   {
     close(serverFD);
-    throw(std::range_error("bind failed"));
+    throw(std::range_error("Failed to bind to port."));
   }
 
   if (listen(serverFD, 10) < 0)
   {
     close(serverFD);
-    throw(std::range_error("listen failed!"));
+    throw(std::range_error("Failed to listen on socket."));
   }
 
   serverListeningLoop(serverFD);

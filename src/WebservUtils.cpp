@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   WebservUtils.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:12:10 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/10 10:19:09 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/30 14:28:19 by demre            ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "Webserv.hpp"
 
@@ -189,7 +189,7 @@ void Webserv::serverListeningLoop(int serverFD)
               else
               {
                 close(serverFD);
-                throw(std::runtime_error("accept failed"));
+                throw(std::runtime_error("Failed to accept connection."));
               }
             }
             std::cout << "New connection accepted: " << newSocket << std::endl;
