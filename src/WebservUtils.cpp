@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:12:10 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/30 18:28:42 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/30 18:30:40 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,7 +197,7 @@ void Webserv::serverListeningLoop(int serverFD)
               else
               {
                 close(serverFD);
-                throw(std::runtime_error("accept failed"));
+                throw(std::runtime_error("Failed to accept connection."));
               }
             }
             std::cout << "New connection accepted: " << newSocket << std::endl;

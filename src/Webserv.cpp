@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 10:06:22 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/30 17:21:21 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/30 18:31:21 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,14 @@ Webserv::Webserv(const char *_filename, ServerConfig config)
   // Check if socket creation was successful
   if (serverFD < 0)
   {
-    throw(std::range_error("socket failed!"));
+    throw(std::range_error("Failed to create socket."));
   }
 
   // Set the socket to non-blocking mode
   if (setNonBlocking(serverFD) < 0)
   {
     close(serverFD);
-    throw(std::range_error("set_nonblocking failed!"));
+    throw(std::range_error("Failed to set non blocking."));
   }
 
   struct sockaddr_in address;
@@ -55,14 +55,14 @@ Webserv::Webserv(const char *_filename, ServerConfig config)
   if (bind(serverFD, (struct sockaddr *)&address, sizeof(address)) < 0)
   {
     close(serverFD);
-    throw(std::range_error("bind failed"));
+    throw(std::range_error("Failed to bind to port."));
   }
 
   // Start listening for incoming connections on the socket
   if (listen(serverFD, 10) < 0)
   {
     close(serverFD);
-    throw(std::range_error("listen failed!"));
+    throw(std::range_error("Failed to listen on socket."));
   }
 
   // Enter the server's main listening loop to handle incoming connections
