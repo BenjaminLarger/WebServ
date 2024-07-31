@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:12:10 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/31 14:56:18 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/31 16:59:50 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,12 +185,13 @@ void Webserv::serverListeningLoop(int serverFD)
           while (true)
           {
             //std::cout << "Enter in while(true)\n";
-            int newSocket = accept(serverFD, NULL, NULL);
+            int newSocket = accept(serverFD, NULL, NULL); //here we can set the second and third parameter to NULL if we do not need to know the client address
+			//we have to close it when we are done with it
             if (newSocket < 0)
             {
               if (errno == EWOULDBLOCK
                   || errno
-                         == EAGAIN) //We cannot check errno value => find another way to break the loop
+                         == EAGAIN)
               {
                 std::cout << "No more incoming connections !\n";
                 // No more incoming connections

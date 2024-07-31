@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 10:06:22 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/30 18:31:21 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/31 16:47:00 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ Webserv::Webserv(const char *_filename, ServerConfig config)
   }
 
   // Start listening for incoming connections on the socket
-  if (listen(serverFD, 10) < 0)
+  if (listen(serverFD, 10) < 0) // here the second parameter is  how many pending connections you can have before the kernel starts rejecting new ones.
   {
     close(serverFD);
     throw(std::range_error("Failed to listen on socket."));
