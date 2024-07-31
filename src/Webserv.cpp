@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 10:06:22 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/30 18:31:21 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/31 13:09:43 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,12 @@ Webserv::Webserv(const char *_filename, ServerConfig config)
   if (setsockopt(serverFD, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval))
       < 0)
     throw(std::range_error("setsockopt(SO_REUSEADDR) failed"));
+  address.sin_family = AF_INET;//IPV4 adress family
+  address.sin_addr.s_addr = INADDR_ANY;//Hear from default 0.0.0.0
+  address.sin_port = htons(port);//htons convert the port bytes order to the net one
+
+	if (setsockopt(serverFD, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
+		throw(std::range_error("setsockopt(SO_REUSEADDR) failed"));
 
   // Link the socket to the specified address and port
   if (bind(serverFD, (struct sockaddr *)&address, sizeof(address)) < 0)
