@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/31 15:22:06 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:25:27 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ std::string GET::extractHtmlContent(const std::string &filePath)
   return (buffer.str());
 }
 
-int sendall(int s, const char *buf, std::size_t len)
+int sendall(int s, const char *buf, int len)
 {
   int totalBytesSent = 0; // how many bytes we've sent
   int bytesleft = len;    // how many we have left to send
