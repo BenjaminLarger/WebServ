@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/31 12:41:52 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/31 13:26:30 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ std::string GET::extractHtmlContent(const std::string &filePath)
 
   std::stringstream buffer;
   buffer << file.rdbuf();
+  buffer << "\r\n";
 
   return (buffer.str());
 }
@@ -94,7 +95,7 @@ void GET::sendResponse(int clientFD, std::string responseBody)
   response << "HTTP/1.1 200 OK\r\n";
   //Headers: Metadata about the response.
   response << "Content-Type: text/html\r\n";
-  response << "Content-Length : " << responseBody.size() << "\r\n";
+  response << "Content-Length: " << responseBody.size() << "\r\n";
   response << "\r\n";
   response << responseBody;
 
@@ -108,7 +109,7 @@ void GET::sendResponse(int clientFD, std::string responseBody)
   while (bytesSent < (int)responseStr.size() && bytesSent != 0)
   {
     if (bytesSent == -1)
-      throw(std::runtime_error("fail sending the message"));
+      throw(std::runtime_error("Failed sending reponse."));
     bytesSent = send(clientFD, responseStr.c_str(), responseStr.size(), 0);
   }
 }
