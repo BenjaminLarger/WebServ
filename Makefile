@@ -19,8 +19,11 @@ HEADER_DIR	= inc/
 # Source files and object files
 SRCS_DIR		= src/
 SRC_FILES		= main.cpp ClientProcessMethods.cpp Webserv.cpp \
-	ConfigurationFile.cpp WebservUtils.cpp ConfigurationFileParsing.cpp \
-	GET.cpp CGI.cpp POST.cpp ErrorUtils.cpp utilsMethods.cpp
+	ErrorUtils.cpp utilsMethods.cpp \
+	ServerConfig.cpp ClientInfo.cpp \
+	GET.cpp CGI.cpp POST.cpp 
+#	ConfigurationFile.cpp WebservUtils.cpp ConfigurationFileParsing.cpp
+
 SRCS				= $(addprefix $(SRCS_DIR),$(SRC_FILES))
 
 BUILD_DIR	:= build/

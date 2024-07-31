@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 09:46:47 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/31 19:37:31 by demre            ###   ########.fr       */
+/*   Updated: 2024/07/31 14:15:08 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,25 +20,8 @@ int main(int argc, const char **argv)
       throw(std::runtime_error(
           "Too many arguments. Use: ./webserv [configuration file]"));
 
-    // Use provided config file or default file
     std::string configFile = argv[1] ? argv[1] : DEFAULT_CONFIG_PATH;
-
-    // Save server configurations to a vector of ServerConfig
-    std::vector<ServerConfig> serverConfigs
-        = ServerConfig::parseConfig(configFile.c_str());
-
-    // Display server configs in terminal to check
-    std::cout << "serverConfigs.size(): " << serverConfigs.size() << std::endl;
-    for (size_t i = 0; i < serverConfigs.size(); i++)
-    {
-      std::cout << "Server " << i << ", port: " << serverConfigs[i].getPort()
-                << ", server_name: " << serverConfigs[i].getServerName()
-                << std::endl;
-    }
-
-    // Launch servers passing serverConfigs vector
-    if (serverConfigs.size() > 0)
-      Webserv servers(serverConfigs);
+    ServerConfig start(configFile.c_str());
   }
   catch (const std::exception &e)
   {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/31 15:30:32 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/31 21:09:33 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,9 +109,10 @@ void GET::sendResponse(int clientFD, std::string responseBody)
     perror("Data failed to be sent to the client");
 }
 
-GET::GET(Webserv &server, int serverFD, int clientFD, std::string &clientInput)
+GET::GET(/* Webserv &server, */ int serverFD, int clientFD,
+         std::string &clientInput)
 {
-  (void)server;
+  // (void)server;
   (void)clientInput;
   (void)serverFD;
   (void)clientFD;

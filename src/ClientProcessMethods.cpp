@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientProcessMethods.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 08:37:10 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/31 15:47:54 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/31 19:06:06 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,25 +32,25 @@ void processDeleteMethod(int serverFD, int clientFD)
   write(clientFD, "DELETE client info\n", 17);
 }
 
-void Webserv::processClientInput(std::string clientInput, int serverFD,
-                                 int clientFD, std::string &staticBuffer)
-{
-  staticBuffer += clientInput;
+// void Webserv::processClientInput(std::string clientInput, int serverFD,
+//                                  int clientFD, std::string &staticBuffer)
+// {
+//   staticBuffer += clientInput;
 
-  if (!strncmp("GET ", staticBuffer.c_str(), 4))
-  {
-    GET method(*this, serverFD, clientFD, staticBuffer);
-  }
-  else if (!strncmp("PUT ", staticBuffer.c_str(), 4))
-    processPutMethod(serverFD, clientFD);
-  else if (!strncmp("DELETE ", staticBuffer.c_str(), 7))
-    processDeleteMethod(serverFD, clientFD);
-  else if (!strncmp("POST ", staticBuffer.c_str(), 5))
-    POST method(*this, serverFD, clientFD, staticBuffer);
-  else
-  {
-    staticBuffer.erase();
-    std::cout << RED << "Unknown instruction received!"
-              << " staticBuffer = " << staticBuffer << RESET << std::endl;
-  }
-}
+//   if (!strncmp("GET ", staticBuffer.c_str(), 4))
+//   {
+//     GET method(*this, serverFD, clientFD, staticBuffer);
+//   }
+//   else if (!strncmp("PUT ", staticBuffer.c_str(), 4))
+//     processPutMethod(serverFD, clientFD);
+//   else if (!strncmp("DELETE ", staticBuffer.c_str(), 7))
+//     processDeleteMethod(serverFD, clientFD);
+//   else if (!strncmp("POST ", staticBuffer.c_str(), 5))
+//     POST method(*this, serverFD, clientFD, staticBuffer);
+//   else
+//   {
+//     staticBuffer.erase();
+//     std::cout << RED << "Unknown instruction received!"
+//               << " staticBuffer = " << staticBuffer << RESET << std::endl;
+//   }
+// }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/07/31 12:06:22 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/31 21:10:56 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 #include "Webserv.hpp"
 
-class GET : public Webserv
+class GET /* : public Webserv */
 {
 
 private:
@@ -32,7 +32,8 @@ private:
   std::string body;
 
 public:
-  GET(Webserv &_server, int serverFD, int clientFD, std::string &clientInput);
+  GET(/* Webserv &_server, */ int serverFD, int clientFD,
+      std::string &clientInput);
   GET();
   ~GET(void);
 

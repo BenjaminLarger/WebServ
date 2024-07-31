@@ -75,12 +75,9 @@ void POST::extractFirstLine()
 }
 
 //We extract all the content of a POST request
-POST::POST(Webserv _server, int serverFD, int clientFD,
-           std::string &clientInput)
+POST::POST(int serverFD, int clientFD, std::string &clientInput)
     : contentLength(0)
 {
-
-  (void)_server;
   (void)serverFD;
   (void)clientFD;
   this->requestStream.str(clientInput);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/09 18:15:50 by demre             #+#    #+#             */
-/*   Updated: 2024/07/31 15:31:22 by blarger          ###   ########.fr       */
+/*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
+/*   Updated: 2024/07/31 21:30:11 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,45 +15,47 @@
 #ifndef WEBSERV_HPP
 #define WEBSERV_HPP
 
-#include "ConfigurationFile.hpp"
+// #include "ConfigurationFile.hpp"
+#include "ClientInfo.hpp"
 #include "Dependencies.hpp"
+#include "ServerConfig.hpp"
 
 // ************************************************************************** //
 //                               Class //
 // ************************************************************************** //
 
-class Webserv : public ServerConfig
+class Webserv
 {
 private:
-  const char *filename;
-  ServerConfig config;
-  unsigned int port;
-  int serverFD;
-  int optval;
-  unsigned int numberOfServers;
+  // std::vector<ServerConfig> serverConfigs;
+  // ServerConfig config;
+  // unsigned int port;
+  // int serverFD;
+  std::vector<pollfd> fds;
+  std::vector<ClientInfo> clients;
 
-public:
-  Webserv();
-  Webserv(const char *filename, ServerConfig config);
-  ~Webserv(void);
+  // std::vector<int> serverFds;
+
+  // int optval;
+  // unsigned int numberOfServers;
+
   const Webserv &operator=(const Webserv &other);
 
-  const int &getServerFD(void) const;
-  const unsigned int &getPort(void) const;
+public:
+  Webserv(void);
+  Webserv(std::vector<ServerConfig> serverConfigs);
+  ~Webserv(void);
 
   int setNonBlocking(int fd);
-  void serverListeningLoop(int serverFD);
-  std::vector<pollfd> initializePollFDSWithServerSocket(int serverFD);
-  void monitorSocketEvents(std::vector<pollfd> &fds, int serverFD);
-  struct pollfd setNewTempFDStruct(int newSocket);
-  void processConnectionData(int serverFD, std::vector<pollfd> &fds, size_t &i,
-                             std::map<size_t, std::string> &buffers);
-  void processClientInput(std::string clientInput, int serverFD, int clientFD,
-                          std::string &staticBuffer);
 
-  // std::vector<ServerConfig> config;
+  // void processClientInput(std::string clientInput, int serverFD, int clientFD,
+  //                         std::string &staticBuffer);
 
-  void countAndParseServer(const char *filename);
+  void handleNewConnection(size_t index,
+                           const std::vector<ServerConfig> &serverConfigs);
+  void handleClientData(size_t index,
+                        const std::vector<ServerConfig> &serverConfigs);
+  void closeConnection(size_t index);
 };
 
 /* ---------------------UTILS FUNCTIONS */
