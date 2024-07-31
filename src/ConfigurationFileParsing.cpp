@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ConfigurationFileParsing.cpp                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 09:08:47 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/09 18:14:59 by demre            ###   ########.fr       */
+/*   Updated: 2024/07/11 11:15:34 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ std::map<int, std::string> ServerConfig::findErrorPage(
   isLine >> code >> path;
 
   errorPage[code] = path;
-  std::cout << "error_page host = " << YELLOW << code << RESET
-            << " path = " << YELLOW << path << RESET << std::endl;
+  //std::cout << "error_page host = " << YELLOW << code << RESET
+  //  << " path = " << YELLOW << path << RESET << std::endl;
   return (errorPage);
 }
 
@@ -32,20 +32,20 @@ void ServerConfig::findLocation(std::string &line, ServerConfig &config,
 {
   std::string key;
 
-  std::cout << "cur location " << YELLOW << currentLocation << RESET
-            << std::endl;
+  //std::cout << "cur location " << YELLOW << currentLocation << RESET
+  // << std::endl;
   // currentLocation = currentLocation.substr(1, currentLocation.length() - 1);
   std::getline(file, line);
   std::istringstream isLine(line);
   isLine >> key;
   while (true) //(if line or next_line has '{')
   {
-    std::cout << MAGENTA << "key = " << key << RESET << std::endl;
+    //std::cout << MAGENTA << "key = " << key << RESET << std::endl;
     if (key == "root")
     {
       isLine >> config.locations[currentLocation].root;
-      std::cout << "current location root = " << YELLOW
-                << config.locations[currentLocation].root << RESET << std::endl;
+      //std::cout << "current location root = " << YELLOW
+      //<< config.locations[currentLocation].root << RESET << std::endl;
     }
     else if (key == "index")
     {
@@ -53,11 +53,10 @@ void ServerConfig::findLocation(std::string &line, ServerConfig &config,
       std::string index;
       isLine >> index;
       isLine >> index;
-      std::cout << "index = " << index << std::endl;
+      //std::cout << "index = " << index << std::endl;
       config.locations[currentLocation].index = index;
-      std::cout << "current location index = " << YELLOW
-                << config.locations[currentLocation].index << RESET
-                << std::endl;
+      //std::cout << "current location index = " << YELLOW
+      //<< config.locations[currentLocation].index << RESET << std::endl;
     }
     else if (key == "return")
     {
@@ -79,7 +78,7 @@ void ServerConfig::findLocation(std::string &line, ServerConfig &config,
     }
     else if (key == "allow_methods")
     {
-      std::cout << RED << "in loop\n" << RESET;
+      //std::cout << RED << "in loop\n" << RESET;
       std::istringstream isLine(line);
       std::string method;
       isLine >> method;
@@ -94,21 +93,21 @@ void ServerConfig::findLocation(std::string &line, ServerConfig &config,
             || method[strlen(method.c_str()) - 1] == '}'
             || method[strlen(method.c_str()) - 1] == ' ')
           method[strlen(method.c_str()) - 1] = '\0';
-        std::cout << "method = " << YELLOW << method << RESET << std::endl;
+        //std::cout << "method = " << YELLOW << method << RESET << std::endl;
         if (strncmp(method.c_str(), "POST", 4)
             && strncmp(method.c_str(), "GET", 3)
             && strncmp(method.c_str(), "DELETE", 6))
           break;
         config.locations[currentLocation].allowedMethods.push_back(method);
-        std::cout << "current location allowed method = " << YELLOW << method
-                  << RESET << std::endl;
+        //std::cout << "current location allowed method = " << YELLOW << method
+        // << RESET << std::endl;
         std::string prevMethod = method;
         isLine >> method;
-        std::cout << "prev method = " << RED << prevMethod
-                  << ", method = " << method << RESET << std::endl;
+        //std::cout << "prev method = " << RED << prevMethod
+        //<< ", method = " << method << RESET << std::endl;
         if (method == prevMethod)
           break;
-        std::cout << "method = " << MAGENTA << method << RESET << std::endl;
+        //std::cout << "method = " << MAGENTA << method << RESET << std::endl;
       }
     }
     else if (key[0] == '}')
@@ -118,9 +117,9 @@ void ServerConfig::findLocation(std::string &line, ServerConfig &config,
     isLine >> key;
   }
   // if line has '}' break (if first line '{')
-  std::cout << RED << line << RESET << std::endl;
+  //std::cout << RED << line << RESET << std::endl;
 
   config.locations[currentLocation] = LocationConfig(); // does not exist
-  std::cout << "config.locations[currentLocation] = " << YELLOW
-            << config.locations[currentLocation].root << RESET << std::endl;
+  //std::cout << "config.locations[currentLocation] = " << YELLOW
+  //<< config.locations[currentLocation].root << RESET << std::endl;
 }

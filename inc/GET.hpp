@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   GET.hpp                                            :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/07/10 13:00:52 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/31 12:06:22 by blarger          ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #pragma once
 
@@ -32,14 +32,18 @@ private:
   std::string body;
 
 public:
-  GET(Webserv _server, int serverFD, int clientFD, std::string &clientInput);
+  GET(Webserv &_server, int serverFD, int clientFD, std::string &clientInput);
   GET();
   ~GET(void);
 
+  void setHost(const std::string &_host);
+  void setUserAgent(const std::string &_userAgent);
+  void setAccept(const std::string &_accept);
+
   void findHeader(std::string &key, std::istringstream &isLine);
-  void	sendResponse(int clientFD);
-  std::string	createResponseBody(void);
-  std::string extractHtmlContent(const std::string& filePath);
+  void sendResponse(int clientFD, std::string responseBody);
+  std::string createResponseBody(void);
+  std::string extractHtmlContent(const std::string &filePath);
 };
 
 #endif
