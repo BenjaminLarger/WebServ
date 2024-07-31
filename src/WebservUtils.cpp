@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:12:10 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/31 12:47:02 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/31 14:56:18 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void Webserv::monitorSocketEvents(std::vector<pollfd> &fds, int serverFD)
 	events have occurred */
   //std::cout << BLUE << "Monitoring...\n" << RESET;
   //std::cout << "POLLIN = " << POLLIN << std::endl;
-  int pollCount = poll(fds.data(), fds.size(), 0);
+  int pollCount = poll(fds.data(), fds.size(), -1);
   if (pollCount < 0)
   {
     close(serverFD);
