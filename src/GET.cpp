@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/30 18:32:48 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/31 12:41:52 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void GET::sendResponse(int clientFD, std::string responseBody)
   }
 }
 
-GET::GET(Webserv server, int serverFD, int clientFD, std::string &clientInput)
+GET::GET(Webserv &server, int serverFD, int clientFD, std::string &clientInput)
 {
   (void)server;
   (void)clientInput;

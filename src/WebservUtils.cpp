@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:12:10 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/31 12:30:53 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/31 12:47:02 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,9 +209,6 @@ void Webserv::serverListeningLoop(int serverFD)
             struct pollfd newTempFD = setNewTempFDStruct(newSocket);
             fds.push_back(
                 newTempFD); // We might have to drop this socket when the connection is closed ?
-            static std::string
-                buffer; // Here we use a static buffer to keep the previous information (needed in methods)
-            buffers[i] = buffer;
           }
         }
         else
