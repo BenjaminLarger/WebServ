@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/31 15:25:27 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:30:32 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,28 +86,6 @@ std::string GET::extractHtmlContent(const std::string &filePath)
   return (buffer.str());
 }
 
-int sendall(int s, const char *buf, int len)
-{
-  int totalBytesSent = 0; // how many bytes we've sent
-  int bytesleft = len;    // how many we have left to send
-  int n;
-
-  while (totalBytesSent < len)
-  {
-    n = send(s, buf + totalBytesSent, bytesleft, 0);
-    if (n == -1)
-    {
-      break;
-    }
-    totalBytesSent += n;
-    bytesleft -= n;
-  }
-
-  len = totalBytesSent; // return number actually sent here
-
-  return n == -1 ? -1 : 0; // return -1 on failure, 0 on success
-}
-
 void GET::sendResponse(int clientFD, std::string responseBody)
 {
   //The format of an HTTP response is defined by the HTTP specification (RFC 2616 for HTTP/1.1).
@@ -127,14 +105,8 @@ void GET::sendResponse(int clientFD, std::string responseBody)
   //Supports additional flags to modify behavior (e.g., MSG_NOSIGNAL to prevent sending a SIGPIPE signal).
   //Syntax: ssize_t send(int sockfd, const void *buf, size_t len, int flags);
 
-  sendall(clientFD, responseStr.c_str(), responseStr.size());
-  /* int bytesSent = send(clientFD, responseStr.c_str(), responseStr.size(), 0);
-  while (bytesSent < (int)responseStr.size() && bytesSent != 0)
-  {
-    if (bytesSent == -1)
-      throw(std::runtime_error("Failed sending reponse."));
-    bytesSent = send(clientFD, responseStr.c_str(), responseStr.size(), 0);
-  } */
+  if (sendall(clientFD, responseStr.c_str(), responseStr.size()) == -1)
+    perror("Data failed to be sent to the client");
 }
 
 GET::GET(Webserv &server, int serverFD, int clientFD, std::string &clientInput)

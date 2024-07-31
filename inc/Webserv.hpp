@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:15:50 by demre             #+#    #+#             */
-/*   Updated: 2024/07/09 18:15:52 by demre            ###   ########.fr       */
+/*   Updated: 2024/07/31 15:31:22 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,5 +57,6 @@ public:
 };
 
 /* ---------------------UTILS FUNCTIONS */
+int sendall(int s, const char *buf, int len);
 
 #endif
