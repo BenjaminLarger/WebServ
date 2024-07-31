@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 08:37:10 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/31 12:05:24 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:47:54 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ void Webserv::processClientInput(std::string clientInput, int serverFD,
 
   if (!strncmp("GET ", staticBuffer.c_str(), 4))
   {
-    // processGetMethod(serverFD, clientFD);
     GET method(*this, serverFD, clientFD, staticBuffer);
   }
   else if (!strncmp("PUT ", staticBuffer.c_str(), 4))
