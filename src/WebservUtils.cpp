@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:12:10 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/30 18:30:40 by blarger          ###   ########.fr       */
+/*   Updated: 2024/07/31 12:30:53 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void Webserv::countAndParseServer(const char *filename)
     std::istringstream isLine(line);
     std::string key;
     isLine >> key;
-    std::cout << key << std::endl;
     if (key == "server")
     {
       openCurlyBraceCount = 0;
@@ -69,11 +68,6 @@ void Webserv::countAndParseServer(const char *filename)
                              && openCurlyBraceCount != closeCurlyBraceCount;)
       {
         std::istringstream isLine(line);
-        std::cout << ORANGE << "server count = " << this->numberOfServers
-                  << ", open brace count = " << openCurlyBraceCount
-                  << ", closed brace count = " << closeCurlyBraceCount << RESET
-                  << std::endl;
-        std::cout << MAGENTA << "line : " << line << RESET << std::endl;
         pos = line.find('{');
         if (pos != std::string::npos)
           openCurlyBraceCount++;
@@ -85,8 +79,6 @@ void Webserv::countAndParseServer(const char *filename)
   }
   if (closeCurlyBraceCount != openCurlyBraceCount)
     throw(std::runtime_error("parsing config: unclosed brace!"));
-  std::cout << YELLOW << "server count = " << this->numberOfServers << RESET
-            << std::endl;
 }
 
 /*
@@ -113,11 +105,17 @@ void Webserv::monitorSocketEvents(std::vector<pollfd> &fds, int serverFD)
   /* The poll() function shall identify those file descriptors on
 	which an application can read or write data, or on which certain
 	events have occurred */
-  int pollCount = poll(fds.data(), fds.size(), -1);
+  //std::cout << BLUE << "Monitoring...\n" << RESET;
+  //std::cout << "POLLIN = " << POLLIN << std::endl;
+  int pollCount = poll(fds.data(), fds.size(), 0);
   if (pollCount < 0)
   {
     close(serverFD);
     throw(std::runtime_error("poll failed"));
+  }
+  else if (pollCount == 0)
+  {
+    //std::cout << RED << "Timeout occured !\n" << RESET;
   }
 }
 
@@ -157,7 +155,7 @@ void Webserv::processConnectionData(int serverFD, std::vector<pollfd> &fds,
   }
   else
   {
-    std::cout << "Received data: " << buffer << std::endl;
+    //std::cout << "Received data: " << buffer << std::endl;
     // Echo the data back to the client
     processClientInput(buffer, serverFD, fds[i].fd, buffers[i]);
   }
@@ -178,12 +176,15 @@ void Webserv::serverListeningLoop(int serverFD)
       // available for reading.
       if (fds[i].revents & POLLIN)
       {
+        std::cout << CYAN << "New event detected !\n" << RESET;
         //There is a new event detected
         if (fds[i].fd == serverFD)
         {
+          std::cout << GREEN << "New connexion detected !\n" << RESET;
           // Accept new connections
           while (true)
           {
+            //std::cout << "Enter in while(true)\n";
             int newSocket = accept(serverFD, NULL, NULL);
             if (newSocket < 0)
             {
@@ -191,6 +192,7 @@ void Webserv::serverListeningLoop(int serverFD)
                   || errno
                          == EAGAIN) //We cannot check errno value => find another way to break the loop
               {
+                std::cout << "No more incoming connections !\n";
                 // No more incoming connections
                 break;
               }
@@ -216,6 +218,7 @@ void Webserv::serverListeningLoop(int serverFD)
         {
           // Handle data from an existing connection
           processConnectionData(serverFD, fds, i, buffers);
+          //break;
         }
       }
     }
