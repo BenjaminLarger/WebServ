@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/01 16:37:57 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/01 19:04:27 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,10 @@
 
 // ---------------------INCLUDE
 #include <algorithm>
+#include <arpa/inet.h>
 #include <cerrno>
 #include <cmath>
+#include <csignal>
 #include <cstdio>
 #include <cstring>
 #include <fcntl.h>
@@ -54,6 +56,6 @@
 #define GREY "\033[1;30m"
 
 // ---------------------MESSAGES
-#define DEFAULT_CONFIG_PATH "configuration_files/simple.conf"
+#define DEFAULT_CONFIG_PATH "config/simple.conf"
 
 #endif

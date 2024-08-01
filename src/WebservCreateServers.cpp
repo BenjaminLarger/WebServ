@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservCreateServers.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 11:06:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/01 13:05:36 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/01 14:39:04 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,20 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
       throw(std::range_error("Failed to set non-blocking."));
     }
 
-    struct sockaddr_in serverAddress = {};
-    // memset(&serverAddress, 0, sizeof(serverAddress)); // not sure if needed
+    struct sockaddr_in serverAddress;
+    memset(&serverAddress, 0, sizeof(serverAddress)); // not sure if needed
     serverAddress.sin_family = AF_INET;
-    serverAddress.sin_addr.s_addr = INADDR_ANY;
+
+    // serverAddress.sin_addr.s_addr = INADDR_ANY;
+    // Convert the host string to network address using inet_addr
+    serverAddress.sin_addr.s_addr
+        = inet_addr(serverConfigs[i].getHost().c_str());
+    if (serverAddress.sin_addr.s_addr == INADDR_NONE)
+    {
+      close(serverFD);
+      throw(std::range_error("Invalid address/ Address not supported."));
+    }
+
     serverAddress.sin_port = htons(serverConfigs[i].getPort());
 
     // Set socket options to allow reuse of local addresses
