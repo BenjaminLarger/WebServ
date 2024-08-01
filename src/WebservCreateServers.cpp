@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservCreateServers.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 11:06:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/01 11:18:57 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/01 13:05:36 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
     // Add the listening socket to the pollfd vector
     pollfd pfd;
     pfd.fd = serverFD;
-    pfd.events = POLLIN;
+    pfd.events = POLLIN | POLLOUT; // Monitor both read and write events
     pfd.revents = 0;
     fds.push_back(pfd);
 
