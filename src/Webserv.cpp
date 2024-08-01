@@ -37,7 +37,7 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
     for (size_t i = 0; i < fds.size(); ++i)
     {
       // evaluates to true if the i-th file descriptor has incoming data available for reading.
-      if (fds[i].revents & POLLIN)
+      if (fds[i].revents & (POLLIN | POLLOUT))
       {
         std::cout << CYAN << "New event detected\n" << RESET;
         if (i < serverConfigs.size())
@@ -52,7 +52,10 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
           // Data from a connected client ~= processConnectionData()
           handleClientRequest(i, serverConfigs);
         }
+		
       }
+	  else if (POLLOUT == 0 || POLLIN == 0)
+			std::cout << RED << "Does not have necessary permission." << std::endl;
     }
   }
 }

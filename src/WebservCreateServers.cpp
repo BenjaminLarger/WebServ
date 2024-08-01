@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 11:06:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/01 14:11:22 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/01 14:39:04 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
     // Add the listening socket to the pollfd vector
     pollfd pfd;
     pfd.fd = serverFD;
-    pfd.events = POLLIN;
+    pfd.events = POLLIN | POLLOUT; // Monitor both read and write events
     pfd.revents = 0;
     fds.push_back(pfd);
 
