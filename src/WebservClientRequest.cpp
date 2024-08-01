@@ -50,17 +50,9 @@ void Webserv::handleClientRequest(
     if (!strncmp("GET ", clientBuffer.c_str(), 4))
       GET method(serverIndex, fds[i].fd, clients[i].buffer);
     // else if (!strncmp("DELETE ", clientBuffer.c_str(), 7))
-    //   processDeleteMethod(serverFD, fds[i].fd);
+    //   processDeleteMethod(serverFD, fds[i].fd); ====> to implement
     else if (!strncmp("POST ", clientBuffer.c_str(), 5))
       POST method(serverIndex, fds[i].fd, clientBuffer);
-	else if (!strncmp("chmod -w client", clientBuffer.c_str(), 15))
-		withdrawWriteCapability(fds[i].fd, clients[i].buffer);
-	else if (!strncmp("chmod -r client", clientBuffer.c_str(), 15))
-		withdrawReadCapability(fds[i].fd, clients[i].buffer);
-	else if (!strncmp("chmod +w client", clientBuffer.c_str(), 15))
-		restoreWriteCapability(fds[i].fd, clients[i].buffer);
-	else if (!strncmp("chmod -w client", clientBuffer.c_str(), 15))
-		restoreReadCapability(fds[i].fd, clients[i].buffer);
     else
     {
       // Send HTTP/1.0 501 Not Implemented or HTTP/1.0 400 Bad Request

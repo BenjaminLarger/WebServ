@@ -36,7 +36,8 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
     // add try / catch around each incoming connection?
     for (size_t i = 0; i < fds.size(); ++i)
     {
-      // evaluates to true if the i-th file descriptor has incoming data available for reading.
+		//withdrawWriteCapability(i, clients[i].buffer);
+      // evaluates to true if the i-th file descriptor has incoming data available for reading and writting.
       if (fds[i].revents & (POLLIN | POLLOUT))
       {
         std::cout << CYAN << "New event detected\n" << RESET;
@@ -51,11 +52,10 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
         {
           // Data from a connected client ~= processConnectionData()
           handleClientRequest(i, serverConfigs);
+		  //break ;
         }
 		
       }
-	  else if (POLLOUT == 0 || POLLIN == 0)
-			std::cout << RED << "Does not have necessary permission." << std::endl;
     }
   }
 }
