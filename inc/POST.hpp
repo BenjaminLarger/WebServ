@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   POST.hpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
+/*   Updated: 2024/08/01 19:56:16 by demre            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 
 #ifndef POST_HPP
@@ -5,8 +17,9 @@
 
 #include "ErrorUtils.hpp"
 #include "Webserv.hpp"
+#include "utils.hpp"
 
-class POST /* : public Webserv */
+class POST
 {
 
 private:
@@ -27,8 +40,7 @@ private:
   void extractBody(int clientFD);
 
 public:
-  POST(/* Webserv _server, */ int serverFD, int clientFD,
-       std::string &clientInput);
+  POST(int serverFD, int clientFD, std::string &clientInput);
   POST();
   ~POST(void);
 };

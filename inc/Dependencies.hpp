@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/01 17:28:43 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/01 19:46:37 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 // ---------------------INCLUDE
 #include <algorithm>
 #include <arpa/inet.h>
+#include <cctype>
 #include <cerrno>
 #include <cmath>
 #include <csignal>

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/01 16:04:57 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/01 19:48:31 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class ServerConfig
 {
 private:
   std::string host;
-  unsigned int port;
+  int port;
   std::vector<std::string> serverNames;
 
 public:
@@ -33,13 +33,20 @@ public:
   ~ServerConfig();
 
   std::string getServerNames(void) const;
-  const unsigned int &getPort(void) const;
+  const int &getPort(void) const;
   const std::string &getHost(void) const;
+
+  void addServerName(std::string serverName);
+
+  void clear(void);
 
   static std::vector<ServerConfig> parseConfig(const char *filename);
 
-  static void parseServerNames(const std::string &value,
-                               std::vector<std::string> &serverNames);
+  static void checkRemainingChar(std::istringstream &iss);
+
+  static void endServerBlock(bool &insideServerBlock,
+                             std::vector<ServerConfig> &serverConfigs,
+                             ServerConfig &config);
 
   static bool checkConfig(ServerConfig &config);
 };
