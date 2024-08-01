@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/01 13:54:22 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/01 17:28:43 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,6 @@
 #define GREY "\033[1;30m"
 
 // ---------------------MESSAGES
-#define DEFAULT_CONFIG_PATH "configuration_files/simple.conf"
+#define DEFAULT_CONFIG_PATH "config/simple.conf"
 
 #endif
