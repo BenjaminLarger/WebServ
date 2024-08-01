@@ -94,6 +94,7 @@ Webserv::Webserv(std::vector<ServerConfig> serverConfigs)
     if (pollCount < 0)
       throw(std::runtime_error("Failed to poll."));
 
+    // add try / catch around each incoming connection?
     for (size_t i = 0; i < fds.size(); ++i)
     {
       // evaluates to true if the i-th file descriptor has incoming data available for reading.
@@ -116,9 +117,11 @@ Webserv::Webserv(std::vector<ServerConfig> serverConfigs)
     }
   }
 
-  // Close all listening sockets
-  for (size_t i = 0; i < serverConfigs.size(); ++i)
+  // Close all listening sockets // servers
+  std::cout << "Close all listening sockets" << std::endl;
+  for (size_t i = 0; i < serverConfigs.size(); ++i) // fds.size()?
   {
+    std::cout << "Closing: " << fds[i].fd << std::endl;
     close(fds[i].fd);
   }
 }
@@ -127,8 +130,10 @@ Webserv::Webserv(std::vector<ServerConfig> serverConfigs)
 
 Webserv::~Webserv(void)
 {
-  for (size_t i = 0; i < fds.size(); ++i)
+  std::cout << "Webserv Destructor called" << std::endl;
+  for (size_t i = 0; i < fds.size(); ++i) // server + incoming
   {
+    std::cout << "Closing: " << fds[i].fd << std::endl;
     close(fds[i].fd);
   }
 }
@@ -229,34 +234,31 @@ void Webserv::handleClientData(size_t i,
     // Handle incoming data (e.g., parse HTTP request)
     buffer[bytes_read] = '\0';
     size_t serverIndex = clients[i].serverIndex;
-    const ServerConfig &serverConfig = serverConfigs[serverIndex];
+
     std::cout << "Received on serverIndex " << serverIndex << ", port "
-              << serverConfig.getPort() << ", clients[i].socketFD "
-              << clients[i].socketFD << ": " << buffer << std::endl;
+              << serverConfigs[serverIndex].getPort()
+              << ", clients[i].socketFD " << clients[i].socketFD << ": "
+              << buffer << std::endl;
 
-    // processClientInput(buffer, serverFD, fds[i].fd, buffers[i]);
+    std::string &clientBuffer = clients[i].buffer;
+    clientBuffer += buffer; // buffers[i] == staticBuffer
 
-    // void Webserv::processClientInput(std::string clientInput, int serverFD, int clientFD, std::string &staticBuffer)
-    // {
-    //   clients[i].buffer += buffer; // buffers[i] == staticBuffer
-
-    //   if (!strncmp("GET ", buffers[i].c_str(), 4))
-    //   {
-    //     GET method(serverIndex, fds[i].fd, buffers[i]);
-    //   }
-    //   // else if (!strncmp("PUT ", buffers[i].c_str(), 4))
-    //   //   processPutMethod(serverFD, fds[i].fd);
-    //   // else if (!strncmp("DELETE ", buffers[i].c_str(), 7))
-    //   //   processDeleteMethod(serverFD, fds[i].fd);
-    //   // else if (!strncmp("POST ", buffers[i].c_str(), 5))
-    //   //   POST method(*this, serverIndex, fds[i].fd, buffers[i]);
-    //   else
-    //   {
-    //     buffers[i].erase();
-    //     std::cout << RED << "Unknown instruction received!"
-    //               << " staticBuffer = " << buffers[i] << RESET << std::endl;
-    //   }
-    // }
+    if (!strncmp("GET ", clientBuffer.c_str(), 4))
+    {
+      GET method(serverIndex, fds[i].fd, clients[i].buffer);
+    }
+    // else if (!strncmp("PUT ", buffers[i].c_str(), 4))
+    //   processPutMethod(serverFD, fds[i].fd);
+    // else if (!strncmp("DELETE ", buffers[i].c_str(), 7))
+    //   processDeleteMethod(serverFD, fds[i].fd);
+    // else if (!strncmp("POST ", buffers[i].c_str(), 5))
+    //   POST method(serverIndex, fds[i].fd, buffers[i]);
+    else
+    {
+      clientBuffer.erase();
+      std::cout << RED << "Unknown instruction received!"
+                << " staticBuffer = " << clientBuffer << RESET << std::endl;
+    }
   }
 }
 
