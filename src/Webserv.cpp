@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Webserv.cpp                                     :+:      :+:    :+:   */
+/*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/31 18:01:57 by demre             #+#    #+#             */
-/*   Updated: 2024/07/31 18:02:05 by demre            ###   ########.fr       */
+/*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
+/*   Updated: 2024/08/01 20:06:25 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
     // add try / catch around each incoming connection?
     for (size_t i = 0; i < fds.size(); ++i)
     {
-		//withdrawWriteCapability(i, clients[i].buffer);
+      //withdrawWriteCapability(i, clients[i].buffer);
       // evaluates to true if the i-th file descriptor has incoming data available for reading and writting.
       if (fds[i].revents & (POLLIN | POLLOUT))
       {
@@ -52,9 +52,8 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
         {
           // Data from a connected client ~= processConnectionData()
           handleClientRequest(i, serverConfigs);
-		  //break ;
+          //break ;
         }
-		
       }
     }
   }

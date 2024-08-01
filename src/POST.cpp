@@ -1,5 +1,17 @@
-#include "../inc/POST.hpp"
-#include "../inc/Dependencies.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   POST.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
+/*   Updated: 2024/08/01 20:08:34 by demre            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "POST.hpp"
+#include "Dependencies.hpp"
 
 //Send form data to a URL and get a response back
 
