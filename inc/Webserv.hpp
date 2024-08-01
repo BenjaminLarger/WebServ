@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/01 13:41:30 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/01 13:51:47 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,10 @@ public:
   static Webserv* instance;
 
   //MANAGE CLIENT CAPABILITY
-  void	withdrawReadCapability(size_t &clientIndex, std::string &buffer);
-  void	withdrawWriteCapability(size_t &clientIndex, std::string &buffer);
-  void	restoreReadCapability(size_t &clientIndex, std::string &buffer);
-  void	restoreWriteCapability(size_t &clientIndex, std::string &buffer);
+  void	withdrawReadCapability(size_t clientIndex, std::string &buffer);
+  void	withdrawWriteCapability(size_t clientIndex, std::string &buffer);
+  void	restoreReadCapability(size_t clientIndex, std::string &buffer);
+  void	restoreWriteCapability(size_t clientIndex, std::string &buffer);
 };
 
 
