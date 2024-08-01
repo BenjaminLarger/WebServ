@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/07/31 21:30:11 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/01 11:32:45 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,12 @@ public:
   void handleClientData(size_t index,
                         const std::vector<ServerConfig> &serverConfigs);
   void closeConnection(size_t index);
+  static void	sigInt(int code);
+  void handleSigInt(int code);
+  static Webserv* instance;
 };
+
+
 
 /* ---------------------UTILS FUNCTIONS */
 int sendall(int s, const char *buf, int len);
