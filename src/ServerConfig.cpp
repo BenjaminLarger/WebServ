@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:15:10 by demre             #+#    #+#             */
-/*   Updated: 2024/07/31 18:32:47 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/01 14:27:24 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ const std::string &ServerConfig::getServerName(void) const
 {
   return (this->serverName);
 }
+
+const std::string &ServerConfig::getHost(void) const { return (this->host); }
 
 /* --------------MEMBER FUNCTIONS */
 
@@ -53,16 +55,37 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
         value.erase(value.size() - 1);
       if (key == "listen")
         config.port = std::atoi(value.c_str());
-      if (key == "server_name")
+      else if (key == "server_name")
         config.serverName = value.c_str();
+      else if (key == "host")
+        config.host = value.c_str();
     }
     else if (line.find("}") != std::string::npos)
     {
       inside_server_block = false;
-      serverConfigs.push_back(config);
+      if (checkConfig(config))
+        serverConfigs.push_back(config);
+      else
+      {
+        // handle wrong server config
+        std::cerr << "checkConfig is false" << std::endl;
+      }
     }
   }
 
   file.close();
   return (serverConfigs);
+}
+
+bool ServerConfig::checkConfig(ServerConfig &config)
+{
+  // check host and port present
+  if (config.getHost().size() == 0)
+  {
+    std::string value = "127.0.0.1";
+    config.host = value.c_str();
+  }
+  // if (!config.getPort())
+  //   return (false);
+  return (true);
 }

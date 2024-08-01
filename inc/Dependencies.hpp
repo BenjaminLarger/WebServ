@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Dependencies.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/01 11:01:40 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/01 13:54:22 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,10 @@
 
 // ---------------------INCLUDE
 #include <algorithm>
+#include <arpa/inet.h>
 #include <cerrno>
 #include <cmath>
+#include <csignal>
 #include <cstdio>
 #include <cstring>
 #include <fcntl.h>
@@ -36,7 +38,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <vector>
-#include <csignal>
 
 // ---------------------COLORS
 #define RESET "\033[0m"
