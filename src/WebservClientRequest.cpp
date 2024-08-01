@@ -24,15 +24,12 @@ void Webserv::handleClientRequest(
     if (errno != EAGAIN && errno != EWOULDBLOCK)
     {
       perror("Failed to read from client.");
-      // Close connection and remove from pollfd array
       closeConnection(i);
       --i;
     }
   }
   else if (bytes_read == 0)
   {
-    std::cout << "Connection closed: " << fds[i].fd << std::endl;
-    // Close connection and remove from pollfd array
     closeConnection(i);
     --i;
   }
@@ -48,21 +45,24 @@ void Webserv::handleClientRequest(
               << buffer << std::endl;
 
     std::string &clientBuffer = clients[i].buffer;
-    clientBuffer += buffer; // buffers[i] == staticBuffer
+    clientBuffer += buffer;
 
     if (!strncmp("GET ", clientBuffer.c_str(), 4))
       GET method(serverIndex, fds[i].fd, clients[i].buffer);
-    // else if (!strncmp("PUT ", buffers[i].c_str(), 4))
-    //   processPutMethod(serverFD, fds[i].fd);
-    // else if (!strncmp("DELETE ", buffers[i].c_str(), 7))
+    // else if (!strncmp("DELETE ", clientBuffer.c_str(), 7))
     //   processDeleteMethod(serverFD, fds[i].fd);
     else if (!strncmp("POST ", clientBuffer.c_str(), 5))
       POST method(serverIndex, fds[i].fd, clientBuffer);
     else
     {
+      // Send HTTP/1.0 501 Not Implemented or HTTP/1.0 400 Bad Request
+
       std::cout << RED << "Unknown instruction received!"
-                << " staticBuffer = " << clientBuffer << RESET << std::endl;
+                << " clientBuffer = " << clientBuffer << RESET << std::endl;
       clientBuffer.erase();
+
+      // closeConnection(i); // commented while testing
+      // --i; // commented while testing
     }
   }
 }

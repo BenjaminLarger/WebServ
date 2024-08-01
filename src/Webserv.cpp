@@ -53,14 +53,6 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
       }
     }
   }
-
-  // Close all listening sockets // servers
-  std::cout << "Close all listening sockets" << std::endl;
-  for (size_t i = 0; i < serverConfigs.size(); ++i) // fds.size()?
-  {
-    std::cout << "Closing: " << fds[i].fd << std::endl;
-    close(fds[i].fd);
-  }
 }
 
 /* --------------DESTRUCTORS */
@@ -97,6 +89,7 @@ int Webserv::setNonBlocking(int fd)
 // Close connection and remove from pollfd array
 void Webserv::closeConnection(size_t index)
 {
+  std::cout << "Connection closed: " << fds[index].fd << std::endl;
   close(fds[index].fd);
   fds.erase(fds.begin() + index);
   clients.erase(clients.begin() + index);
