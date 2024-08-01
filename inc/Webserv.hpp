@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/07/31 21:30:11 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/01 11:22:56 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ private:
 
 public:
   Webserv(void);
-  Webserv(std::vector<ServerConfig> serverConfigs);
+  Webserv(std::vector<ServerConfig> &serverConfigs);
   ~Webserv(void);
 
   int setNonBlocking(int fd);
@@ -51,10 +51,12 @@ public:
   // void processClientInput(std::string clientInput, int serverFD, int clientFD,
   //                         std::string &staticBuffer);
 
+  void createServers(std::vector<ServerConfig> &serverConfigs);
+
   void handleNewConnection(size_t index,
                            const std::vector<ServerConfig> &serverConfigs);
-  void handleClientData(size_t index,
-                        const std::vector<ServerConfig> &serverConfigs);
+  void handleClientRequest(size_t index,
+                           const std::vector<ServerConfig> &serverConfigs);
   void closeConnection(size_t index);
 };
 

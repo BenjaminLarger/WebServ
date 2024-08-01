@@ -21,7 +21,8 @@ SRCS_DIR		= src/
 SRC_FILES		= main.cpp ClientProcessMethods.cpp Webserv.cpp \
 	ErrorUtils.cpp utilsMethods.cpp \
 	ServerConfig.cpp ClientInfo.cpp \
-	GET.cpp CGI.cpp POST.cpp 
+	GET.cpp CGI.cpp POST.cpp \
+	WebservCreateServers.cpp WebservClientRequest.cpp WebservNewConnection.cpp
 #	ConfigurationFile.cpp WebservUtils.cpp ConfigurationFileParsing.cpp
 
 SRCS				= $(addprefix $(SRCS_DIR),$(SRC_FILES))
