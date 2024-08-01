@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/07/11 10:40:22 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/01 11:01:40 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <vector>
+#include <csignal>
 
 // ---------------------COLORS
 #define RESET "\033[0m"

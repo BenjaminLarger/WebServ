@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
-
 /* --------------CONSTRUCTORS */
 //The socket() function shall create an unbound socket in a communications domain,
 //and return a file descriptor that can be used in later function calls that operate on sockets.
@@ -24,6 +23,9 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
   // serverListeningLoop(serverFD);
 
   // Main server loop
+  instance = this;
+  signal(SIGINT, Webserv::sigInt);
+  std::cout << "fds size = " << fds.size() << std::endl;
   while (true)
   {
     // int pollCount = poll(&fds[0], fds.size(), -1);
