@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/01 19:56:16 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 12:48:38 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,12 @@ private:
   // Body
   std::string body;
 
+  //Util
   void extractFirstLine();
   void extractHeaders();
   void extractBody(int clientFD);
+  void extractUploadBody();
+
 
 public:
   POST(int serverFD, int clientFD, std::string &clientInput);
