@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 14:33:15 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 14:35:40 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 15:26:28 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
 
   while (std::getline(file, line))
   {
+    trimTrailingWS(line);
     std::istringstream iss(line);
     std::string key, value;
 
@@ -43,27 +44,37 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
       config.clear();
       tempPorts.clear();
     }
+    else if (line[0] == '#')
+      continue;
     else if (insideServerBlock && iss >> key >> value)
     {
-      if (line[line.size() - 1] != ';') // Check line ends with ";"
-        throw(std::runtime_error("Invalid end of line in config file."));
+      // Check line ends with ";"
+      // std::cout << "line: " << line << std::endl;
+      if (line[line.size() - 1] != ';')
+        file.close(),
+            throw(std::runtime_error("Invalid end of line in config file."));
 
       if (!value.empty() && value[0] == ' ')
         value.erase(0, 1); // Remove leading space
       if (!value.empty() && value[value.size() - 1] == ';')
         value.erase(value.size() - 1); // Remove trailing semicolon
 
-      if (key == "host")
+      if (key[0] == '#')
+        continue;
+      else if (key == "host")
       {
         config.host = value;
-        checkIfRemainingChar(iss);
+        if (checkStreamForRemainingContent(iss))
+          file.close(), throw(std::runtime_error(
+                            "Unexpected characters in config file: " + line));
       }
       else if (key == "listen")
       {
         int port = std::atoi(value.c_str());
         tempPorts.push_back(port);
-        // config.addPort(port);
-        checkIfRemainingChar(iss);
+        if (checkStreamForRemainingContent(iss))
+          file.close(), throw(std::runtime_error(
+                            "Unexpected characters in config file: " + line));
       }
       else if (key == "server_names")
       {
@@ -78,15 +89,18 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
         }
       }
       else if (key.size() > 0 && !isAllWhitespace(key))
-        throw(std::runtime_error("Invalid data in config file: " + key));
+        file.close(),
+            throw(std::runtime_error("Invalid data in config file: " + key));
     }
     else if (line.size() == 1 && line.find("}") != std::string::npos)
-    {
       endServerBlock(insideServerBlock, serverConfigs, config, tempPorts);
-    }
     else if (line.size() > 0 && !isAllWhitespace(line))
-      throw(std::runtime_error("Invalid data in config file: " + line));
+      file.close(),
+          throw(std::runtime_error("Invalid data in config file: " + line));
   }
+  if (insideServerBlock)
+    file.close(),
+        throw(std::runtime_error("Invalid server block in config file."));
 
   file.close();
   return (serverConfigs);
@@ -125,16 +139,4 @@ bool ServerConfig::checkConfig(ServerConfig &config)
   // if (config.getPort() == -1)
   //   return (false);
   return (true);
-}
-
-void ServerConfig::checkIfRemainingChar(std::istringstream &iss)
-{
-  std::string remaining;
-  iss >> remaining;
-  if (!remaining.empty() && remaining[remaining.size() - 1] == ';')
-    remaining.erase(remaining.size() - 1); // Remove trailing semicolon
-  // std::cout << "remaining: '" << remaining << "'" << std::endl;
-  if (!remaining.empty())
-    throw(std::runtime_error("Unexpected characters in config file: "
-                             + remaining));
 }

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 12:43:24 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 15:24:45 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,14 @@ bool isAllWhitespace(const std::string &str);
 
 // Converts an int to a string
 std::string intToString(int value);
+
+// Checks if the input string stream has content after potentially removing a trailing semicolon
+bool checkStreamForRemainingContent(std::istringstream &iss);
+
+// Trims in place whitespace from both ends of a string
+void trimBothEnds(std::string &line);
+
+// Trims trailing whitespace of a string
+void trimTrailingWS(std::string &line);
 
 #endif
