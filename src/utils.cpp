@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 15:30:21 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/02 15:41:24 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 17:30:00 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,10 @@ std::string intToString(int value)
   return (oss.str());
 }
 
-bool checkStreamForRemainingContent(std::istringstream &iss)
+bool checkStreamForRemainingContent(std::stringstream &ss)
 {
   std::string remaining;
-  iss >> remaining;
+  ss >> remaining;
   if (!remaining.empty() && remaining[remaining.size() - 1] == ';')
     remaining.erase(remaining.size() - 1); // Remove trailing semicolon
   // std::cout << "remaining: '" << remaining << "'" << std::endl;
@@ -89,6 +89,20 @@ bool hasDuplicates(const std::vector<int> &vec)
   {
     // Compare the current element with all subsequent elements
     for (std::vector<int>::size_type j = i + 1; j < vec.size(); ++j)
+    {
+      if (vec[i] == vec[j])
+        return (true);
+    }
+  }
+  return (false);
+}
+
+bool hasDuplicates(const std::vector<std::string> &vec)
+{
+  for (std::vector<std::string>::size_type i = 0; i < vec.size(); ++i)
+  {
+    // Compare the current element with all subsequent elements
+    for (std::vector<std::string>::size_type j = i + 1; j < vec.size(); ++j)
     {
       if (vec[i] == vec[j])
         return (true);
