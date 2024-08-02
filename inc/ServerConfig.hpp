@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 13:43:03 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 14:35:01 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ public:
   // Parses server configs to a vector of ServerConfig from a config file
   static std::vector<ServerConfig> parseConfig(const char *filename);
 
-  // Checks remaining characters in istringstream after extracting value
-  static void checkRemainingChar(std::istringstream &iss);
+  // Checks presence of remaining characters in istringstream after extracting value
+  static void checkIfRemainingChar(std::istringstream &iss);
 
   // Handles ServerConfig when reaching the end of a server block in the configfile
   static void endServerBlock(bool &insideServerBlock,

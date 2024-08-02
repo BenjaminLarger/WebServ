@@ -20,7 +20,7 @@ HEADER_DIR	= inc/
 SRCS_DIR		= src/
 SRC_FILES		= main.cpp ClientProcessMethods.cpp Webserv.cpp \
 	ErrorUtils.cpp utils.cpp \
-	ServerConfig.cpp ClientInfo.cpp \
+	ServerConfig.cpp ServerConfigParsing.cpp ClientInfo.cpp \
 	GET.cpp CGI.cpp POST.cpp POSTupload.cpp\
 	WebservCreateServers.cpp WebservClientRequest.cpp WebservNewConnection.cpp WebservSignal.cpp \
 	ManageWriteReadClientCapability.cpp
