@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:01 by demre             #+#    #+#             */
-/*   Updated: 2024/08/01 20:07:01 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 12:30:00 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void Webserv::handleNewConnection(
     size_t i, const std::vector<ServerConfig> &serverConfigs)
 {
+  (void)serverConfigs;
   while (true)
   {
     int newSocket = accept(fds[i].fd, NULL, NULL);
@@ -40,8 +41,8 @@ void Webserv::handleNewConnection(
       continue;
     }
 
-    std::cout << "New connection accepted: " << newSocket << ", on port: "
-              << serverConfigs[clients[i].serverIndex].getPort() << std::endl;
+    std::cout << "New connection accepted: " << newSocket
+              << ", on port: " << clients[i].port << std::endl;
 
     // Add the new socket to the pollfd vector
     pollfd pfd;
@@ -54,6 +55,7 @@ void Webserv::handleNewConnection(
     ClientInfo ci;
     ci.socketFD = newSocket;
     ci.serverIndex = clients[i].serverIndex;
+    ci.port = clients[i].port;
     clients.push_back(ci);
   }
 }

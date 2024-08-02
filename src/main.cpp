@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 09:46:47 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/01 15:58:31 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 13:39:59 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ int main(int argc, const char **argv)
     std::cout << "serverConfigs.size(): " << serverConfigs.size() << std::endl;
     for (size_t i = 0; i < serverConfigs.size(); i++)
     {
-      std::cout << "Server " << i << ", host: " << serverConfigs[i].getHost()
+      std::cout << "ServerConfig " << i
+                << ", host: " << serverConfigs[i].getHost()
                 << ", port: " << serverConfigs[i].getPort()
                 << ", server_names: " << serverConfigs[i].getServerNames()
                 << std::endl;

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/01 20:06:25 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 13:11:02 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
       {
         std::cout << CYAN << "New event detected\n" << RESET;
         if (i < serverConfigs.size())
-        // if (clients[i].socketFD == fds[i].fd)
         {
           // New connection request on listening socket
           std::cout << GREEN << "New connection detected\n" << RESET;

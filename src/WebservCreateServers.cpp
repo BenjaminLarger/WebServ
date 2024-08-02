@@ -6,13 +6,13 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 11:06:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/01 14:39:04 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 13:42:27 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-// Create and set up listening sockets (serverFD) for all servers and add them to std::vector<pollfd> fds
+// Create and set up listening sockets (serverFD) for all servers on all ports and add them to std::vector<pollfd> fds
 void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
 {
   for (std::vector<ServerConfig>::size_type i = 0; i < serverConfigs.size();
@@ -83,6 +83,7 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
     ClientInfo ci;
     ci.socketFD = serverFD;
     ci.serverIndex = i; // Associate with the respective server
+    ci.port = serverConfigs[i].getPort();
     clients.push_back(ci);
   }
 }

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:15:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/01 20:03:14 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 13:46:40 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@ ServerConfig::ServerConfig(void) {}
 ServerConfig::~ServerConfig(void) {}
 
 /* --------------GETTER */
-
-const int &ServerConfig::getPort(void) const { return (this->port); }
 
 std::string ServerConfig::getServerNames(void) const
 {
@@ -37,14 +35,23 @@ std::string ServerConfig::getServerNames(void) const
   return (serverNamesStr);
 }
 
+const std::string &ServerConfig::getServerName(int index) const
+{
+  return (this->serverNames[index]);
+}
+
+const int &ServerConfig::getPort() const { return (this->port); }
+
 const std::string &ServerConfig::getHost(void) const { return (this->host); }
 
 /* --------------SETTER */
 
-void ServerConfig::addServerName(std::string serverName)
+void ServerConfig::addServerName(std::string newServerName)
 {
-  serverNames.push_back(serverName);
+  serverNames.push_back(newServerName);
 }
+
+void ServerConfig::addPort(int newPort) { this->port = newPort; }
 
 /* --------------MEMBER FUNCTIONS */
 
@@ -64,6 +71,7 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
   std::vector<ServerConfig> serverConfigs;
   std::string line;
   ServerConfig config;
+  std::vector<int> tempPorts;
   bool insideServerBlock = false;
 
   while (std::getline(file, line))
@@ -75,6 +83,7 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
     {
       insideServerBlock = true;
       config.clear();
+      tempPorts.clear();
     }
     else if (insideServerBlock && iss >> key >> value)
     {
@@ -90,7 +99,9 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
       }
       else if (key == "listen")
       {
-        config.port = std::atoi(value.c_str());
+        int port = std::atoi(value.c_str());
+        tempPorts.push_back(port);
+        // config.addPort(port);
         checkRemainingChar(iss);
       }
       else if (key == "server_names")
@@ -108,7 +119,7 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
     }
     else if (line.find("}") != std::string::npos)
     {
-      endServerBlock(insideServerBlock, serverConfigs, config);
+      endServerBlock(insideServerBlock, serverConfigs, config, tempPorts);
     }
   }
 
@@ -124,19 +135,26 @@ bool ServerConfig::checkConfig(ServerConfig &config)
     std::string value = "127.0.0.1";
     config.host = value.c_str();
   }
-  if (config.getPort() == -1)
-    return (false);
+  // if (config.getPort() == -1)
+  //   return (false);
   return (true);
 }
 
 void ServerConfig::endServerBlock(bool &insideServerBlock,
                                   std::vector<ServerConfig> &serverConfigs,
-                                  ServerConfig &config)
+                                  ServerConfig &config,
+                                  std::vector<int> &tempPorts)
 {
   insideServerBlock = false;
 
-  if (checkConfig(config))
-    serverConfigs.push_back(config);
+  if (checkConfig(config) && tempPorts.size() > 0)
+  {
+    for (size_t i = 0; i < tempPorts.size(); i++)
+    { // Create a new serverConfig for each port for each server
+      config.addPort(tempPorts[i]);
+      serverConfigs.push_back(config);
+    }
+  }
   else
   {
     // handle wrong server config
@@ -144,7 +162,6 @@ void ServerConfig::endServerBlock(bool &insideServerBlock,
   }
 }
 
-// Check if there's anything left in iss after extracting value
 void ServerConfig::checkRemainingChar(std::istringstream &iss)
 {
   std::string remaining;

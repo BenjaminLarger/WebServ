@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/01 20:07:11 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 12:29:47 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 void Webserv::handleClientRequest(
     size_t i, const std::vector<ServerConfig> &serverConfigs)
 {
+  (void)serverConfigs;
   char buffer[1024];
   ssize_t bytes_read = read(fds[i].fd, buffer, sizeof(buffer));
   if (bytes_read < 0)
@@ -40,9 +41,8 @@ void Webserv::handleClientRequest(
     size_t serverIndex = clients[i].serverIndex;
 
     std::cout << "Received on serverIndex " << serverIndex << ", port "
-              << serverConfigs[serverIndex].getPort()
-              << ", clients[i].socketFD " << clients[i].socketFD << ": "
-              << buffer << std::endl;
+              << clients[i].port << ", clients[i].socketFD "
+              << clients[i].socketFD << ": " << buffer << std::endl;
 
     std::string &clientBuffer = clients[i].buffer;
     clientBuffer += buffer;
