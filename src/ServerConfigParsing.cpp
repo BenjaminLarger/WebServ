@@ -6,17 +6,18 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 14:33:15 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 15:51:27 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 17:49:09 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerConfig.hpp"
 #include "utils.hpp"
 
-void ServerConfig::clear()
+void ServerConfig::reset()
 {
   host.clear();
   port = -1;
+  maxBodySize = -1;
   serverNames.clear();
 }
 
@@ -35,43 +36,51 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
   while (std::getline(file, line))
   {
     trimTrailingWS(line);
-    std::istringstream iss(line);
-    std::string key, value;
+    std::stringstream iss(line);
+    std::string key, valueStr;
+    int valueInt;
 
     if (line.size() == 8 && line.find("server {") != std::string::npos)
     {
       insideServerBlock = true;
-      config.clear();
+      config.reset();
       tempPorts.clear();
     }
     else if (line[0] == '#')
       continue;
-    else if (insideServerBlock && iss >> key >> value)
+    else if (line.size() == 1 && line.find("}") != std::string::npos)
+      endServerBlock(insideServerBlock, serverConfigs, config, tempPorts, file);
+    else if (insideServerBlock && iss >> key)
     {
-      // Check line ends with ";"
-      // std::cout << "line: " << line << std::endl;
-      if (line[line.size() - 1] != ';')
+      // Check line ends with ";" and remove it
+      // std::cout << "line: '" << line << "'" << std::endl;
+      if (line[line.size() - 1] != ';' && key[0] != '#')
         file.close(),
             throw(std::runtime_error("Invalid end of line in config file."));
+      line.erase(line.size() - 1);
+      trimTrailingWS(line);
 
-      if (!value.empty() && value[0] == ' ')
-        value.erase(0, 1); // Remove leading space
-      if (!value.empty() && value[value.size() - 1] == ';')
-        value.erase(value.size() - 1); // Remove trailing semicolon
+      iss.str("");
+      iss << line;
+      iss >> key;
 
       if (key[0] == '#')
         continue;
       else if (key == "host")
       {
-        config.host = value;
+        iss >> valueStr;
+        config.host = valueStr;
+
         if (checkStreamForRemainingContent(iss))
           file.close(), throw(std::runtime_error(
                             "Unexpected characters in config file: " + line));
       }
       else if (key == "listen")
       {
-        int port = std::atoi(value.c_str());
+        iss >> valueInt;
+        int port = valueInt;
         tempPorts.push_back(port);
+
         if (checkStreamForRemainingContent(iss))
           file.close(), throw(std::runtime_error(
                             "Unexpected characters in config file: " + line));
@@ -81,22 +90,28 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
       }
       else if (key == "server_names")
       {
-        config.addServerName(value);
-
-        while (iss >> value)
+        while (iss >> valueStr)
         {
-          if (!value.empty() && value[value.size() - 1] == ';')
-            value.erase(value.size() - 1);
-          if (!isAllWhitespace(value))
-            config.addServerName(value);
+          if (!isAllWhitespace(valueStr))
+            config.addServerName(valueStr);
         }
+        if (hasDuplicates(config.serverNames))
+          file.close(), throw(std::runtime_error(
+                            "Duplicate server names in config file."));
+      }
+      else if (key == "client_max_body_size")
+      {
+        iss >> valueInt;
+        config.maxBodySize = valueInt;
+
+        if (checkStreamForRemainingContent(iss))
+          file.close(), throw(std::runtime_error(
+                            "Unexpected characters in config file: " + line));
       }
       else if (key.size() > 0 && !isAllWhitespace(key))
         file.close(),
             throw(std::runtime_error("Invalid data in config file: " + key));
     }
-    else if (line.size() == 1 && line.find("}") != std::string::npos)
-      endServerBlock(insideServerBlock, serverConfigs, config, tempPorts, file);
     else if (line.size() > 0 && !isAllWhitespace(line))
       file.close(),
           throw(std::runtime_error("Invalid data in config file: " + line));
@@ -107,6 +122,30 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
 
   file.close();
   return (serverConfigs);
+}
+
+bool ServerConfig::checkConfig(ServerConfig &config,
+                               std::vector<int> &tempPorts)
+{
+  // Add default host if needed
+  if (config.getHost().size() == 0)
+  {
+    std::string value = "127.0.0.1";
+    config.host = value.c_str();
+  }
+
+  // Check host is valid
+  for (std::string::const_iterator it = config.host.begin();
+       it != config.host.end(); ++it)
+  {
+    if (!isdigit(*it) && *it != '.')
+      return (false);
+  }
+
+  // Check port present
+  if (tempPorts.size() == 0)
+    return (false);
+  return (true);
 }
 
 void ServerConfig::endServerBlock(bool &insideServerBlock,
@@ -130,18 +169,4 @@ void ServerConfig::endServerBlock(bool &insideServerBlock,
     file.close();
     throw(std::runtime_error("Invalid server block in config file."));
   }
-}
-
-bool ServerConfig::checkConfig(ServerConfig &config,
-                               std::vector<int> &tempPorts)
-{
-  // check host and port present
-  if (config.getHost().size() == 0)
-  {
-    std::string value = "127.0.0.1";
-    config.host = value.c_str();
-  }
-  if (tempPorts.size() == 0)
-    return (false);
-  return (true);
 }

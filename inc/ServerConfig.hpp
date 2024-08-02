@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 15:51:23 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 17:39:07 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ private:
   int port;
   std::vector<std::string> serverNames;
 
+  int maxBodySize;
+
 public:
   ServerConfig(void);
   ~ServerConfig();
@@ -47,8 +49,8 @@ public:
   // Add a port to the ports vector
   void addPort(int newPort);
 
-  // Clears the attributes from the current ServerConfig object
-  void clear(void);
+  // Resets the attributes from the current ServerConfig object
+  void reset(void);
 
   // Parses server configs to a vector of ServerConfig from a config file
   static std::vector<ServerConfig> parseConfig(const char *filename);
