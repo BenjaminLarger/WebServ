@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 17:39:07 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 20:40:23 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,16 @@
 //                               Class //
 // ************************************************************************** //
 
+class LocationConfig
+{
+private:
+public:
+  std::string root;
+  std::string index;
+  std::vector<std::string> allowedMethods;
+  bool autoindexOn;
+};
+
 class ServerConfig
 {
 private:
@@ -29,6 +39,8 @@ private:
   std::vector<std::string> serverNames;
 
   int maxBodySize;
+  std::map<std::string, LocationConfig> locations;
+  // std::map<int, std::string> errorPages;
 
 public:
   ServerConfig(void);
@@ -53,16 +65,31 @@ public:
   void reset(void);
 
   // Parses server configs to a vector of ServerConfig from a config file
-  static std::vector<ServerConfig> parseConfig(const char *filename);
+  static std::vector<ServerConfig> parseConfigs(const char *filename);
+
+  // Check line has correct end character and trim ws if required
+  static void validateAndSanitizeServerLine(std::string &line,
+                                            std::stringstream &ss,
+                                            std::string &key,
+                                            std::ifstream &file);
+
+  // Check line has correct end character and trim ws if required
+  static void validateAndSanitizeLocationLine(std::string &line,
+                                              std::stringstream &ss,
+                                              std::string &key,
+                                              std::ifstream &file);
 
   // Handles ServerConfig when reaching the end of a server block in the configfile
-  static void endServerBlock(bool &insideServerBlock,
-                             std::vector<ServerConfig> &serverConfigs,
-                             ServerConfig &config, std::vector<int> &tempPorts,
-                             std::ifstream &file);
+  void endServerBlock(bool &insideServerBlock,
+                      std::vector<ServerConfig> &serverConfigs,
+                      std::vector<int> &tempPorts, std::ifstream &file);
 
   // Checks that the ServerConfig has valid and complete data
-  static bool checkConfig(ServerConfig &config, std::vector<int> &tempPorts);
+  bool checkConfig(std::vector<int> &tempPorts);
+
+  void parseLocation(std::ifstream &file, std::string urlPattern);
+
+  // std::map<int, std::string> findErrorPage(std::istringstream &iss);
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 09:46:47 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/02 13:39:59 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 19:24:56 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int main(int argc, const char **argv)
 
     // Save server configurations to a vector of ServerConfig
     std::vector<ServerConfig> serverConfigs
-        = ServerConfig::parseConfig(configFile.c_str());
+        = ServerConfig::parseConfigs(configFile.c_str());
 
     // Display server configs in terminal to check
     std::cout << "serverConfigs.size(): " << serverConfigs.size() << std::endl;
