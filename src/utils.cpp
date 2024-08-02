@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 15:30:21 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/02 15:24:37 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 15:41:24 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,4 +81,18 @@ void trimTrailingWS(std::string &line)
 {
   std::string::size_type end = line.find_last_not_of(" \t\n\r\f\v");
   line = line.substr(0, end + 1);
+}
+
+bool hasDuplicates(const std::vector<int> &vec)
+{
+  for (std::vector<int>::size_type i = 0; i < vec.size(); ++i)
+  {
+    // Compare the current element with all subsequent elements
+    for (std::vector<int>::size_type j = i + 1; j < vec.size(); ++j)
+    {
+      if (vec[i] == vec[j])
+        return (true);
+    }
+  }
+  return (false);
 }

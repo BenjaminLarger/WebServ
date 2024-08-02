@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 15:24:45 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 15:40:53 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,5 +33,8 @@ void trimBothEnds(std::string &line);
 
 // Trims trailing whitespace of a string
 void trimTrailingWS(std::string &line);
+
+// Checks if int vector has duplicate elements
+bool hasDuplicates(const std::vector<int> &vec);
 
 #endif

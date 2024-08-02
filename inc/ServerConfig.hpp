@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 14:50:47 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 15:51:23 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,11 @@ public:
   // Handles ServerConfig when reaching the end of a server block in the configfile
   static void endServerBlock(bool &insideServerBlock,
                              std::vector<ServerConfig> &serverConfigs,
-                             ServerConfig &config, std::vector<int> &tempPorts);
+                             ServerConfig &config, std::vector<int> &tempPorts,
+                             std::ifstream &file);
 
   // Checks that the ServerConfig has valid and complete data
-  static bool checkConfig(ServerConfig &config);
+  static bool checkConfig(ServerConfig &config, std::vector<int> &tempPorts);
 };
 
 #endif

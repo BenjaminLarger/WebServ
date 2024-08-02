@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 14:33:15 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 15:26:28 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 15:51:27 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,9 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
         if (checkStreamForRemainingContent(iss))
           file.close(), throw(std::runtime_error(
                             "Unexpected characters in config file: " + line));
+        if (hasDuplicates(tempPorts))
+          file.close(),
+              throw(std::runtime_error("Duplicate ports in config file."));
       }
       else if (key == "server_names")
       {
@@ -93,7 +96,7 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
             throw(std::runtime_error("Invalid data in config file: " + key));
     }
     else if (line.size() == 1 && line.find("}") != std::string::npos)
-      endServerBlock(insideServerBlock, serverConfigs, config, tempPorts);
+      endServerBlock(insideServerBlock, serverConfigs, config, tempPorts, file);
     else if (line.size() > 0 && !isAllWhitespace(line))
       file.close(),
           throw(std::runtime_error("Invalid data in config file: " + line));
@@ -109,26 +112,28 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
 void ServerConfig::endServerBlock(bool &insideServerBlock,
                                   std::vector<ServerConfig> &serverConfigs,
                                   ServerConfig &config,
-                                  std::vector<int> &tempPorts)
+                                  std::vector<int> &tempPorts,
+                                  std::ifstream &file)
 {
   insideServerBlock = false;
-
-  if (checkConfig(config) && tempPorts.size() > 0)
+  // std::cout << "tempPorts.size(): " << tempPorts.size() << std::endl;
+  if (checkConfig(config, tempPorts))
   {
     for (size_t i = 0; i < tempPorts.size(); i++)
-    { // Create a new serverConfig for each port for each server
+    { // Create a new serverConfig for each port of each server
       config.addPort(tempPorts[i]);
       serverConfigs.push_back(config);
     }
   }
   else
   {
-    // handle wrong server config
-    std::cerr << "checkConfig is false" << std::endl;
+    file.close();
+    throw(std::runtime_error("Invalid server block in config file."));
   }
 }
 
-bool ServerConfig::checkConfig(ServerConfig &config)
+bool ServerConfig::checkConfig(ServerConfig &config,
+                               std::vector<int> &tempPorts)
 {
   // check host and port present
   if (config.getHost().size() == 0)
@@ -136,7 +141,7 @@ bool ServerConfig::checkConfig(ServerConfig &config)
     std::string value = "127.0.0.1";
     config.host = value.c_str();
   }
-  // if (config.getPort() == -1)
-  //   return (false);
+  if (tempPorts.size() == 0)
+    return (false);
   return (true);
 }
