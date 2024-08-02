@@ -6,9 +6,16 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:15:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 13:46:40 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 13:52:46 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/* HTML5 references
+
+There are three possibilities for enctype:
+- application/x-www-form-urlencoded
+- multipart/form-data (spec points to RFC7578)
+- text/plain. This is "not reliably interpretable by computer", so it should never be used in production, and we will not look further into it. */
 
 #include "ServerConfig.hpp"
 #include "utils.hpp"
