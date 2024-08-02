@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:15:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 13:52:46 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/02 14:24:17 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
     std::istringstream iss(line);
     std::string key, value;
 
-    if (line.find("server {") != std::string::npos)
+    if (line.size() == 8 && line.find("server {") != std::string::npos)
     {
       insideServerBlock = true;
       config.clear();
@@ -94,6 +94,9 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
     }
     else if (insideServerBlock && iss >> key >> value)
     {
+      if (line[line.size() - 1] != ';') // Check line ends with ";"
+        throw(std::runtime_error("Invalid end of line in config file."));
+
       if (!value.empty() && value[0] == ' ')
         value.erase(0, 1); // Remove leading space
       if (!value.empty() && value[value.size() - 1] == ';')
@@ -123,11 +126,15 @@ std::vector<ServerConfig> ServerConfig::parseConfig(const char *filename)
             config.addServerName(value);
         }
       }
+      else if (key.size() > 0 && !isAllWhitespace(key))
+        throw(std::runtime_error("Invalid data in config file: " + key));
     }
-    else if (line.find("}") != std::string::npos)
+    else if (line.size() == 1 && line.find("}") != std::string::npos)
     {
       endServerBlock(insideServerBlock, serverConfigs, config, tempPorts);
     }
+    else if (line.size() > 0 && !isAllWhitespace(line))
+      throw(std::runtime_error("Invalid data in config file: " + line));
   }
 
   file.close();
