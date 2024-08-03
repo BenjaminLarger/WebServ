@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/02 15:52:42 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/03 13:29:15 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,21 @@ STRUCTURE
 		Body
 		--boundary--
 */
-static std::string extractBoundary(const std::string& contentType) {
-    std::string boundaryPrefix = "boundary=";
-    size_t boundaryPos = contentType.find(boundaryPrefix);
-    if (boundaryPos != std::string::npos) {
-        // Extract the boundary value
-        return contentType.substr(boundaryPos + boundaryPrefix.length());
-    }
-    return "";
+
+std::string extractBoundary(const std::string& input)
+{
+   std::size_t pos = input.find('=');
+	 std::cout << "input = " << input << ", " << pos << std::endl;
+  if (pos != std::string::npos)
+	{
+		std::cout << input.substr(pos + 1) << std::endl;
+		return input.substr(pos + 1);
+	}
+	else
+		return "";
 }
 
-void POST::extractUploadBody()
+std::string	POST::skipBoundaryPart(void)
 {
 	std::string line;
 	std::string boundary;

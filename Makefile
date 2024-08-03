@@ -11,7 +11,7 @@ MKDIR_P	= mkdir -p
 
 # Compilation flags
 CFLAGS	= -g -Wall -Wextra -Werror -std=c++98 -I $(HEADER_DIR) \
-#	-Wshadow -Wunreachable-code -fsanitize=address,undefined 
+	-Wshadow -Wunreachable-code -fsanitize=address,undefined 
 
 # Header files directory
 HEADER_DIR	= inc/
@@ -20,7 +20,8 @@ HEADER_DIR	= inc/
 SRCS_DIR		= src/
 SRC_FILES		= main.cpp ClientProcessMethods.cpp Webserv.cpp \
 	ErrorUtils.cpp utils.cpp \
-	ServerConfig.cpp ServerConfigParsing.cpp ClientInfo.cpp \
+	ServerConfig.cpp ServerConfigParsing.cpp ServerConfigParsingLocation.cpp \
+	ClientInfo.cpp \
 	GET.cpp CGI.cpp POST.cpp POSTupload.cpp\
 	WebservCreateServers.cpp WebservClientRequest.cpp WebservNewConnection.cpp WebservSignal.cpp \
 	ManageWriteReadClientCapability.cpp

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 15:44:38 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/03 13:26:29 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ class POST
 private:
   // Request line
   std::map<std::string, std::string> headers;
-  std::istringstream requestStream;
   std::string pathToRessource;
   std::string HTTPversion;
+  std::istringstream requestStream;
   // Header
   std::string host;
   std::string contentType;
@@ -44,6 +44,11 @@ private:
   void extractHeaders();
   void extractBody(int clientFD);
   void extractUploadBody();
+
+	//Util uplaod file
+	std::map<int, std::string> headerUpload;
+  std::string	skipBoundaryPart(void);
+
 
 
 public:

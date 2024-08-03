@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 14:19:50 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/03 13:27:16 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ void POST::extractBody(int clientFD)
 void POST::extractHeaders()
 {
   std::string line;
+	bool				isFirstLine = true;
 
   //Reads line by line until it finds an empty line
   while (std::getline(requestStream, line) && line != "\r")
@@ -60,6 +61,7 @@ void POST::extractHeaders()
       headerValue.erase(0, headerValue.find_first_not_of(" \t"));
       headerValue.erase(headerValue.find_last_not_of(" \t") + 1);
       this->headers[headerName] = headerValue;
+			isFirstLine = false;
       if (headerName == "Content-Length")
         contentLength = std::atoi(headerValue.c_str());
       else if (headerName == "Content-Type")
@@ -67,6 +69,8 @@ void POST::extractHeaders()
       else if (headerName == "Host")
         host = headerValue;
     }
+		else if (isFirstLine == false)
+			break;
   }
 
 	std::cout << "\nEXTRACT HEADER :\n" ;
