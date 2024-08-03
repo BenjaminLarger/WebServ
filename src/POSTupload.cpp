@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/03 14:40:08 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/03 18:46:37 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,15 @@ STRUCTURE
 		--boundary--
 */
 
+bool	isClosingBoundary(std::string line, std::string boundary)
+{
+	if (line[line.size() - 1] == '\r' && line[line.size() - 2] == '-' && line[line.size() - 3] == '-')
+	{
+		if (strncmp(line.c_str(), boundary.c_str(), boundary.size()))
+			return (true);
+	}
+	return (false);
+}
 std::string extractFirstWord(const std::string& str)
 {
     std::istringstream stream(str);
@@ -45,6 +54,46 @@ std::string extractFirstWord(const std::string& str)
 
     stream >> firstWord;
     return (firstWord);
+}
+std::string makeCopy(const std::string &original)
+{
+    if (original.length() < 4) {
+        return "";
+    }
+    std::string copy;
+    for (size_t i = 4; i < original.length(); ++i) {
+        copy += original[i];
+    }
+		std::cout << RED << copy << RESET << std::endl;
+    return copy;
+}
+
+bool	isBoundary(std::string line, std::string boundary)
+{
+	std::string newline;
+	if (line[0] == '-' && line[1] == '-')
+	{
+		std::cout << ORANGE << "line = " << line << RESET << std::endl;
+		newline = makeCopy(line);
+		std::cout << RED << newline << RESET << std::endl;
+		std::cout << RED << boundary << RESET << std::endl;
+		if (!strcmp(newline.c_str(), boundary.c_str()))
+		{
+			std::cout << ORANGE << "is boundary\n" << RESET << std::endl;
+			return (true);
+		}
+		
+	}
+	return (false);
+}
+
+void	extractValues(std::string line, std::map<int, std::string> &myMap, int index, std::string key)
+{
+	std::string values;
+
+	values = line.substr(key.size() + 1);
+	myMap[index] = values;
+	std::cout << ORANGE << "map[" << index << "] = " << values << RESET << std::endl;	
 }
 
 std::string extractBoundary(const std::string& input)
@@ -97,19 +146,28 @@ void	POST::extractUploadBody()
 		std::cout << BLUE << line << std::endl;
 		key = extractFirstWord(line);
 		std::cout << "key = " << MAGENTA << key << RESET << std::endl;
-		if (line == boundary)
+		if (isBoundary(line, boundary) == true)
 			index++;
 		else if (key == "Content-Disposition:")
 		{
-			requestStream >> value;
+			extractValues(line, contentDispositionMap, index, key);
+			/* requestStream >> value;
 			contentDispositionMap[index] = value;
-			std::cout << YELLOW << "contentDispositionMap[" << index << "] = " << value << RESET << std::endl;
+			std::cout << YELLOW << "contentDispositionMap[" << index << "] = " << value << RESET << std::endl; */
 		}
 		else if (key == "Content-Type:")
 		{
-			requestStream >> value;
+			extractValues(line, contentTypeMap, index, key);
+/* 			requestStream >> value;
 			this->contentTypeMap[index] = value;
-			std::cout << YELLOW << "contentTypeMap[" << index << "] = " << value << RESET << std::endl;
+			std::cout << YELLOW << "contentTypeMap[" << index << "] = " << value << RESET << std::endl; */
+		}
+		
+		//else if (!strncmp(line.c_str(), boundary.c_str(), boundary.size() - 2)/*  && boundary[boundary.size() - 2] == '-' && boundary[boundary.size() - 1] == '-' */)
+		else if (isClosingBoundary(line, boundary) == true)
+		{
+			std::cout << YELLOW << "Has closing boundary\n" << RESET;
+			hasClosingBoundary = true;
 		}
 	 }
 	 
