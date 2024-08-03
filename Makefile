@@ -11,7 +11,7 @@ MKDIR_P	= mkdir -p
 
 # Compilation flags
 CFLAGS	= -g -Wall -Wextra -Werror -std=c++98 -I $(HEADER_DIR) \
-	-Wshadow -Wunreachable-code -fsanitize=address,undefined 
+	-Wshadow -Wunreachable-code #-fsanitize=address,undefined 
 
 # Header files directory
 HEADER_DIR	= inc/

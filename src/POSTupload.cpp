@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/03 13:29:15 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/03 14:40:08 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,24 +38,32 @@ STRUCTURE
 		--boundary--
 */
 
+std::string extractFirstWord(const std::string& str)
+{
+    std::istringstream stream(str);
+    std::string firstWord;
+
+    stream >> firstWord;
+    return (firstWord);
+}
+
 std::string extractBoundary(const std::string& input)
 {
    std::size_t pos = input.find('=');
 	 std::cout << "input = " << input << ", " << pos << std::endl;
   if (pos != std::string::npos)
 	{
-		std::cout << input.substr(pos + 1) << std::endl;
-		return input.substr(pos + 1);
+		std::cout << input.substr(pos + 3) << std::endl;
+		std::cout << CYAN << "input.substr(pos + 1)[0] = " << input.substr(pos + 1)[0] << ", input.substr(pos + 1)[1] = " << input.substr(pos + 1)[1] << RESET << std::endl;
+		if (input.substr(pos + 1)[0] == '-' && input.substr(pos + 1)[1] == '-')
+			return input.substr(pos + 3);
 	}
-	else
-		return "";
+	return "";
 }
 
 std::string	POST::skipBoundaryPart(void)
 {
 	std::string line;
-	std::string boundary;
-	int			index = 0;
 
 	requestStream.clear();
 	requestStream.seekg(0);
@@ -67,30 +75,42 @@ std::string	POST::skipBoundaryPart(void)
 		if (!strncmp(line.c_str(), "--", 2))
 			break;		
 	 }
-	boundary = extractBoundary(contentType);
-
-	std::string	key = line;
+	return (extractBoundary(contentType));
+}
+void	POST::extractUploadBody()
+{
+	std::string	key;
 	std::string	value;
+	std::string boundary;
+	std::string line;
+	int			index = 0;
+	hasClosingBoundary = false;
+	
+
+	std::cout << "\nUPLOAD BODY :\n";
+	boundary = skipBoundaryPart();
+	std::cout << boundary << std::endl;
 	if (boundary.empty())
-	 	return ; //Handle error
-		
-	while (key)
+		return ; //handle error
+	while (std::getline(requestStream, line) && line[line.size() - 1] == '\r')
 	 {
-		requestStream >> key;
+		std::cout << BLUE << line << std::endl;
+		key = extractFirstWord(line);
 		std::cout << "key = " << MAGENTA << key << RESET << std::endl;
-		if (key == boundary)
+		if (line == boundary)
 			index++;
-		else if (key == "Content-Disposition")
+		else if (key == "Content-Disposition:")
 		{
 			requestStream >> value;
 			contentDispositionMap[index] = value;
+			std::cout << YELLOW << "contentDispositionMap[" << index << "] = " << value << RESET << std::endl;
 		}
-		else if (key == "Content-Type")
+		else if (key == "Content-Type:")
 		{
 			requestStream >> value;
 			this->contentTypeMap[index] = value;
+			std::cout << YELLOW << "contentTypeMap[" << index << "] = " << value << RESET << std::endl;
 		}
 	 }
 	 
 }
-	

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/03 13:26:29 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/03 14:39:59 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ private:
 
 	//Util uplaod file
 	std::map<int, std::string> headerUpload;
+	bool	hasClosingBoundary;
   std::string	skipBoundaryPart(void);
 
 
