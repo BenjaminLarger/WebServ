@@ -6,10 +6,11 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 15:30:21 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/02 17:30:00 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/03 19:37:06 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "utils.hpp"
 #include "Dependencies.hpp"
 
 int sendall(int s, const char *buf, int len)
@@ -109,4 +110,45 @@ bool hasDuplicates(const std::vector<std::string> &vec)
     }
   }
   return (false);
+}
+
+void displayServerConfigs(std::vector<ServerConfig> &serverConfigs)
+{
+  std::cout << "serverConfigs.size(): " << serverConfigs.size() << std::endl;
+  std::cout << std::endl;
+
+  for (size_t i = 0; i < serverConfigs.size(); i++)
+  {
+    std::cout << "ServerConfig " << i
+              << ", host: " << serverConfigs[i].getHost()
+              << ", port: " << serverConfigs[i].getPort()
+              << ", server_names: " << serverConfigs[i].getServerNames()
+              << ", locations.size(): " << serverConfigs[i].locations.size()
+              << std::endl;
+    for (std::map<std::string, LocationConfig>::iterator it
+         = serverConfigs[i].locations.begin();
+         it != serverConfigs[i].locations.end(); ++it)
+    {
+      std::cout << "  location " << it->first << ", root: " << it->second.root
+                << ", autoIndexOn: " << it->second.autoIndexOn
+                << ", index: " << it->second.index << std::endl;
+
+      for (std::map<int, std::string>::iterator itR
+           = it->second.redirection.begin();
+           itR != it->second.redirection.end(); ++itR)
+      {
+        std::cout << "    redirection:  " << itR->first << " " << itR->second
+                  << std::endl;
+      }
+
+      std::cout << "    allowedMethods: ";
+      for (unsigned long itAM = 0; itAM < it->second.allowedMethods.size();
+           ++itAM)
+      {
+        std::cout << it->second.allowedMethods[itAM] << " ";
+      }
+      std::cout << std::endl;
+    }
+    std::cout << std::endl;
+  }
 }

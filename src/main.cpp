@@ -6,11 +6,12 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 09:46:47 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/02 19:24:56 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/03 19:23:31 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
+#include "utils.hpp"
 
 int main(int argc, const char **argv)
 {
@@ -28,15 +29,7 @@ int main(int argc, const char **argv)
         = ServerConfig::parseConfigs(configFile.c_str());
 
     // Display server configs in terminal to check
-    std::cout << "serverConfigs.size(): " << serverConfigs.size() << std::endl;
-    for (size_t i = 0; i < serverConfigs.size(); i++)
-    {
-      std::cout << "ServerConfig " << i
-                << ", host: " << serverConfigs[i].getHost()
-                << ", port: " << serverConfigs[i].getPort()
-                << ", server_names: " << serverConfigs[i].getServerNames()
-                << std::endl;
-    }
+    displayServerConfigs(serverConfigs);
 
     // Launch servers passing serverConfigs vector
     if (serverConfigs.size() > 0)

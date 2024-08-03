@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 17:30:12 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/03 19:23:13 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #define UTILS_HPP
 
 #include "Dependencies.hpp"
+#include "ServerConfig.hpp"
 
 int sendall(int s, const char *buf, int len);
 
@@ -37,5 +38,8 @@ void trimTrailingWS(std::string &line);
 // Checks if vector has duplicate elements
 bool hasDuplicates(const std::vector<int> &vec);
 bool hasDuplicates(const std::vector<std::string> &vec);
+
+// Display server configs in terminal to check
+void displayServerConfigs(std::vector<ServerConfig> &serverConfigs);
 
 #endif
