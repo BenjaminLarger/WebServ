@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 14:33:15 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 20:45:32 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/03 19:17:21 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void ServerConfig::reset()
   port = -1;
   maxBodySize = -1;
   serverNames.clear();
+  locations.clear();
 }
 
 std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)

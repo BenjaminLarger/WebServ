@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 20:40:23 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/03 19:19:20 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,24 @@
 //                               Class //
 // ************************************************************************** //
 
-class LocationConfig
+struct LocationConfig
 {
-private:
-public:
-  std::string root;
-  std::string index;
-  std::vector<std::string> allowedMethods;
-  bool autoindexOn;
+  // Define a list of accepted HTTP methods for the route
+  std::vector<std::string> allowedMethods; // limit_except GET POST DELETE
+
+  // Define an HTTP redirection
+  std::map<int, std::string>
+      redirection; // return 301 http://example.org$new_uri;
+
+  // Define a directory or a file from where the file should be searched
+  std::string root; // root /var/www;
+  // std::string alias; // alias /temp/www;
+
+  // Turn on or off directory listing
+  bool autoIndexOn; // autoindex on/off;
+
+  // Set a default file to answer if the request is a directory
+  std::string index; // index index.html;
 };
 
 class ServerConfig
@@ -39,26 +49,25 @@ private:
   std::vector<std::string> serverNames;
 
   int maxBodySize;
-  std::map<std::string, LocationConfig> locations;
   // std::map<int, std::string> errorPages;
 
 public:
+  std::map<std::string, LocationConfig> locations; // urlPattern, location block
+
   ServerConfig(void);
   ~ServerConfig();
-
   // Returns a list of all the server names as one string (to display in terminal)
   std::string getServerNames(void) const;
 
   // Returns the server name at the given index in the serverNames vector
   const std::string &getServerName(int index) const;
-  // Returns the port at the given index in the ports vector
-  const int &getPort(void) const;
 
+  const int &getPort(void) const;
   const std::string &getHost(void) const;
 
   // Add a server name to the serverNames vector
   void addServerName(std::string newServerName);
-  // Add a port to the ports vector
+  // Set the port
   void addPort(int newPort);
 
   // Resets the attributes from the current ServerConfig object
