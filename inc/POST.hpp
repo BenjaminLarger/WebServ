@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 12:48:38 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/02 15:44:38 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,10 @@ private:
   // Body
   std::string body;
 
+	//BodyUplaod
+		//Header
+		std::map<int, std::string> contentDispositionMap;
+		std::map<int, std::string> contentTypeMap;
   //Util
   void extractFirstLine();
   void extractHeaders();

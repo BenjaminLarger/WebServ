@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 13:01:02 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/02 14:19:50 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ POST::POST(int serverFD, int clientFD, std::string &clientInput)
   extractHeaders();
   if (contentType == "application/x-www-form-urlencoded")
   	extractBody(clientFD);
-  else if (strncmp(contentType.c_str(), "multipart/form-data", 19))
+  else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
 	extractUploadBody();
 }
 
