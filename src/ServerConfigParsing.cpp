@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 14:33:15 by demre             #+#    #+#             */
-/*   Updated: 2024/08/03 19:17:21 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/04 17:31:06 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ void ServerConfig::reset()
   maxBodySize = -1;
   serverNames.clear();
   locations.clear();
+  serverRoot.clear();
+  serverIndex.clear();
 }
 
 std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
@@ -53,12 +55,12 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
     }
     else if (line.size() && line[0] == '#')
       continue;
-    else if (line.size() == 1 && line.find("}") != std::string::npos)
+    else if (insideServerBlock && line.size() == 1 && line[0] == '}')
       config.endServerBlock(insideServerBlock, serverConfigs, tempPorts, file);
     else if (insideServerBlock && ss >> key)
     {
       std::string valueStr;
-      int valueInt;
+      long long valueLong;
 
       // std::cout << "line: '" << line << "'" << std::endl;
       // std::cout << "key: '" << key << "'" << std::endl;
@@ -70,21 +72,22 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
       else if (key == "host")
       {
         ss >> valueStr;
-        config.host = valueStr;
-
-        if (checkStreamForRemainingContent(ss))
+        if (config.host.size() || !valueStr.size()
+            || checkStreamForRemainingContent(ss))
           file.close(), throw(std::runtime_error(
                             "Unexpected characters in config file: " + line));
+
+        config.host = valueStr;
       }
       else if (key == "listen")
       {
-        ss >> valueInt;
-        int port = valueInt;
-        tempPorts.push_back(port);
-
-        if (checkStreamForRemainingContent(ss))
+        ss >> valueLong;
+        if (valueLong < 1024 || valueLong > 65535
+            || checkStreamForRemainingContent(ss))
           file.close(), throw(std::runtime_error(
-                            "Unexpected characters in config file: " + line));
+                            "Incorrect port in config file: " + line));
+
+        tempPorts.push_back(valueLong);
         if (hasDuplicates(tempPorts))
           file.close(),
               throw(std::runtime_error("Duplicate ports in config file."));
@@ -102,12 +105,14 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
       }
       else if (key == "client_max_body_size")
       {
-        ss >> valueInt;
-        config.maxBodySize = valueInt;
+        ss >> valueLong;
+        if (config.maxBodySize > 0 || valueLong < 1 || valueLong > INT_MAX
+            || checkStreamForRemainingContent(ss))
+          file.close(),
+              throw(std::runtime_error(
+                  "Incorrect client_max_body_size in config file: " + line));
 
-        if (checkStreamForRemainingContent(ss))
-          file.close(), throw(std::runtime_error(
-                            "Unexpected characters in config file: " + line));
+        config.maxBodySize = valueLong;
       }
       else if (key == "location")
       {
@@ -122,6 +127,26 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
       }
       else if (key == "error_page")
       {
+      }
+      else if (key == "root")
+      {
+        ss >> valueStr;
+        if (config.serverRoot.size() || !valueStr.size()
+            || checkStreamForRemainingContent(ss))
+          file.close(),
+              throw(std::runtime_error(
+                  "Unexpected characters in location block: " + line));
+        config.serverRoot = valueStr;
+      }
+      else if (key == "index")
+      {
+        ss >> valueStr;
+        if (config.serverIndex.size() || !valueStr.size()
+            || checkStreamForRemainingContent(ss))
+          file.close(),
+              throw(std::runtime_error(
+                  "Unexpected characters in location block: " + line));
+        config.serverIndex = valueStr;
       }
       else if (key.size() && !isAllWhitespace(key))
         file.close(),

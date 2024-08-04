@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:15:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 14:35:23 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/04 17:43:49 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ ServerConfig::~ServerConfig(void) {}
 
 std::string ServerConfig::getServerNames(void) const
 {
-  std::cout << ".size(" << serverNames.size() << ") ";
+  std::cout << ".size(" << serverNames.size() << "): ";
 
   std::string serverNamesStr;
   for (size_t i = 0; i < this->serverNames.size(); i++)

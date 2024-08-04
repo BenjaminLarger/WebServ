@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 18:23:26 by demre             #+#    #+#             */
-/*   Updated: 2024/08/04 16:14:36 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/04 17:47:11 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,16 +51,16 @@ void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
     }
     else if (key == "return") // HTTP redirection
     {
-      int valueInt;
-      ss >> valueInt >> valueStr;
+      long long valueLong;
+      ss >> valueLong >> valueStr;
       if (!valueStr.size() || checkStreamForRemainingContent(ss)
-          || (valueInt != 301 && valueInt != 302 && valueInt != 303
-              && valueInt != 307 && valueInt != 308))
+          || (valueLong != 301 && valueLong != 302 && valueLong != 303
+              && valueLong != 307 && valueLong != 308))
         file.close(),
             throw(std::runtime_error(
                 "Incorrect HTTP redirection in location block: " + line));
 
-      this->locations[urlPattern].redirection[valueInt] = valueStr;
+      this->locations[urlPattern].redirection[valueLong] = valueStr;
     }
     else if (key == "root") // where the file should be searched
     {
@@ -97,7 +97,11 @@ void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
       this->locations[urlPattern].index = valueStr;
     }
     else if (key.size() && key[0] == '}')
+    {
+      if (!this->locations[urlPattern].allowedMethods.size())
+        this->locations[urlPattern].allowedMethods.push_back("GET");
       break;
+    }
     else if (key.size() && !isAllWhitespace(key))
       file.close(),
           throw(std::runtime_error("Invalid data in config file: " + key));

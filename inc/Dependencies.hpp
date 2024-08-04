@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Dependencies.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/04 11:39:15 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/04 17:15:48 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <arpa/inet.h>
 #include <cctype>
 #include <cerrno>
+#include <climits>
 #include <cmath>
 #include <csignal>
 #include <cstdio>
@@ -61,7 +62,5 @@
 
 // ---------------------MESSAGES
 #define DEFAULT_CONFIG_PATH "config/simple.conf"
-
-
 
 #endif

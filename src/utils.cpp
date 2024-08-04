@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 15:30:21 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/04 11:26:25 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/04 17:42:59 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,16 +122,20 @@ void displayServerConfigs(std::vector<ServerConfig> &serverConfigs)
     std::cout << "ServerConfig " << i
               << ", host: " << serverConfigs[i].getHost()
               << ", port: " << serverConfigs[i].getPort()
-              << ", server_names: " << serverConfigs[i].getServerNames()
-              << ", locations.size(): " << serverConfigs[i].locations.size()
-              << std::endl;
+              << ", maxBodySize: " << serverConfigs[i].maxBodySize
+              << ", root: " << serverConfigs[i].serverRoot
+              << ", index: " << serverConfigs[i].serverIndex << ", server_names"
+              << serverConfigs[i].getServerNames() << std::endl;
+    std::cout << "  locations.size(" << serverConfigs[i].locations.size()
+              << "): " << std::endl;
+
     for (std::map<std::string, LocationConfig>::iterator it
          = serverConfigs[i].locations.begin();
          it != serverConfigs[i].locations.end(); ++it)
     {
       std::cout << "  location " << it->first << ", root: " << it->second.root
-                << ", autoIndexOn: " << it->second.autoIndexOn
-                << ", index: " << it->second.index << std::endl;
+                << ", index: " << it->second.index
+                << ", autoIndexOn: " << it->second.autoIndexOn << std::endl;
 
       for (std::map<int, std::string>::iterator itR
            = it->second.redirection.begin();
@@ -153,11 +157,11 @@ void displayServerConfigs(std::vector<ServerConfig> &serverConfigs)
   }
 }
 
-std::string extractFirstWord(const std::string& str)
+std::string extractFirstWord(const std::string &str)
 {
-    std::istringstream stream(str);
-    std::string firstWord;
+  std::istringstream stream(str);
+  std::string firstWord;
 
-    stream >> firstWord;
-    return (firstWord);
+  stream >> firstWord;
+  return (firstWord);
 }

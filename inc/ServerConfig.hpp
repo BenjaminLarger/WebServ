@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/04 16:14:56 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/04 17:32:39 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,19 @@ struct LocationConfig
 class ServerConfig
 {
 private:
-  std::string host;
-  int port;
-  std::vector<std::string> serverNames;
-
-  int maxBodySize;
-  // std::map<int, std::string> errorPages;
-
 public:
-  std::map<std::string, LocationConfig> locations; // urlPattern, location block
-
   ServerConfig(void);
   ~ServerConfig();
+
+  std::string host;
+  int port;
+  long long maxBodySize;
+  std::vector<std::string> serverNames;
+  std::string serverRoot;  // root /var/www
+  std::string serverIndex; // index index.html
+  // std::map<int, std::string> errorPages;
+  std::map<std::string, LocationConfig> locations; // urlPattern, location block
+
   // Returns a list of all the server names as one string (to display in terminal)
   std::string getServerNames(void) const;
 
