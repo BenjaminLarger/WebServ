@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/03 14:39:59 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/04 11:55:58 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,10 @@
 #include "Webserv.hpp"
 #include "utils.hpp"
 
+#define BODY_BEFORE_CONTENT_ERROR "ERROR: content cannot be defined after body!"
+#define CONTENT_AFTER_BODY_ERROR "ERROR: body cannot be defined before content disposition!"
+#define CLOSING_BOUNDARY_ERROR "ERROR: Multipart/Form-Data must include closing boundary!"
+#define HAS_NOT_BOUNDARY_ERROR "ERROR: Multipart/Form-Data must include boundary separation!"
 class POST
 {
 
@@ -39,14 +43,28 @@ private:
 		//Header
 		std::map<int, std::string> contentDispositionMap;
 		std::map<int, std::string> contentTypeMap;
+		std::map<int, std::string> bodyMap;
+		std::map<int, bool> HasContentType;
+		std::map<int, bool> HasContentDisposition;
+		std::map<int, bool> HasBody;
+		int									ClientFD;
   //Util
   void extractFirstLine();
   void extractHeaders();
   void extractBody(int clientFD);
-  void extractUploadBody();
+  int extractMultipartFormData();
 
 	//Util uplaod file
-	std::map<int, std::string> headerUpload;
+	std::map<int, std::string>	headerUpload;
+	int													extractValues(std::string line, std::map<int, std::string> &myMap, int index, std::string key, std::map<int, bool> HasContent);
+	bool												isBoundary(std::string line, std::string boundary);
+	std::string									extractBoundary(const std::string& input);
+	bool												isClosingBoundary(std::string line, std::string boundary);
+	std::string									makeCopy(const std::string &original);
+
+
+
+	
 	bool	hasClosingBoundary;
   std::string	skipBoundaryPart(void);
 

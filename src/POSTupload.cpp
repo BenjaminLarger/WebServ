@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/03 18:46:37 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/04 12:33:30 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,20 @@ STRUCTURE
 		--boundary--
 */
 
-bool	isClosingBoundary(std::string line, std::string boundary)
+bool	lineIsEmpty(std::string line)
+{
+	for (int i = 0; line[i]; i++)
+	{
+		std::cout << (int)line[i] << ", ";
+		if ((line[i] < 9 || line[i] > 13) && line[i] != 32)
+			return (false);
+	}
+	std::cout << std::endl;
+	std::cout << ORANGE << "Line is empty!\n" << RESET;
+	return (true);
+}
+
+bool	POST::isClosingBoundary(std::string line, std::string boundary)
 {
 	if (line[line.size() - 1] == '\r' && line[line.size() - 2] == '-' && line[line.size() - 3] == '-')
 	{
@@ -47,28 +60,8 @@ bool	isClosingBoundary(std::string line, std::string boundary)
 	}
 	return (false);
 }
-std::string extractFirstWord(const std::string& str)
-{
-    std::istringstream stream(str);
-    std::string firstWord;
 
-    stream >> firstWord;
-    return (firstWord);
-}
-std::string makeCopy(const std::string &original)
-{
-    if (original.length() < 4) {
-        return "";
-    }
-    std::string copy;
-    for (size_t i = 4; i < original.length(); ++i) {
-        copy += original[i];
-    }
-		std::cout << RED << copy << RESET << std::endl;
-    return copy;
-}
-
-bool	isBoundary(std::string line, std::string boundary)
+bool	POST::isBoundary(std::string line, std::string boundary)
 {
 	std::string newline;
 	if (line[0] == '-' && line[1] == '-')
@@ -87,16 +80,24 @@ bool	isBoundary(std::string line, std::string boundary)
 	return (false);
 }
 
-void	extractValues(std::string line, std::map<int, std::string> &myMap, int index, std::string key)
+int	POST::extractValues(std::string line, std::map<int, std::string> &myMap, int index, std::string key, std::map<int, bool> HasContent)
 {
 	std::string values;
 
+	if (HasBody[index] == true)
+	{
+		std::cout << RED << "Body has been defined before content\n" << RESET;
+		sendall(ClientFD, BODY_BEFORE_CONTENT_ERROR, strlen(BODY_BEFORE_CONTENT_ERROR));
+		return (FAILURE);
+	}
 	values = line.substr(key.size() + 1);
 	myMap[index] = values;
 	std::cout << ORANGE << "map[" << index << "] = " << values << RESET << std::endl;	
+	HasContent[index] = true;
+	return (SUCCESS);
 }
 
-std::string extractBoundary(const std::string& input)
+std::string POST::extractBoundary(const std::string& input)
 {
    std::size_t pos = input.find('=');
 	 std::cout << "input = " << input << ", " << pos << std::endl;
@@ -116,7 +117,6 @@ std::string	POST::skipBoundaryPart(void)
 
 	requestStream.clear();
 	requestStream.seekg(0);
-	std::cout << "\nUPLOAD BODY :\n";
 	//skip until bundary
 	 while (std::getline(requestStream, line) && line[line.size() - 1] == '\r')
 	 {
@@ -126,7 +126,8 @@ std::string	POST::skipBoundaryPart(void)
 	 }
 	return (extractBoundary(contentType));
 }
-void	POST::extractUploadBody()
+
+int	POST::extractMultipartFormData()
 {
 	std::string	key;
 	std::string	value;
@@ -134,41 +135,75 @@ void	POST::extractUploadBody()
 	std::string line;
 	int			index = 0;
 	hasClosingBoundary = false;
+	HasContentType[0] = false;
+	HasContentDisposition[0] = false;
 	
 
 	std::cout << "\nUPLOAD BODY :\n";
+//Parse the Content-Type header to get the boundary string. => done
+//Ensure the boundary string is correctly identified and doesn't appear in the data. => to implement
 	boundary = skipBoundaryPart();
 	std::cout << boundary << std::endl;
 	if (boundary.empty())
-		return ; //handle error
+	{
+		std::cout << RED << "Boundary separartion not found!\n" << RESET;
+		sendall(ClientFD, HAS_NOT_BOUNDARY_ERROR, strlen(HAS_NOT_BOUNDARY_ERROR));
+		return (FAILURE); //handle error
+	}
 	while (std::getline(requestStream, line) && line[line.size() - 1] == '\r')
 	 {
 		std::cout << BLUE << line << std::endl;
 		key = extractFirstWord(line);
 		std::cout << "key = " << MAGENTA << key << RESET << std::endl;
 		if (isBoundary(line, boundary) == true)
+		{
+			//New part has been iddentified
+			std::cout << YELLOW << "New part iddentified!\n" << RESET;
 			index++;
+			HasContentType[index] = false;
+			HasContentDisposition[index] = false;
+			HasBody[index] = false;
+		}
 		else if (key == "Content-Disposition:")
 		{
-			extractValues(line, contentDispositionMap, index, key);
-			/* requestStream >> value;
-			contentDispositionMap[index] = value;
-			std::cout << YELLOW << "contentDispositionMap[" << index << "] = " << value << RESET << std::endl; */
+			std::cout << YELLOW << "Extracting Content Disposition\n" << RESET;
+			//Content-Disposition is madatory and specifies how the content is to be handled, often indicating form field names and filenames
+			if (extractValues(line, contentDispositionMap, index, key, HasContentDisposition) == FAILURE)
+				return (FAILURE);
 		}
 		else if (key == "Content-Type:")
 		{
-			extractValues(line, contentTypeMap, index, key);
-/* 			requestStream >> value;
-			this->contentTypeMap[index] = value;
-			std::cout << YELLOW << "contentTypeMap[" << index << "] = " << value << RESET << std::endl; */
+			std::cout << YELLOW << "Extracting Content Type\n" << RESET;
+			//This header is optional and specifies the media type of the content.
+			if (extractValues(line, contentTypeMap, index, key, HasContentType) == FAILURE)
+				return (FAILURE);
 		}
-		
-		//else if (!strncmp(line.c_str(), boundary.c_str(), boundary.size() - 2)/*  && boundary[boundary.size() - 2] == '-' && boundary[boundary.size() - 1] == '-' */)
 		else if (isClosingBoundary(line, boundary) == true)
 		{
-			std::cout << YELLOW << "Has closing boundary\n" << RESET;
+			std::cout << YELLOW << "Has closing boundary ==> return SUCCESS\n" << RESET;
 			hasClosingBoundary = true;
+			return (SUCCESS);
+		}
+		else if (HasContentDisposition[index] == false && lineIsEmpty(line) == false)
+		{
+			//Body apppears at the right place
+			std::cout << YELLOW << "Extracting Body\n" << RESET;
+			bodyMap[index] += line;
+			std::cout << "Body[" << index << "] = " << YELLOW << bodyMap[index] << RESET << std::endl;
+			HasBody[index] = true;
+		}
+		else if (lineIsEmpty(line) == false)
+		{
+			//Body appears before / without content disposition
+			std::cout << YELLOW << "Body appears before / without content disposition\n"<< RESET ;
+			sendall(ClientFD, CONTENT_AFTER_BODY_ERROR, strlen(CONTENT_AFTER_BODY_ERROR));
+			return (FAILURE);
 		}
 	 }
-	 
+	if (hasClosingBoundary == false)
+	{
+		sendall(ClientFD, CLOSING_BOUNDARY_ERROR, strlen(CLOSING_BOUNDARY_ERROR));
+		return (FAILURE);
+	}
+	return (SUCCESS);
 }

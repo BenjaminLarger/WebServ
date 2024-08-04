@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/03 13:27:16 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/04 12:37:07 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,19 @@ void POST::extractBody(int clientFD)
   else
     sendErrorResponse(clientFD, "411", "Length required");
   //close(clientFD);
+}
+
+std::string POST::makeCopy(const std::string &original)
+{
+    if (original.length() < 4) {
+        return "";
+    }
+    std::string copy;
+    for (size_t i = 4; i < original.length(); ++i) {
+        copy += original[i];
+    }
+		std::cout << RED << copy << RESET << std::endl;
+    return copy;
 }
 
 void POST::extractHeaders()
@@ -96,7 +109,7 @@ void POST::extractFirstLine()
 
 //We extract all the content of a POST request
 POST::POST(int serverFD, int clientFD, std::string &clientInput)
-    : contentLength(0)
+    : contentLength(0), ClientFD(clientFD)
 {
   (void)serverFD;
   (void)clientFD;
@@ -108,7 +121,8 @@ POST::POST(int serverFD, int clientFD, std::string &clientInput)
   if (contentType == "application/x-www-form-urlencoded")
   	extractBody(clientFD);
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
-	extractUploadBody();
+		extractMultipartFormData();
+	//clientInput.erase();
 }
 
 POST::~POST(void) {}
