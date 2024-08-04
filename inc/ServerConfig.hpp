@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/03 19:19:20 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/04 16:14:56 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 struct LocationConfig
 {
   // Define a list of accepted HTTP methods for the route
-  std::vector<std::string> allowedMethods; // limit_except GET POST DELETE
+  std::vector<std::string> allowedMethods; // allow_methods GET POST DELETE
 
   // Define an HTTP redirection
   std::map<int, std::string>

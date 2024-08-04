@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 18:23:26 by demre             #+#    #+#             */
-/*   Updated: 2024/08/03 19:19:01 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/04 16:14:36 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
 
     if (key.size() && key[0] == '#')
       continue;
-    else if (key == "limit_except") // list of accepted HTTP methods
+    else if (key == "allow_methods") // list of accepted HTTP methods
     {
       while (ss >> valueStr)
       {
