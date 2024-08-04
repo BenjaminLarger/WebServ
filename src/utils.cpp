@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 15:30:21 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/03 19:37:06 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/04 11:26:25 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,4 +151,13 @@ void displayServerConfigs(std::vector<ServerConfig> &serverConfigs)
     }
     std::cout << std::endl;
   }
+}
+
+std::string extractFirstWord(const std::string& str)
+{
+    std::istringstream stream(str);
+    std::string firstWord;
+
+    stream >> firstWord;
+    return (firstWord);
 }

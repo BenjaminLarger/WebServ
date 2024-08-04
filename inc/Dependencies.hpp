@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/03 18:39:14 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/04 11:39:15 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,13 @@
 #define WHITE "\033[1; 37m"
 #define GREY "\033[1;30m"
 
+// ---------------------FUNCTION RESTURNS
+#define SUCCESS 1
+#define FAILURE -1
+
 // ---------------------MESSAGES
 #define DEFAULT_CONFIG_PATH "config/simple.conf"
+
+
 
 #endif
