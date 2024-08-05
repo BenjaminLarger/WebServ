@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/04 17:32:39 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 18:23:53 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,13 @@ public:
   ServerConfig(void);
   ~ServerConfig();
 
-  std::string host;
-  int port;
-  long long maxBodySize;
-  std::vector<std::string> serverNames;
-  std::string serverRoot;  // root /var/www
-  std::string serverIndex; // index index.html
-  // std::map<int, std::string> errorPages;
+  std::string host;                      // 127.0.0.1
+  int port;                              // listen 8080;
+  long long maxBodySize;                 // client_max_body_size 1000;
+  std::vector<std::string> serverNames;  // server_names ex.com www.ex.com;
+  std::string serverRoot;                // root /var/www
+  std::string serverIndex;               // index index.html
+  std::map<int, std::string> errorPages; // error_page 404 /404.html;
   std::map<std::string, LocationConfig> locations; // urlPattern, location block
 
   // Returns a list of all the server names as one string (to display in terminal)

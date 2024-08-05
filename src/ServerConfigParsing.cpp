@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 14:33:15 by demre             #+#    #+#             */
-/*   Updated: 2024/08/04 17:31:06 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 18:10:01 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void ServerConfig::reset()
   locations.clear();
   serverRoot.clear();
   serverIndex.clear();
+  errorPages.clear();
 }
 
 std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
@@ -73,7 +74,7 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
       {
         ss >> valueStr;
         if (config.host.size() || !valueStr.size()
-            || checkStreamForRemainingContent(ss))
+            || streamHasRemainingContent(ss))
           file.close(), throw(std::runtime_error(
                             "Unexpected characters in config file: " + line));
 
@@ -83,7 +84,7 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
       {
         ss >> valueLong;
         if (valueLong < 1024 || valueLong > 65535
-            || checkStreamForRemainingContent(ss))
+            || streamHasRemainingContent(ss))
           file.close(), throw(std::runtime_error(
                             "Incorrect port in config file: " + line));
 
@@ -107,7 +108,7 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
       {
         ss >> valueLong;
         if (config.maxBodySize > 0 || valueLong < 1 || valueLong > INT_MAX
-            || checkStreamForRemainingContent(ss))
+            || streamHasRemainingContent(ss))
           file.close(),
               throw(std::runtime_error(
                   "Incorrect client_max_body_size in config file: " + line));
@@ -127,12 +128,25 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
       }
       else if (key == "error_page")
       {
+        ss >> valueLong >> valueStr;
+        if ((!(valueLong >= 400 && valueLong <= 429) && valueLong != 431
+             && valueLong != 451 && !(valueLong >= 500 && valueLong <= 508)
+             && valueLong != 510 && valueLong != 511)
+            || !valueStr.size() || streamHasRemainingContent(ss))
+          file.close(), throw(std::runtime_error(
+                            "Incorrect error_page in config file: " + line));
+
+        if (hasDuplicates(config.errorPages, static_cast<int>(valueLong)))
+          file.close(), throw(std::runtime_error(
+                            "Duplicate error_page in config file: " + line));
+
+        config.errorPages[valueLong] = valueStr;
       }
       else if (key == "root")
       {
         ss >> valueStr;
         if (config.serverRoot.size() || !valueStr.size()
-            || checkStreamForRemainingContent(ss))
+            || streamHasRemainingContent(ss))
           file.close(),
               throw(std::runtime_error(
                   "Unexpected characters in location block: " + line));
@@ -142,7 +156,7 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
       {
         ss >> valueStr;
         if (config.serverIndex.size() || !valueStr.size()
-            || checkStreamForRemainingContent(ss))
+            || streamHasRemainingContent(ss))
           file.close(),
               throw(std::runtime_error(
                   "Unexpected characters in location block: " + line));
@@ -207,6 +221,11 @@ bool ServerConfig::checkConfig(std::vector<int> &tempPorts)
   // Check port present
   if (tempPorts.size() == 0)
     return (false);
+
+  // Set default maxBodySize
+  if (this->maxBodySize == -1)
+    this->maxBodySize = 1000000;
+
   return (true);
 }
 

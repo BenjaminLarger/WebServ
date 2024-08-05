@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 18:23:26 by demre             #+#    #+#             */
-/*   Updated: 2024/08/04 17:47:11 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 18:20:47 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
 {
   std::string line;
+  this->locations[urlPattern].autoIndexOn = false; // set default
 
   // std::cout << "urlPattern: '" << urlPattern << "'" << std::endl;
 
@@ -53,7 +54,7 @@ void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
     {
       long long valueLong;
       ss >> valueLong >> valueStr;
-      if (!valueStr.size() || checkStreamForRemainingContent(ss)
+      if (!valueStr.size() || streamHasRemainingContent(ss)
           || (valueLong != 301 && valueLong != 302 && valueLong != 303
               && valueLong != 307 && valueLong != 308))
         file.close(),
@@ -65,7 +66,7 @@ void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
     else if (key == "root") // where the file should be searched
     {
       ss >> valueStr;
-      if (!valueStr.size() || checkStreamForRemainingContent(ss))
+      if (!valueStr.size() || streamHasRemainingContent(ss))
         file.close(), throw(std::runtime_error(
                           "Unexpected characters in location block: " + line));
 
@@ -77,7 +78,7 @@ void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
     {
       ss >> valueStr;
       if ((valueStr != "on" && valueStr != "off")
-          || checkStreamForRemainingContent(ss))
+          || streamHasRemainingContent(ss))
         file.close(),
             throw(std::runtime_error(
                 "Incorrect directory listing data in location block: " + line));
@@ -90,7 +91,7 @@ void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
     else if (key == "index") // default file if the request is a directory
     {
       ss >> valueStr;
-      if (!valueStr.size() || checkStreamForRemainingContent(ss))
+      if (!valueStr.size() || streamHasRemainingContent(ss))
         file.close(), throw(std::runtime_error(
                           "Unexpected characters in location block: " + line));
 

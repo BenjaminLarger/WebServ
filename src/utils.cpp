@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 15:30:21 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/04 17:42:59 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 18:25:29 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,24 @@ std::string intToString(int value)
   return (oss.str());
 }
 
-bool checkStreamForRemainingContent(std::stringstream &ss)
+bool streamHasRemainingContent(std::stringstream &ss)
 {
   std::string remaining;
   ss >> remaining;
   if (!remaining.empty() && remaining[remaining.size() - 1] == ';')
     remaining.erase(remaining.size() - 1); // Remove trailing semicolon
   // std::cout << "remaining: '" << remaining << "'" << std::endl;
+  if (!remaining.empty())
+    return (true);
+  return (false);
+}
+
+bool streamHasRemainingContent(std::istringstream &iss)
+{
+  std::string remaining;
+  iss >> remaining;
+  if (!remaining.empty() && remaining[remaining.size() - 1] == ';')
+    remaining.erase(remaining.size() - 1); // Remove trailing semicolon
   if (!remaining.empty())
     return (true);
   return (false);
@@ -84,30 +95,42 @@ void trimTrailingWS(std::string &line)
   line = line.substr(0, end + 1);
 }
 
-bool hasDuplicates(const std::vector<int> &vec)
+bool hasDuplicates(const std::vector<int> &container)
 {
-  for (std::vector<int>::size_type i = 0; i < vec.size(); ++i)
+  for (std::vector<int>::size_type i = 0; i < container.size(); ++i)
   {
     // Compare the current element with all subsequent elements
-    for (std::vector<int>::size_type j = i + 1; j < vec.size(); ++j)
+    for (std::vector<int>::size_type j = i + 1; j < container.size(); ++j)
     {
-      if (vec[i] == vec[j])
+      if (container[i] == container[j])
         return (true);
     }
   }
   return (false);
 }
 
-bool hasDuplicates(const std::vector<std::string> &vec)
+bool hasDuplicates(const std::vector<std::string> &container)
 {
-  for (std::vector<std::string>::size_type i = 0; i < vec.size(); ++i)
+  for (std::vector<std::string>::size_type i = 0; i < container.size(); ++i)
   {
-    // Compare the current element with all subsequent elements
-    for (std::vector<std::string>::size_type j = i + 1; j < vec.size(); ++j)
+    for (std::vector<std::string>::size_type j = i + 1; j < container.size();
+         ++j)
     {
-      if (vec[i] == vec[j])
+      if (container[i] == container[j])
         return (true);
     }
+  }
+  return (false);
+}
+
+bool hasDuplicates(const std::map<int, std::string> &container, int value)
+{
+  std::map<int, std::string>::const_iterator it;
+
+  for (it = container.begin(); it != container.end(); ++it)
+  {
+    if (it->first == value)
+      return (true);
   }
   return (false);
 }
@@ -126,32 +149,44 @@ void displayServerConfigs(std::vector<ServerConfig> &serverConfigs)
               << ", root: " << serverConfigs[i].serverRoot
               << ", index: " << serverConfigs[i].serverIndex << ", server_names"
               << serverConfigs[i].getServerNames() << std::endl;
+
+    std::cout << "  errorPages.size(" << serverConfigs[i].errorPages.size()
+              << "): ";
+    for (std::map<int, std::string>::iterator it
+         = serverConfigs[i].errorPages.begin();
+         it != serverConfigs[i].errorPages.end(); ++it)
+    {
+      std::cout << it->first << " " << it->second;
+      if (it != --serverConfigs[i].errorPages.end())
+        std::cout << ", ";
+    }
+    std::cout << std::endl;
+
     std::cout << "  locations.size(" << serverConfigs[i].locations.size()
               << "): " << std::endl;
-
     for (std::map<std::string, LocationConfig>::iterator it
          = serverConfigs[i].locations.begin();
          it != serverConfigs[i].locations.end(); ++it)
     {
-      std::cout << "  location " << it->first << ", root: " << it->second.root
-                << ", index: " << it->second.index
-                << ", autoIndexOn: " << it->second.autoIndexOn << std::endl;
-
-      for (std::map<int, std::string>::iterator itR
-           = it->second.redirection.begin();
-           itR != it->second.redirection.end(); ++itR)
-      {
-        std::cout << "    redirection:  " << itR->first << " " << itR->second
-                  << std::endl;
-      }
-
-      std::cout << "    allowedMethods: ";
+      std::cout << "    location  " << it->first
+                << ", root: " << it->second.root
+                << ", index:  " << it->second.index
+                << ", autoIndexOn:  " << it->second.autoIndexOn
+                << ", allowedMethods: ";
       for (unsigned long itAM = 0; itAM < it->second.allowedMethods.size();
            ++itAM)
       {
         std::cout << it->second.allowedMethods[itAM] << " ";
       }
       std::cout << std::endl;
+
+      for (std::map<int, std::string>::iterator itR
+           = it->second.redirection.begin();
+           itR != it->second.redirection.end(); ++itR)
+      {
+        std::cout << "      redirection:  " << itR->first << " " << itR->second
+                  << std::endl;
+      }
     }
     std::cout << std::endl;
   }
