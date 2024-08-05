@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:15:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/04 17:43:49 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:56:01 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ There are three possibilities for enctype:
 - text/plain. This is "not reliably interpretable by computer", so it should never be used in production, and we will not look further into it. */
 
 #include "ServerConfig.hpp"
-#include "utils.hpp"
+#include "core.hpp"
 
 ServerConfig::ServerConfig(void) {}
 

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 15:30:21 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/05 19:55:02 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 20:00:31 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,8 @@ void displayServerConfigs(std::vector<ServerConfig> &serverConfigs)
               << ", port: " << serverConfigs[i].getPort()
               << ", maxBodySize: " << serverConfigs[i].maxBodySize
               << ", root: " << serverConfigs[i].serverRoot
-              << ", index: " << serverConfigs[i].serverIndex << ", server_names"
+              << ", index: " << serverConfigs[i].serverIndex
+              << ", alias: " << serverConfigs[i].serverAlias << ", server_names"
               << serverConfigs[i].getServerNames() << std::endl;
 
     std::cout << "  errorPages.size(" << serverConfigs[i].errorPages.size()
@@ -150,6 +151,7 @@ void displayServerConfigs(std::vector<ServerConfig> &serverConfigs)
       std::cout << "    location  " << it->first
                 << ", root: " << it->second.root
                 << ", index:  " << it->second.index
+                << ", alias:  " << it->second.alias
                 << ", autoIndexOn:  " << it->second.autoIndexOn
                 << ", allowedMethods: ";
       for (unsigned long itAM = 0; itAM < it->second.allowedMethods.size();

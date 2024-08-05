@@ -6,12 +6,12 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 18:23:26 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 19:11:40 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:56:10 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerConfig.hpp"
-#include "utils.hpp"
+#include "core.hpp"
 
 void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
 {

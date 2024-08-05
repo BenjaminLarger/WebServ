@@ -6,12 +6,12 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 14:33:15 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 19:14:37 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:56:15 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerConfig.hpp"
-#include "utils.hpp"
+#include "core.hpp"
 
 void ServerConfig::reset()
 {
@@ -214,6 +214,19 @@ void ServerConfig::validateAndSanitizeServerLine(std::string &line,
 
 bool ServerConfig::checkConfig(std::vector<int> &tempPorts)
 {
+  // Add default values
+
+  // Set default maxBodySize
+  if (this->maxBodySize == -1)
+    this->maxBodySize = 1000000;
+
+  // Set default root
+  if (this->serverRoot.size() == 0)
+    this->serverRoot = "/var/www";
+
+  // Set default index file
+  if (this->serverIndex.size() == 0)
+    this->serverIndex = "index.html";
   // Add default host if needed
   if (this->getHost().size() == 0)
   {
@@ -232,18 +245,6 @@ bool ServerConfig::checkConfig(std::vector<int> &tempPorts)
   // Check port present
   if (tempPorts.size() == 0)
     return (false);
-
-  // Set default maxBodySize
-  if (this->maxBodySize == -1)
-    this->maxBodySize = 1000000;
-
-  // Set default root
-  if (this->serverRoot.size() == 0)
-    this->serverRoot = "/";
-
-  // Set default index file
-  if (this->serverIndex.size() == 0)
-    this->serverIndex = "index.html";
 
   return (true);
 }
