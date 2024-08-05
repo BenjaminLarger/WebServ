@@ -1,0 +1,25 @@
+# Key Theoretical Aspects of curl:
+## HTTP Methods:
+
+### curl supports various HTTP methods including GET, POST, PUT, DELETE, etc.
+Syntax: curl -X <METHOD> <URL>
+Headers:
+
+### You can set custom headers in your requests using the -H option.
+Syntax: curl -H "Content-Type: application/json" <URL>
+Data Transfer:
+
+### For POST requests, you can send data using -d or --data.
+Syntax: curl -d "key=value" <URL>
+File Uploads:
+
+### To upload files, use the -F option for multipart/form-data requests.
+Syntax: curl -F "file=@/path/to/file" <URL>
+Verbose Mode:
+
+### Use the -v option to get detailed information about the request and response.
+Syntax: curl -v <URL>
+Authentication:
+
+### curl supports various authentication mechanisms like Basic, Digest, OAuth, etc.
+Syntax for Basic Auth: curl -u username:password <URL>

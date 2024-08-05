@@ -2,3 +2,9 @@ GET /index.html HTTP/1.1
 Host: www.example.com Accept: text/html
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
 
+USING CURL
+curl http://localhost:8080/path/to/resource
+=> curl http://localhost:8080/
+=> curl http://localhost:8080/silence
+=> curl http://localhost:8080/error
+

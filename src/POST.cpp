@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/04 12:37:07 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/05 11:28:02 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void POST::extractHeaders()
 			break;
   }
 
-	std::cout << "\nEXTRACT HEADER :\n" ;
+	std::cout << RESET << "\nEXTRACT HEADER :\n" ;
   std::cout << YELLOW << "content-type: " << this->contentType << std::endl;
   std::cout << "content-length: " << this->contentLength << std::endl;
   std::cout << "host: " << this->host << RESET << std::endl;

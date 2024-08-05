@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/04 11:55:58 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/05 12:43:47 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,12 +55,14 @@ private:
   int extractMultipartFormData();
 
 	//Util uplaod file
+	void												readAllRequest(void); //can delete before submit project
 	std::map<int, std::string>	headerUpload;
-	int													extractValues(std::string line, std::map<int, std::string> &myMap, int index, std::string key, std::map<int, bool> HasContent);
+	int													extractValues(std::string line, std::map<int, std::string> &myMap, int index, std::string key, std::map<int, bool> &HasContent);
 	bool												isBoundary(std::string line, std::string boundary);
 	std::string									extractBoundary(const std::string& input);
 	bool												isClosingBoundary(std::string line, std::string boundary);
 	std::string									makeCopy(const std::string &original);
+	int													parseContent(int index);
 
 
 

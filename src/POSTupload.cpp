@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/04 12:33:30 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/05 12:53:10 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ bool	POST::isBoundary(std::string line, std::string boundary)
 	return (false);
 }
 
-int	POST::extractValues(std::string line, std::map<int, std::string> &myMap, int index, std::string key, std::map<int, bool> HasContent)
+int	POST::extractValues(std::string line, std::map<int, std::string> &myMap, int index, std::string key, std::map<int, bool> &HasContent)
 {
 	std::string values;
 
@@ -111,20 +111,66 @@ std::string POST::extractBoundary(const std::string& input)
 	return "";
 }
 
-std::string	POST::skipBoundaryPart(void)
+void	POST::readAllRequest()
 {
 	std::string line;
 
 	requestStream.clear();
 	requestStream.seekg(0);
+	std::cout << "\n--------------READING ALL CONTENT--------------";
+	while (std::getline(requestStream, line) && line[line.size() - 1] == '\r')
+	 {
+		std::cout << "\n" << MAGENTA << line << RESET;
+	 }
+	 std::cout << std::endl;
+}
+std::string	POST::skipBoundaryPart(void)
+{
+	std::string line;
+
+	readAllRequest();
+	requestStream.clear();
+	requestStream.seekg(0);
 	//skip until bundary
 	 while (std::getline(requestStream, line) && line[line.size() - 1] == '\r')
 	 {
-		std::cout << "\n" << MAGENTA << line << RESET << std::endl;
+		//std::cout << "\n" << MAGENTA << "line = "<< line << RESET << std::endl;
 		if (!strncmp(line.c_str(), "--", 2))
 			break;		
 	 }
 	return (extractBoundary(contentType));
+}
+
+int	POST::parseContent(int index)
+{
+	std::string	key;
+
+	std::cout << "index = " << index << std::endl;
+	for (int i = 0; i < index; i++)
+	{
+		if (HasContentDisposition[i] == false)
+		{
+			std::cout << RED << index << " has not content disposition!" << RESET << std::endl;
+			return (FAILURE);
+		}
+		key = extractFirstWord(contentDispositionMap[index]);
+		std::cout << BLUE << "key = " <<  key << RESET << std::endl;
+		if (key != "form-data;" && key != "form-data;")
+			std::cout << RED << "Webserver can only handle form-data key of content disposition!\n" << RESET << std::endl;
+		else
+		{
+			
+		}
+		
+		/* std::istringstream stream(contentDispositionMap[index]);
+		stream >> str;
+		while (str.empty() == false)
+		{
+			
+		} */
+		
+	}
+	return (SUCCESS);
 }
 
 int	POST::extractMultipartFormData()
@@ -143,11 +189,11 @@ int	POST::extractMultipartFormData()
 //Parse the Content-Type header to get the boundary string. => done
 //Ensure the boundary string is correctly identified and doesn't appear in the data. => to implement
 	boundary = skipBoundaryPart();
-	std::cout << boundary << std::endl;
+	std::cout << "boundary = " << boundary << std::endl;
 	if (boundary.empty())
 	{
 		std::cout << RED << "Boundary separartion not found!\n" << RESET;
-		sendall(ClientFD, HAS_NOT_BOUNDARY_ERROR, strlen(HAS_NOT_BOUNDARY_ERROR));
+		//sendall(ClientFD, HAS_NOT_BOUNDARY_ERROR, strlen(HAS_NOT_BOUNDARY_ERROR));
 		return (FAILURE); //handle error
 	}
 	while (std::getline(requestStream, line) && line[line.size() - 1] == '\r')
@@ -180,11 +226,11 @@ int	POST::extractMultipartFormData()
 		}
 		else if (isClosingBoundary(line, boundary) == true)
 		{
-			std::cout << YELLOW << "Has closing boundary ==> return SUCCESS\n" << RESET;
+			std::cout << GREEN << "Has closing boundary ==> return SUCCESS\n" << RESET;
 			hasClosingBoundary = true;
-			return (SUCCESS);
+			return (parseContent(index));
 		}
-		else if (HasContentDisposition[index] == false && lineIsEmpty(line) == false)
+		else if (HasContentDisposition[index] == true && lineIsEmpty(line) == false)
 		{
 			//Body apppears at the right place
 			std::cout << YELLOW << "Extracting Body\n" << RESET;
@@ -200,10 +246,11 @@ int	POST::extractMultipartFormData()
 			return (FAILURE);
 		}
 	 }
-	if (hasClosingBoundary == false)
+/* 	if (hasClosingBoundary == false)
 	{
 		sendall(ClientFD, CLOSING_BOUNDARY_ERROR, strlen(CLOSING_BOUNDARY_ERROR));
 		return (FAILURE);
-	}
-	return (SUCCESS);
+	} */
+	std::cout << GREEN << "Has not closing boundary ==> return SUCCESS\n" << RESET << std::endl;
+	return (parseContent(index));
 }
