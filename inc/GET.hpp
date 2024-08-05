@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/07/31 21:10:56 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:18:25 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 #include "Webserv.hpp"
 
-class GET /* : public Webserv */
+class GET
 {
 
 private:
@@ -32,8 +32,7 @@ private:
   std::string body;
 
 public:
-  GET(/* Webserv &_server, */ int serverFD, int clientFD,
-      std::string &clientInput);
+  GET(int serverFD, int clientFD, std::string &clientInput);
   GET();
   ~GET(void);
 

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/01 19:55:39 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:17:58 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,11 +161,11 @@ GET::GET(/* Webserv &server, */ int serverFD, int clientFD,
     else
     {
       if (this->pathToRessource == "/silence")
-        responseBody = extractHtmlContent("public/body/silence.html");
+        responseBody = extractHtmlContent("var/www/silence.html");
       else if (this->pathToRessource == "/")
-        responseBody = extractHtmlContent("public/body/main.html");
+        responseBody = extractHtmlContent("var/www/index.html");
       else
-        responseBody = extractHtmlContent("public/error_pages/404.html");
+        responseBody = extractHtmlContent("var/www/errors/404.html");
     }
     sendResponse(clientFD, responseBody);
     // std::cout << "response sent." << std::endl;
