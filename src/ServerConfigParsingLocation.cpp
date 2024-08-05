@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 18:23:26 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 18:20:47 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:11:40 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,15 @@ void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
                           "Unexpected characters in location block: " + line));
 
       this->locations[urlPattern].root = valueStr;
+    }
+    else if (key == "alias")
+    {
+      ss >> valueStr;
+      if (!valueStr.size() || streamHasRemainingContent(ss))
+        file.close(), throw(std::runtime_error(
+                          "Unexpected characters in location block: " + line));
+
+      this->locations[urlPattern].alias = valueStr;
     }
     // What is Directory Listing?
     // Directory listing is a feature that allows the server to display the contents of a directory if no specific file is requested. When enabled, accessing a directory URL without a specified file will list all files and subdirectories within that directory.

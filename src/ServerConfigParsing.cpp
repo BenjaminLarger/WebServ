@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 14:33:15 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 18:10:01 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:14:37 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void ServerConfig::reset()
   serverNames.clear();
   locations.clear();
   serverRoot.clear();
+  serverAlias.clear();
   serverIndex.clear();
   errorPages.clear();
 }
@@ -152,6 +153,16 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
                   "Unexpected characters in location block: " + line));
         config.serverRoot = valueStr;
       }
+      else if (key == "alias")
+      {
+        ss >> valueStr;
+        if (config.serverAlias.size() || !valueStr.size()
+            || streamHasRemainingContent(ss))
+          file.close(),
+              throw(std::runtime_error(
+                  "Unexpected characters in location block: " + line));
+        config.serverAlias = valueStr;
+      }
       else if (key == "index")
       {
         ss >> valueStr;
@@ -225,6 +236,14 @@ bool ServerConfig::checkConfig(std::vector<int> &tempPorts)
   // Set default maxBodySize
   if (this->maxBodySize == -1)
     this->maxBodySize = 1000000;
+
+  // Set default root
+  if (this->serverRoot.size() == 0)
+    this->serverRoot = "/";
+
+  // Set default index file
+  if (this->serverIndex.size() == 0)
+    this->serverIndex = "index.html";
 
   return (true);
 }
