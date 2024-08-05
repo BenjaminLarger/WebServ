@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 11:28:02 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/05 17:35:52 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ void POST::extractBody(int clientFD)
     std::string response
         = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n";
     response += "POST data received.\n";
+    std::cout << "Enviando datos al cliente..." << std::endl;
+    std::cout << "Datos: " << response << std::endl;
     if (sendall(clientFD, response.c_str(), response.size()) == -1)
       perror("Data failed to be sent to the client");
     //send(clientFD, response.c_str(), response.size(), 0);
@@ -118,7 +120,7 @@ POST::POST(int serverFD, int clientFD, std::string &clientInput)
   std::cout << std::endl << "--------POST request---------" << std::endl;
   extractFirstLine();
   extractHeaders();
-  if (contentType == "application/x-www-form-urlencoded")
+  if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded", 33))
   	extractBody(clientFD);
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
 		extractMultipartFormData();
