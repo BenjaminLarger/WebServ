@@ -6,12 +6,12 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:54:52 by demre             #+#    #+#             */
-/*   Updated: 2024/08/01 19:54:58 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:55:52 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
-#include "utils.hpp"
+#include "core.hpp"
 
 void sendErrorResponse(int clientSocket, std::string statusCode,
                        const std::string &statusMessage)

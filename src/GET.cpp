@@ -6,13 +6,13 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/05 19:17:58 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:55:57 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GET.hpp"
 #include "CGI.hpp"
-#include "utils.hpp"
+#include "core.hpp"
 
 void GET::setAccept(const std::string &_accept) { this->accept = _accept; }
 void GET::setHost(const std::string &_host) { this->host = _host; }

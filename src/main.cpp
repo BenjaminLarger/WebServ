@@ -6,12 +6,12 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 09:46:47 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/03 19:23:31 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:56:19 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
-#include "utils.hpp"
+#include "core.hpp"
 
 int main(int argc, const char **argv)
 {

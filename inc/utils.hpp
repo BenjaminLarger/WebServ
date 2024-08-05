@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 19:45:39 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:52:44 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@
 
 #include "ServerConfig.hpp"
 #include "dependencies.hpp"
-
-int sendall(int s, const char *buf, int len);
 
 // Checks whether a string is all whitespace
 bool isAllWhitespace(const std::string &str);
