@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/01 19:52:58 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:44:56 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,9 @@
 #ifndef WEBSERV_HPP
 #define WEBSERV_HPP
 
-// #include "ConfigurationFile.hpp"
 #include "ClientInfo.hpp"
-#include "Dependencies.hpp"
 #include "ServerConfig.hpp"
+#include "dependencies.hpp"
 
 // ************************************************************************** //
 //                               Class //

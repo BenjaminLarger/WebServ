@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 20:29:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 12:22:47 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:44:32 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #ifndef CLIENT_INFO_HPP
 #define CLIENT_INFO_HPP
 
-#include "Dependencies.hpp"
+#include "dependencies.hpp"
 
 class ClientInfo
 {

@@ -6,12 +6,12 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 15:30:21 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/05 18:25:29 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:46:08 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.hpp"
-#include "Dependencies.hpp"
+#include "dependencies.hpp"
 
 int sendall(int s, const char *buf, int len)
 {
