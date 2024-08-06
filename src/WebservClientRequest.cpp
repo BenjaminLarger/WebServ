@@ -14,6 +14,12 @@
 #include "POST.hpp"
 #include "Webserv.hpp"
 
+// void Webserv::manageRequestLocation(
+//     size_t serverIndex, const std::vector<ServerConfig> &serverConfigs)
+// {
+
+// }
+
 void Webserv::handleClientRequest(
     size_t i, const std::vector<ServerConfig> &serverConfigs)
 {
@@ -42,11 +48,11 @@ void Webserv::handleClientRequest(
 
     std::cout << "Received on serverIndex " << serverIndex << ", port "
               << clients[i].port << ", clients[i].socketFD "
-              << clients[i].socketFD << ": " << buffer << std::endl;
+              << clients[i].socketFD << ": " << buffer << "location" << std::endl;
 
     std::string &clientBuffer = clients[i].buffer;
     clientBuffer += buffer;
-
+    //manageRequestLocation(serverIndex, &serverConfigs);
     if (!strncmp("GET ", clientBuffer.c_str(), 4))
       GET method(serverIndex, fds[i].fd, clients[i].buffer);
     // else if (!strncmp("DELETE ", clientBuffer.c_str(), 7))
