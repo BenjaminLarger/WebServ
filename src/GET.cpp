@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/06 15:09:19 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/06 17:13:34 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,26 +110,68 @@ void GET::sendResponse(int clientFD, std::string responseBody)
     perror("Data failed to be sent to the client");
 }
 
-std::string  GET::handleLocations(std::string pathToResource, int serverIndex, const std::vector<ServerConfig> &serverConfigs)
+std::string GET::handleLocations(std::string pathToResource, int serverIndex,
+                                 const std::vector<ServerConfig> &serverConfigs)
 {
   std::string responseBody;
-  std::map<std::string, LocationConfig> locations = serverConfigs[serverIndex].locations;
-  std::map<std::string, LocationConfig>::iterator it = locations.find(pathToResource);
+  std::map<std::string, LocationConfig> locations
+      = serverConfigs[serverIndex].locations;
+  std::map<std::string, LocationConfig>::iterator it
+      = locations.find(pathToResource);
 
-  if (it != locations.end()) {
-    std::string index = it->second.index;
+  if (it != locations.end()) // pathToResource == it->first
+  {
+    std::string path;
     std::string root = it->second.root;
-    trimTrailingWS(index);
-    trimTrailingWS(root);
-    responseBody =  extractHtmlContent("." + root + "/" + index);
-    return (responseBody);
-  } else {
+
+    if (!pathToResource.empty()
+        && pathToResource[pathToResource.size() - 1] == '/')
+      path = "." + root + pathToResource;
+    else
+      path = "." + root + pathToResource + "/";
+
+    std::cout << "path: '" << path
+              << "' isDirectory(path): " << isDirectory(path) << std::endl;
+
+    // Check if the location has a file to serve
+    if (!it->second.index.empty())
+    {
+      path += it->second.index;
+      responseBody = extractHtmlContent(path);
+      return (responseBody);
+    }
+    // If location doesn't have a file, is a folder, and autoindex on
+    else if (!it->second.index.size() && isDirectory(path)
+             && it->second.autoIndexOn)
+    {
+      std::vector<std::string> contents = listDirectoryContent(path);
+      responseBody = generateDirectoryListing(pathToResource + "/", contents);
+
+      return (responseBody);
+    }
+    // Else: no file, is a folder, but autoindex off
+    else
+    {
+      // This should be a redirect to 403 error page
+
+      // 403 Forbidden Response
+      responseBody = "HTTP/1.1 403 Forbidden\r\n"
+                     "Content-Type: text/html\r\n\r\n"
+                     "<html><body><h1>403 Forbidden</h1>"
+                     "<p>You don't have permission to access "
+                     "this directory.</p></body></html>";
+      return (responseBody);
+    }
+  }
+  else
+  {
     throw std::runtime_error("Location not found for path: " + pathToResource);
   }
 }
 
 GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
-         std::string &clientInput, const std::vector<ServerConfig> &serverConfigs)
+         std::string &clientInput,
+         const std::vector<ServerConfig> &serverConfigs)
 {
   // (void)server;
   (void)clientInput;
@@ -137,7 +179,8 @@ GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
 
   // std::cout << RED << countJumpLine(clientInput)
   //         << " jumplines in client request!" << RESET << std::endl;
-  if (countJumpLine(clientInput) < 3) //Change with if receive a blank line => erase buffer
+  if (countJumpLine(clientInput)
+      < 3) //Change with if receive a blank line => erase buffer
     return;
   std::istringstream isLine(clientInput);
   std::string key;
@@ -176,7 +219,8 @@ GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
     if (this->pathToRessource.find(".php") != std::string::npos)
       responseBody = executePhp(this->pathToRessource);
     else
-      responseBody = handleLocations(pathToRessource, serverIndex, serverConfigs);
+      responseBody
+          = handleLocations(pathToRessource, serverIndex, serverConfigs);
     sendResponse(clientFD, responseBody);
     // std::cout << "response sent." << std::endl;
   }
