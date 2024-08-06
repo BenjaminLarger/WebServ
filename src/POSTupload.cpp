@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/06 17:18:12 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/06 19:23:13 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,8 +193,8 @@ int	POST::extractMultipartFormData()
 		{
 			//Body appears before / without content disposition
 			std::cout << YELLOW << "Body appears before / without content disposition\n"<< RESET ;
-			sendall(ClientFD, CONTENT_AFTER_BODY_ERROR, strlen(CONTENT_AFTER_BODY_ERROR));
-			return (FAILURE);
+			//sendall(ClientFD, CONTENT_AFTER_BODY_ERROR, strlen(CONTENT_AFTER_BODY_ERROR));
+			return (FAILURE); //throw error
 		}
 	 }
 /* 	if (hasClosingBoundary == false)
@@ -211,19 +211,29 @@ int POST::handleFileUpload(int index)
 	std::string directory = "./upload/";
 	for (int i = 0; i <= index; i++)
 	{
-		std::string	filePath = directory + contentMap[i].filename;
-		std::cout << MAGENTA << "filepath = " << filePath << RESET << std::endl;
-		std::ofstream outFile(filePath.c_str(), std::ios::binary);
-		if (!outFile)
-		{
-			std::cerr << RED << "ERROR: Failed to create outfile " << contentMap[i].filename << "!\n" << RESET << std::endl;
-			std::cerr << "Error code: " << errno << " (" << std::strerror(errno) << ")" << std::endl;
-			return (FAILURE);
-			//throw error
-		}
-		outFile.write(contentMap[i].body.c_str(), contentMap[i].body.size());
+		if (lineIsEmpty(contentMap[i].filename) == false)
+			{
+			std::string	filePath = directory + contentMap[i].filename;
+			std::cout << MAGENTA << "filepath = " << filePath << RESET << std::endl;
+			std::ofstream outFile(filePath.c_str(), std::ios::binary);
+			if (!outFile)
+			{
+				std::cerr << RED << "ERROR: Failed to create outfile " << contentMap[i].filename << "!\n" << RESET << std::endl;
+				std::cerr << "Error code: " << errno << " (" << std::strerror(errno) << ")" << std::endl;
+				return (FAILURE);
+				//throw error
+			}
+			std::string fileData = 
+    "\x89PNG\r\n\x1A\n\x00\x00\x00\rIHDR\x00\x00\x00\x0C\x00\x00\x00\x0C"
+    "\x08\x06\x00\x00\x00\x9D\x9B\xD1\xA0\x00\x00\x00\x0CIDATx\xDA\x63"
+    "\x60\x60\x60\xF8\xCF\xC0\xC0\xC0\xF0\x9F\xC3\xC0\xA0\xD4\x07\x00"
+    "\x0A\xE9\x03\x4E\x4D\x00\x00\x00\x00IEND\xAE\x42\x60\x82";
+			std::cout << "Writting " << contentMap[i].body.c_str() << " into file.\n";
+		//outFile.write(contentMap[i].body.c_str(), contentMap[i].body.size());
+		outFile.write(fileData.c_str(), fileData.size());
 		outFile.close();
 		std::cout << GREEN << "File uploaded successfully: " << filePath << RESET << std::endl;
+		}
 	}
 	return (SUCCESS);
 }

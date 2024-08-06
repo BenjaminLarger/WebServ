@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 13:35:08 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/06 19:20:09 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void Webserv::handleClientRequest(
     size_t i, const std::vector<ServerConfig> &serverConfigs)
 {
   (void)serverConfigs;
-  char buffer[1024];
+  char buffer[100000];
   ssize_t bytes_read = read(fds[i].fd, buffer, sizeof(buffer));
   if (bytes_read < 0)
   {
