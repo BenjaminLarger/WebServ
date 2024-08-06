@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 16:23:46 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/06 17:05:53 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "ErrorUtils.hpp"
 #include "Webserv.hpp"
 #include "core.hpp"
+
 
 #define BODY_BEFORE_CONTENT_ERROR "ERROR: content cannot be defined after body!"
 #define CONTENT_AFTER_BODY_ERROR                                               \
@@ -35,8 +36,8 @@ struct Content {
 		std::string	contentDisposition;
 		std::string contentType;
 		std::string	body;
-		std::string	nameValue;
-		std::string	filenameValue;
+		std::string	name;
+		std::string	filename;
 };
 
 class POST
@@ -79,6 +80,7 @@ private:
 	void	parseContentType(int index, std::string &content);
   bool hasClosingBoundary;
   std::string skipBoundaryPart(void);
+	int handleFileUpload(int index);
 
 	POST(const POST&);
   POST& operator=(const POST&);

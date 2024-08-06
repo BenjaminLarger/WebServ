@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/06 16:21:56 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/06 17:18:12 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,13 @@ void	POST::parseContentDisposition(int index, const std::string &content)
 			break ;
 		else if (!strncmp(key.c_str(), " name", 4) || key == "name")
 		{
-			std::getline(stream, contentMap[index].nameValue, ';');
-			std::cout << YELLOW << "name = " << contentMap[index].nameValue << RESET << std::endl;
+			std::getline(stream, contentMap[index].name, ';');
+			std::cout << YELLOW << "name = " << contentMap[index].name << RESET << std::endl;
 		}
 		else if (!strncmp(key.c_str(), " filename", 8))
 		{
-			std::getline(stream, contentMap[index].filenameValue, ';');
-			std::cout << YELLOW << "filename = " << contentMap[index].filenameValue << RESET << std::endl;
+			std::getline(stream, contentMap[index].filename, ';');
+			std::cout << YELLOW << "filename = " << contentMap[index].filename << RESET << std::endl;
 		}
 		else if (key.empty() == true || lineIsEmpty(key) == true || lastWorld == key)
 			break ;
@@ -79,11 +79,23 @@ void	POST::parseContentDisposition(int index, const std::string &content)
 void	POST::parseContentType(int index, std::string &content)
 {
 	std::cout << "\n" << "----------------------- PARSE CONTENT DISPOSITION-----------------------\n";
-	std::istringstream stream(content);
-	std::getline(stream, contentMap[index].nameValue, ';');
-//	contentType[index].contentType = content;
-	trimBothEnds(contentMap[index].nameValue);
-	std::cout << YELLOW << "Content type value = " << content << RESET << std::endl;
+	if (contentMap[index].HasContentType == true)
+	{
+		std::istringstream stream(content);
+		std::getline(stream, contentMap[index].name, ';');
+	//	contentType[index].contentType = content;
+		trimBothEnds(contentMap[index].name);
+		if (contentMap[index].name != "text/plain" && contentMap[index].name != "image/png")
+			std::cout << RED << "ERROR: Content type " << contentMap[index].name << " not supported!\n" << RESET << std::endl;//=> throw exception
+		std::cout << YELLOW << "Content type value = " << content << RESET << std::endl;
+	}
+	else
+	{
+		std::istringstream stream("text/plain");
+		std::getline(stream, contentMap[index].name, ';');
+		trimBothEnds(contentMap[index].name);
+		std::cout << YELLOW << "Content type value = " << content << RESET << std::endl;
+	}
 	std::cout << "\n" << "----------------------------------------------\n\n";
 }
 
@@ -102,21 +114,14 @@ int	POST::parseContent(int index)
 		key = extractFirstWord(contentMap[i].contentDisposition);
 		std::cout << BLUE << "key = " <<  key << RESET << std::endl;
 		if (key != "form-data;" && key != "form-data;")
-			std::cout << RED << "Webserver can only handle form-data key of content disposition!\n" << RESET << std::endl;
+			std::cout << RED << "Webserver can only handle form-data key of content disposition!\n" << RESET << std::endl; //throw error
 		else
 		{
 			parseContentDisposition(i, contentMap[i].contentDisposition);
 		}
-		if (contentMap[i].HasContentType == true)
-		{
-			key = extractFirstWord(contentMap[i].contentType);
-			parseContentType(i, contentMap[i].contentType);
-		}
-		/* else
-			contentType[i].contentType = "text/plain"; */
-		
+		parseContentType(i, contentMap[i].contentType);
 	}
-	return (SUCCESS);
+	return (handleFileUpload(index));
 }
 
 int	POST::extractMultipartFormData()
@@ -199,4 +204,26 @@ int	POST::extractMultipartFormData()
 	} */
 	std::cout << GREEN << "Has not closing boundary ==> return SUCCESS\n" << RESET << std::endl;
 	return (parseContent(index));
+}
+
+int POST::handleFileUpload(int index)
+{
+	std::string directory = "./upload/";
+	for (int i = 0; i <= index; i++)
+	{
+		std::string	filePath = directory + contentMap[i].filename;
+		std::cout << MAGENTA << "filepath = " << filePath << RESET << std::endl;
+		std::ofstream outFile(filePath.c_str(), std::ios::binary);
+		if (!outFile)
+		{
+			std::cerr << RED << "ERROR: Failed to create outfile " << contentMap[i].filename << "!\n" << RESET << std::endl;
+			std::cerr << "Error code: " << errno << " (" << std::strerror(errno) << ")" << std::endl;
+			return (FAILURE);
+			//throw error
+		}
+		outFile.write(contentMap[i].body.c_str(), contentMap[i].body.size());
+		outFile.close();
+		std::cout << GREEN << "File uploaded successfully: " << filePath << RESET << std::endl;
+	}
+	return (SUCCESS);
 }
