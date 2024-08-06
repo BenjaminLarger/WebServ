@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 19:52:44 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/06 16:22:49 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,5 +44,8 @@ void displayServerConfigs(std::vector<ServerConfig> &serverConfigs);
 
 // Extract the first world of a line
 std::string extractFirstWord(const std::string &str);
+
+// Check if a line is empty
+bool	lineIsEmpty(std::string line);
 
 #endif

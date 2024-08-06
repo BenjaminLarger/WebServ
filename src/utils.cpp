@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 15:30:21 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/05 20:00:31 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/06 16:19:49 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,4 +180,17 @@ std::string extractFirstWord(const std::string &str)
 
   stream >> firstWord;
   return (firstWord);
+}
+
+bool	lineIsEmpty(std::string line)
+{
+	for (int i = 0; line[i]; i++)
+	{
+		std::cout << (int)line[i] << ", ";
+		if ((line[i] < 9 || line[i] > 13) && line[i] != 32)
+			return (false);
+	}
+	std::cout << std::endl;
+	std::cout << ORANGE << "Line is empty!\n" << RESET;
+	return (true);
 }

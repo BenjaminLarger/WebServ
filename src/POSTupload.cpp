@@ -6,12 +6,13 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/06 12:29:54 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/06 16:21:56 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "POST.hpp"
 #include "Webserv.hpp"
+#include "utils.hpp"
 
 /*
 DEFINITION
@@ -38,120 +39,9 @@ STRUCTURE
 		--boundary--
 */
 
-bool	lineIsEmpty(std::string line)
-{
-	for (int i = 0; line[i]; i++)
-	{
-		std::cout << (int)line[i] << ", ";
-		if ((line[i] < 9 || line[i] > 13) && line[i] != 32)
-			return (false);
-	}
-	std::cout << std::endl;
-	std::cout << ORANGE << "Line is empty!\n" << RESET;
-	return (true);
-}
-
-bool	POST::isClosingBoundary(std::string line, std::string boundary)
-{
-	if (line[line.size() - 1] == '\r' && line[line.size() - 2] == '-' && line[line.size() - 3] == '-')
-	{
-		if (strncmp(line.c_str(), boundary.c_str(), boundary.size()))
-			return (true);
-	}
-	return (false);
-}
-
-bool	POST::isBoundary(std::string line, std::string boundary)
-{
-	std::string newline;
-	if (line[0] == '-' && line[1] == '-')
-	{
-		std::cout << ORANGE << "line = " << line << RESET << std::endl;
-		newline = makeCopy(line);
-		std::cout << RED << newline << RESET << std::endl;
-		std::cout << RED << boundary << RESET << std::endl;
-		if (!strcmp(newline.c_str(), boundary.c_str()))
-		{
-			std::cout << ORANGE << "is boundary\n" << RESET << std::endl;
-			return (true);
-		}
-		
-	}
-	return (false);
-}
-
-int	POST::extractValues(std::string line, std::map<int, std::string> &myMap, int index, std::string key, std::map<int, bool> &HasContent)
-{
-	std::string values;
-
-	if (HasBody[index] == true)
-	{
-		std::cout << RED << "Body has been defined before content\n" << RESET;
-		sendall(ClientFD, BODY_BEFORE_CONTENT_ERROR, strlen(BODY_BEFORE_CONTENT_ERROR));
-		return (FAILURE);
-	}
-	values = line.substr(key.size() + 1);
-	myMap[index] = values;
-	std::cout << ORANGE << "map[" << index << "] = " << values << RESET << std::endl;	
-	HasContent[index] = true;
-	return (SUCCESS);
-}
-
-std::string POST::extractBoundary(const std::string& input)
-{
-   std::size_t pos = input.find('=');
-	 std::cout << "input = " << input << ", " << pos << std::endl;
-  if (pos != std::string::npos)
-	{
-		std::cout << input.substr(pos + 3) << std::endl;
-		std::cout << CYAN << "input.substr(pos + 1)[0] = " << input.substr(pos + 1)[0] << ", input.substr(pos + 1)[1] = " << input.substr(pos + 1)[1] << RESET << std::endl;
-		if (input.substr(pos + 1)[0] == '-' && input.substr(pos + 1)[1] == '-')
-			return input.substr(pos + 3);
-	}
-	return "";
-}
-
-void	POST::readAllRequest()
-{
-	std::string line;
-
-	requestStream.clear();
-	requestStream.seekg(0);
-	std::cout << "\n--------------READING ALL CONTENT--------------";
-	while (std::getline(requestStream, line) && line[line.size() - 1] == '\r')
-	 {
-		std::cout << "\n" << MAGENTA << line << RESET;
-	 }
-	 std::cout << std::endl;
-}
-std::string	POST::skipBoundaryPart(void)
-{
-	std::string line;
-
-	readAllRequest();
-	requestStream.clear();
-	requestStream.seekg(0);
-	//skip until bundary
-	 while (std::getline(requestStream, line) && line[line.size() - 1] == '\r')
-	 {
-		//std::cout << "\n" << MAGENTA << "line = "<< line << RESET << std::endl;
-		if (!strncmp(line.c_str(), "--", 2))
-			break;		
-	 }
-	return (extractBoundary(contentType));
-}
-
-/* void	getASCIIvalues(std::string str)
-{
-	for (int i = 0; str[i]; i++)
-		std::cout << RED << (int)str[i] << " ";
-	std::cout << RESET << std::endl;
-} */
-
 void	POST::parseContentDisposition(int index, const std::string &content)
 {
 	std::string key;
-	std::string	value;
 	std::istringstream stream(content);
 	std::string	lastWorld;
 	(void)index;
@@ -171,18 +61,29 @@ void	POST::parseContentDisposition(int index, const std::string &content)
 			break ;
 		else if (!strncmp(key.c_str(), " name", 4) || key == "name")
 		{
-			std::getline(stream, value, ';');
-			std::cout << YELLOW << "name = " << value << RESET << std::endl;
+			std::getline(stream, contentMap[index].nameValue, ';');
+			std::cout << YELLOW << "name = " << contentMap[index].nameValue << RESET << std::endl;
 		}
 		else if (!strncmp(key.c_str(), " filename", 8))
 		{
-			std::getline(stream, value, ';');
-			std::cout << YELLOW << "filename = " << value << RESET << std::endl;
+			std::getline(stream, contentMap[index].filenameValue, ';');
+			std::cout << YELLOW << "filename = " << contentMap[index].filenameValue << RESET << std::endl;
 		}
 		else if (key.empty() == true || lineIsEmpty(key) == true || lastWorld == key)
 			break ;
 		lastWorld = key;
 	}
+	std::cout << "\n" << "----------------------------------------------\n\n";
+}
+
+void	POST::parseContentType(int index, std::string &content)
+{
+	std::cout << "\n" << "----------------------- PARSE CONTENT DISPOSITION-----------------------\n";
+	std::istringstream stream(content);
+	std::getline(stream, contentMap[index].nameValue, ';');
+//	contentType[index].contentType = content;
+	trimBothEnds(contentMap[index].nameValue);
+	std::cout << YELLOW << "Content type value = " << content << RESET << std::endl;
 	std::cout << "\n" << "----------------------------------------------\n\n";
 }
 
@@ -193,19 +94,27 @@ int	POST::parseContent(int index)
 	std::cout << "index = " << index << std::endl;
 	for (int i = 0; i <= index; i++)
 	{
-		if (HasContentDisposition[i] == false)
+		if (contentMap[i].HasContentDisposition == false)
 		{
 			std::cout << RED << index << " has not content disposition!" << RESET << std::endl;
 			return (FAILURE);
 		}
-		key = extractFirstWord(contentDispositionMap[i]);
+		key = extractFirstWord(contentMap[i].contentDisposition);
 		std::cout << BLUE << "key = " <<  key << RESET << std::endl;
 		if (key != "form-data;" && key != "form-data;")
 			std::cout << RED << "Webserver can only handle form-data key of content disposition!\n" << RESET << std::endl;
 		else
 		{
-			parseContentDisposition(i, contentDispositionMap[i]);
-		}	
+			parseContentDisposition(i, contentMap[i].contentDisposition);
+		}
+		if (contentMap[i].HasContentType == true)
+		{
+			key = extractFirstWord(contentMap[i].contentType);
+			parseContentType(i, contentMap[i].contentType);
+		}
+		/* else
+			contentType[i].contentType = "text/plain"; */
+		
 	}
 	return (SUCCESS);
 }
@@ -218,8 +127,8 @@ int	POST::extractMultipartFormData()
 	std::string line;
 	int			index = 0;
 	hasClosingBoundary = false;
-	HasContentType[0] = false;
-	HasContentDisposition[0] = false;
+	contentMap[0].HasContentType = false;
+	contentMap[0].HasContentDisposition = false;
 	
 
 	std::cout << "\nUPLOAD BODY :\n";
@@ -243,22 +152,22 @@ int	POST::extractMultipartFormData()
 			//New part has been iddentified
 			std::cout << YELLOW << "New part iddentified!\n" << RESET;
 			index++;
-			HasContentType[index] = false;
-			HasContentDisposition[index] = false;
-			HasBody[index] = false;
+			contentMap[index].HasContentType = false;
+			contentMap[index].HasContentDisposition = false;
+			contentMap[index].HasBody = false;
 		}
 		else if (key == "Content-Disposition:")
 		{
 			std::cout << YELLOW << "Extracting Content Disposition\n" << RESET;
 			//Content-Disposition is madatory and specifies how the content is to be handled, often indicating form field names and filenames
-			if (extractValues(line, contentDispositionMap, index, key, HasContentDisposition) == FAILURE)
+			if (extractValues(line, contentMap, index, key, "Content disposition") == FAILURE)
 				return (FAILURE);
 		}
 		else if (key == "Content-Type:")
 		{
 			std::cout << YELLOW << "Extracting Content Type\n" << RESET;
 			//This header is optional and specifies the media type of the content.
-			if (extractValues(line, contentTypeMap, index, key, HasContentType) == FAILURE)
+			if (extractValues(line, contentMap, index, key, "Content type") == FAILURE)
 				return (FAILURE);
 		}
 		else if (isClosingBoundary(line, boundary) == true)
@@ -267,13 +176,13 @@ int	POST::extractMultipartFormData()
 			hasClosingBoundary = true;
 			return (parseContent(index));
 		}
-		else if (HasContentDisposition[index] == true && lineIsEmpty(line) == false)
+		else if (contentMap[index].HasContentDisposition == true && lineIsEmpty(line) == false)
 		{
 			//Body apppears at the right place
 			std::cout << YELLOW << "Extracting Body\n" << RESET;
-			bodyMap[index] += line;
-			std::cout << "Body[" << index << "] = " << YELLOW << bodyMap[index] << RESET << std::endl;
-			HasBody[index] = true;
+			contentMap[index].body += line;
+			std::cout << "Body[" << index << "] = " << YELLOW << contentMap[index].body << RESET << std::endl;
+			contentMap[index].HasBody = true;
 		}
 		else if (lineIsEmpty(line) == false)
 		{

@@ -1,0 +1,14 @@
+POST / HTTP/1.1
+Host: localhost:8080
+User-Agent: curl/7.81.0
+Accept: */*
+Content-Length: 338
+Content-Type: multipart/form-data;; boundary=------------------------9f889e0b0faca93d
+
+--------------------------9f889e0b0faca93d
+Content-Disposition: form-data; name="field1"
+
+value1
+--------------------------9f889e0b0faca93d
+Content-Disposition: form-data; name="field2"; filename="example.txt"
+Content-Type: text/plain

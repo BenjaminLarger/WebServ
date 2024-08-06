@@ -22,7 +22,7 @@ SRC_FILES		= main.cpp ClientProcessMethods.cpp Webserv.cpp \
 	ErrorUtils.cpp utils.cpp core.cpp \
 	ServerConfig.cpp ServerConfigParsing.cpp ServerConfigParsingLocation.cpp \
 	ClientInfo.cpp \
-	GET.cpp CGI.cpp POST.cpp POSTupload.cpp\
+	GET.cpp CGI.cpp POST.cpp POSTupload.cpp POSTutils.cpp\
 	WebservCreateServers.cpp WebservClientRequest.cpp WebservNewConnection.cpp WebservSignal.cpp \
 	ManageWriteReadClientCapability.cpp
 #	ConfigurationFile.cpp WebservUtils.cpp ConfigurationFileParsing.cpp
