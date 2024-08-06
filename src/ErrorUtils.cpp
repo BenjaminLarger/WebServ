@@ -3,24 +3,37 @@
 /*                                                        :::      ::::::::   */
 /*   ErrorUtils.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:54:52 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 19:55:52 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/06 17:22:01 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Webserv.hpp"
-#include "core.hpp"
+#include "ErrorUtils.hpp"
 
 void sendErrorResponse(int clientSocket, std::string statusCode,
-                       const std::string &statusMessage)
+                       const std::string &statusMessage, std::string errorBody)
 {
-  std::string response
-      = "HTTP/1.1 " + statusCode + " " + statusMessage + "\r\n";
-  response += "Content-Type: text/plain\r\n\r\n";
-  response += statusMessage + "\n";
+  std::ostringstream  response;
+      response << "HTTP/1.1 " << statusCode << " " << statusMessage + "\r\n";
+  response << "Content-Type: text/html\r\n\r\n";
+  response << errorBody;
 
-  if (sendall(clientSocket, response.c_str(), response.size()) == -1)
+  std::string responseStr = response.str();
+  if (sendall(clientSocket, responseStr.c_str(), responseStr.size()) == -1)
     perror("Data failed to be sent to the client");
 }
+
+void sendDefaultErrorPage(int clientSocket, std::string statusCode, std::map<int, std::string> errorPages)
+{
+  std::string response;
+  
+  if (errorPages.find(std::atoi(statusCode.c_str())) == errorPages.end())
+    response = "HTTP/1.1 " + statusCode + " " + "Not Found\r\n";
+  else
+    response = extractHtmlContent("var/www/errors" + errorPages[std::atoi(statusCode.c_str())]);
+  sendErrorResponse(clientSocket, statusCode, "Error", response);
+}
+
+

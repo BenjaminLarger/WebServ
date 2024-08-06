@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 16:02:19 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/06 17:19:11 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void POST::extractBody(int clientFD)
     sendResponse(clientFD, "Form received correctly");
   }
   else
-    sendErrorResponse(clientFD, "411", "Length required");
+    sendErrorResponse(clientFD, "411", "Length required", "");
   //close(clientFD);
 }
 

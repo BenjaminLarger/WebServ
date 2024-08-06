@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/06 16:04:20 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/06 16:35:13 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,11 +182,9 @@ GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
   }
   catch (const std::exception &e)
   {
-    std::string responseBody;
     std::cerr << RED << e.what() << RESET << '\n';
-    std::cout << "Sending 404 error" << std::endl;
-    responseBody = extractHtmlContent("var/www/errors/404.html");
-    sendResponse(clientFD, responseBody);
+    std::cout << "Sending default error" << std::endl;
+    sendDefaultErrorPage(clientFD, "404", serverConfigs[serverIndex].errorPages);
   }
 }
 
