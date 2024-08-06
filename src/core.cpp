@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 15:22:28 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/06 17:44:55 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,16 @@ int sendall(int s, const char *buf, int len)
     bytesleft -= n;
   }
 
-  len = totalBytesSent; // return number actually sent here
+  len = totalBytesSent;      // return number actually sent here
   return (n == -1 ? -1 : 0); // return -1 on failure, 0 on success
+}
+
+bool isDirectory(const std::string &path)
+{
+  struct stat path_stat;
+  if (stat(path.c_str(), &path_stat) != 0)
+  {
+    return (false);
+  }
+  return (S_ISDIR(path_stat.st_mode));
 }

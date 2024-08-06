@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/06 16:35:13 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/06 19:31:47 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ int countJumpLine(std::string str)
 
 std::string GET::extractHtmlContent(const std::string &filePath)
 {
+  std::cout << "filePath: " << filePath << std::endl;
   std::ifstream file(filePath.c_str());
   if (!file.is_open())
     throw std::runtime_error("Could not open file: " + filePath);
@@ -110,26 +111,78 @@ void GET::sendResponse(int clientFD, std::string responseBody)
     perror("Data failed to be sent to the client");
 }
 
-std::string  GET::handleLocations(std::string pathToResource, int serverIndex, const std::vector<ServerConfig> &serverConfigs)
+std::string GET::handleLocations(std::string pathToResource, int serverIndex,
+                                 const std::vector<ServerConfig> &serverConfigs)
 {
   std::string responseBody;
-  std::map<std::string, LocationConfig> locations = serverConfigs[serverIndex].locations;
-  std::map<std::string, LocationConfig>::iterator it = locations.find(pathToResource);
+  std::map<std::string, LocationConfig> locations
+      = serverConfigs[serverIndex].locations;
+  std::map<std::string, LocationConfig>::iterator it
+      = locations.find(pathToResource);
 
-  if (it != locations.end()) {
-    std::string index = it->second.index;
+  if (it != locations.end()) // pathToResource == it->first
+  {
+    std::string path;
     std::string root = it->second.root;
-    trimTrailingWS(index);
-    trimTrailingWS(root);
-    responseBody =  extractHtmlContent("." + root + "/" + index);
-    return (responseBody);
-  } else {
-    throw std::runtime_error("Location not found for path: " + pathToResource);
+
+    if (!pathToResource.empty()
+        && pathToResource[pathToResource.size() - 1] == '/')
+      path = "." + root + pathToResource;
+    else
+      path = "." + root + pathToResource + "/";
+
+    std::cout << "path: '" << path
+              << "' isDirectory(path): " << isDirectory(path) << std::endl;
+
+    if (pathToResource == "/favicon.ico")
+    {
+      return ("");
+    }
+    // Check if the location has a redirection
+    if (it->second.redirection.first)
+    {
+      std::cout << "redirection: " << it->second.redirection.first << " "
+                << it->second.redirection.second << std::endl;
+      // it->second.redirection.
+      // HTTP/1.1 301 Moved Permanently
+      // Location: http://www.example.com/new-url
+      // Content-Length: 0
+      // Cache-Control: no-cache
+      return ("");
+    }
+    // Check if the location has a file to serve
+    else if (!it->second.index.empty())
+    {
+      path += it->second.index;
+      responseBody = extractHtmlContent(path);
+      return (responseBody);
+    }
+    // If location doesn't have a file, is a folder, and autoindex on
+    else if (!it->second.index.size() && isDirectory(path)
+             && it->second.autoIndexOn)
+    {
+      std::vector<std::string> contents = listDirectoryContent(path);
+      responseBody = generateDirectoryListing(pathToResource + "/", contents);
+
+      return (responseBody);
+    }
+    // Else: no file, is a folder, but autoindex off
+    else
+    {
+      throw HttpException(
+          "403", "You don't have permission to access this directory.");
+      return (responseBody);
+    }
+  }
+  else
+  {
+    throw HttpException("404", "Not Found");
   }
 }
 
 GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
-         std::string &clientInput, const std::vector<ServerConfig> &serverConfigs)
+         std::string &clientInput,
+         const std::vector<ServerConfig> &serverConfigs)
 {
   // (void)server;
   (void)clientInput;
@@ -137,7 +190,8 @@ GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
 
   // std::cout << RED << countJumpLine(clientInput)
   //         << " jumplines in client request!" << RESET << std::endl;
-  if (countJumpLine(clientInput) < 3) //Change with if receive a blank line => erase buffer
+  if (countJumpLine(clientInput)
+      < 3) //Change with if receive a blank line => erase buffer
     return;
   std::istringstream isLine(clientInput);
   std::string key;
@@ -176,15 +230,22 @@ GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
     if (this->pathToRessource.find(".php") != std::string::npos)
       responseBody = executePhp(this->pathToRessource);
     else
-      responseBody = handleLocations(pathToRessource, serverIndex, serverConfigs);
+      responseBody
+          = handleLocations(pathToRessource, serverIndex, serverConfigs);
     sendResponse(clientFD, responseBody);
     // std::cout << "response sent." << std::endl;
+  }
+  catch (const HttpException &e)
+  {
+    std::cerr << RED << e.what() << RESET << '\n';
+    sendDefaultErrorPage(clientFD, e.getStatusCode(), e.getErrorMessage(),
+                         serverConfigs[serverIndex].errorPages);
   }
   catch (const std::exception &e)
   {
     std::cerr << RED << e.what() << RESET << '\n';
-    std::cout << "Sending default error" << std::endl;
-    sendDefaultErrorPage(clientFD, "404", serverConfigs[serverIndex].errorPages);
+    sendDefaultErrorPage(clientFD, "500", "Internal Server Error",
+                         serverConfigs[serverIndex].errorPages);
   }
 }
 

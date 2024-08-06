@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 18:23:26 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 19:56:10 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/06 19:24:26 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
             throw(std::runtime_error(
                 "Incorrect HTTP redirection in location block: " + line));
 
-      this->locations[urlPattern].redirection[valueLong] = valueStr;
+      this->locations[urlPattern].redirection.first = valueLong;
+      this->locations[urlPattern].redirection.second = valueStr;
     }
     else if (key == "root") // where the file should be searched
     {
@@ -108,8 +109,14 @@ void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
     }
     else if (key.size() && key[0] == '}')
     {
+      // Closing location block
       if (!this->locations[urlPattern].allowedMethods.size())
         this->locations[urlPattern].allowedMethods.push_back("GET");
+
+      // Set default root
+      if (this->locations[urlPattern].root.empty())
+        this->locations[urlPattern].root = "/var/www";
+
       break;
     }
     else if (key.size() && !isAllWhitespace(key))

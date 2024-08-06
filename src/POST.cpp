@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 17:19:11 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/06 18:22:56 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,31 @@ void POST::sendResponse(int clientFD, std::string responseBody)
     perror("Data failed to be sent to the client");
 }
 
+std::string POST::buildHtmlResponse()
+{
+  std::string responseBody;
+  std::map<std::string, std::string> formValues;
+  std::istringstream bodyStream(body);
+  std::string keyValuePair;
+
+  while (std::getline(bodyStream, keyValuePair, '&'))
+  {
+      size_t pos = keyValuePair.find('=');
+      if (pos != std::string::npos)
+      {
+          std::string key = keyValuePair.substr(0, pos);
+          std::string value = keyValuePair.substr(pos + 1);
+          formValues[key] = value;
+      }
+  }
+  responseBody = "<html><body><h1>Form data received</h1><table>";
+  for (std::map<std::string, std::string>::iterator it = formValues.begin(); it != formValues.end(); ++it)
+  {
+      responseBody += "<tr><td>" + it->first + "</td><td>" + it->second + "</td></tr>";
+  }
+  return responseBody;
+}
+
 void POST::extractBody(int clientFD)
 {
 	//std::cout << "length = " << contentLength << std::endl;
@@ -54,7 +79,7 @@ void POST::extractBody(int clientFD)
     delete[] buffer;
     std::cout << "body: " << body << std::endl;
     // 200 = code for success received, OK = brief description of the status, text/plain = type of the response
-    sendResponse(clientFD, "Form received correctly");
+    sendResponse(clientFD, buildHtmlResponse());
   }
   else
     sendErrorResponse(clientFD, "411", "Length required", "");

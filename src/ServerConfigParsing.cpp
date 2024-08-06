@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 14:33:15 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 19:56:15 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/06 14:48:37 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,8 +225,9 @@ bool ServerConfig::checkConfig(std::vector<int> &tempPorts)
     this->serverRoot = "/var/www";
 
   // Set default index file
-  if (this->serverIndex.size() == 0)
-    this->serverIndex = "index.html";
+  // if (this->serverIndex.size() == 0)
+  //   this->serverIndex = "index.html";
+
   // Add default host if needed
   if (this->getHost().size() == 0)
   {

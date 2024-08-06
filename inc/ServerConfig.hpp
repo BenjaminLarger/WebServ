@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 19:44:48 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/06 19:16:49 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ struct LocationConfig
   std::vector<std::string> allowedMethods; // allow_methods GET POST DELETE
 
   // Define an HTTP redirection
-  std::map<int, std::string>
+  std::pair<int, std::string>
       redirection; // return 301 http://example.org$new_uri;
 
   // Define a directory or a file from where the file should be searched
