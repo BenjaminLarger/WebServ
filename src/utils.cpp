@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/06 17:24:21 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/06 17:26:09 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,19 +184,6 @@ std::string extractFirstWord(const std::string &str)
   return (firstWord);
 }
 
-std::string extractHtmlContent(const std::string &filePath)
-{
-  std::ifstream file(filePath.c_str());
-  if (!file.is_open())
-    throw std::runtime_error("Could not open file: " + filePath);
-
-  std::stringstream buffer;
-  buffer << file.rdbuf();
-  buffer << "\r\n";
-
-  return (buffer.str());
-}
-
 void sendResponse(int clientFD, std::string responseBody)
 {
   //The format of an HTTP response is defined by the HTTP specification (RFC 2616 for HTTP/1.1).
@@ -233,28 +220,6 @@ std::string extractHtmlContent(const std::string &filePath)
   return (buffer.str());
 }
 
-void sendResponse(int clientFD, std::string responseBody)
-{
-  //The format of an HTTP response is defined by the HTTP specification (RFC 2616 for HTTP/1.1).
-  //Here it is convenient to use ostring to concatenate
-  std::ostringstream response;
-  //Status Line: Specifies the HTTP version, status code, and status message.
-  response << "HTTP/1.1 200 OK\r\n";
-  //Headers: Metadata about the response.
-  response << "Content-Type: text/html\r\n";
-  response << "Content-Length: " << responseBody.size() << "\r\n";
-  response << "\r\n";
-  response << responseBody;
-
-  std::string responseStr = response.str();
-  // std::cout << "responseStr: \n" << responseStr << std::endl;
-  //send function is similar to write, but it is specific to socket.
-  //Supports additional flags to modify behavior (e.g., MSG_NOSIGNAL to prevent sending a SIGPIPE signal).
-  //Syntax: ssize_t send(int sockfd, const void *buf, size_t len, int flags);
-
-  if (sendall(clientFD, responseStr.c_str(), responseStr.size()) == -1)
-    perror("Data failed to be sent to the client");
-}
 
 bool	lineIsEmpty(std::string line)
 {
