@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/06 17:45:04 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/06 19:03:16 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,20 +152,13 @@ std::string GET::handleLocations(std::string pathToResource, int serverIndex,
     // Else: no file, is a folder, but autoindex off
     else
     {
-      // This should be a redirect to 403 error page
-
-      // 403 Forbidden Response
-      responseBody = "HTTP/1.1 403 Forbidden\r\n"
-                     "Content-Type: text/html\r\n\r\n"
-                     "<html><body><h1>403 Forbidden</h1>"
-                     "<p>You don't have permission to access "
-                     "this directory.</p></body></html>";
+      throw HttpException("403", "You don't have permission to access this directory.");
       return (responseBody);
     }
   }
   else
   {
-    throw std::runtime_error("Location not found for path: " + pathToResource);
+    throw HttpException("404", "Not Found");
   }
 }
 
@@ -223,13 +216,12 @@ GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
           = handleLocations(pathToRessource, serverIndex, serverConfigs);
     sendResponse(clientFD, responseBody);
     // std::cout << "response sent." << std::endl;
-  }
-  catch (const std::exception &e)
-  {
-    std::cerr << RED << e.what() << RESET << '\n';
-    std::cout << "Sending default error" << std::endl;
-    sendDefaultErrorPage(clientFD, "404",
-                         serverConfigs[serverIndex].errorPages);
+  } catch (const HttpException &e) {
+      std::cerr << RED << e.what() << RESET << '\n';
+      sendDefaultErrorPage(clientFD, e.getStatusCode(), serverConfigs[serverIndex].errorPages);
+  } catch (const std::exception &e) {
+      std::cerr << RED << e.what() << RESET << '\n';
+      sendDefaultErrorPage(clientFD, "500", serverConfigs[serverIndex].errorPages);
   }
 }
 
