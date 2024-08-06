@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:54:52 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 19:25:47 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/06 19:31:53 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@ void sendErrorResponse(int clientSocket, std::string statusCode,
 {
   std::ostringstream  response;
       response << "HTTP/1.1 " << statusCode << " " << statusMessage + "\r\n";
-  response << "Content-Type: text/html\r\n\r\n";
+  response << "Content-Type: text/html\r\n";
+  response << "Content-Length: " << errorBody.size() << "\r\n";
+  response << "Connection: close\r\n\r\n";
   response << errorBody;
 
   std::string responseStr = response.str();
