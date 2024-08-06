@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 19:18:25 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/06 13:39:56 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #define GET_HPP
 
 #include "Webserv.hpp"
+#include "ErrorUtils.hpp"
 
 class GET
 {
@@ -32,7 +33,7 @@ private:
   std::string body;
 
 public:
-  GET(int serverFD, int clientFD, std::string &clientInput);
+  GET(size_t serverIndex, int clientFD, std::string &clientInput, const std::vector<ServerConfig> &serverConfigs);
   GET();
   ~GET(void);
 
@@ -44,6 +45,7 @@ public:
   void sendResponse(int clientFD, std::string responseBody);
   std::string createResponseBody(void);
   std::string extractHtmlContent(const std::string &filePath);
+  std::string handleLocations(std::string pathToResource, int serverIndex, const std::vector<ServerConfig> &serverConfigs);
 };
 
 #endif

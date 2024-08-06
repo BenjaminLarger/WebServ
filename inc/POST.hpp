@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 16:12:44 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/06 16:23:46 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ private:
   void extractHeaders();
   void extractBody(int clientFD);
   int extractMultipartFormData();
+  void sendResponse(int clientFD, std::string responseBody);
 
   //Util uplaod file
   void readAllRequest(void); //can delete before submit project
