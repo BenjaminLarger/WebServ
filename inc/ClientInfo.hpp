@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 20:29:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 19:44:32 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/06 11:29:50 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@
 
 #include "dependencies.hpp"
 
+struct ClientRequest
+{
+  std::string buffer; // Appended whole request sent by client
+};
+
 class ClientInfo
 {
 private:
@@ -24,10 +29,11 @@ public:
   ClientInfo(void);
   ~ClientInfo(void);
 
-  int socketFD;
-  int port;
+  int socketFD;       // Client socket file descriptor
+  int port;           // Server port where client is connected
   size_t serverIndex; // Index of the server in serverConfigs vector
-  std::string buffer;
+
+  ClientRequest req;
 };
 
 #endif
