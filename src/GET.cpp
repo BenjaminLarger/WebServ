@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/06 17:45:04 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/06 19:29:58 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ int countJumpLine(std::string str)
 
 std::string GET::extractHtmlContent(const std::string &filePath)
 {
+  std::cout << "filePath: " << filePath << std::endl;
   std::ifstream file(filePath.c_str());
   if (!file.is_open())
     throw std::runtime_error("Could not open file: " + filePath);
@@ -133,8 +134,24 @@ std::string GET::handleLocations(std::string pathToResource, int serverIndex,
     std::cout << "path: '" << path
               << "' isDirectory(path): " << isDirectory(path) << std::endl;
 
+    if (pathToResource == "/favicon.ico")
+    {
+      return ("");
+    }
+    // Check if the location has a redirection
+    if (it->second.redirection.first)
+    {
+      std::cout << "redirection: " << it->second.redirection.first << " "
+                << it->second.redirection.second << std::endl;
+      // it->second.redirection.
+      // HTTP/1.1 301 Moved Permanently
+      // Location: http://www.example.com/new-url
+      // Content-Length: 0
+      // Cache-Control: no-cache
+      return ("");
+    }
     // Check if the location has a file to serve
-    if (!it->second.index.empty())
+    else if (!it->second.index.empty())
     {
       path += it->second.index;
       responseBody = extractHtmlContent(path);

@@ -3,14 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/06 17:26:09 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/06 19:25:45 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #include "utils.hpp"
 
@@ -163,15 +161,12 @@ void displayServerConfigs(std::vector<ServerConfig> &serverConfigs)
       }
       std::cout << std::endl;
 
-      for (std::map<int, std::string>::iterator itR
-           = it->second.redirection.begin();
-           itR != it->second.redirection.end(); ++itR)
-      {
-        std::cout << "      redirection:  " << itR->first << " " << itR->second
-                  << std::endl;
-      }
+      std::cout << "      redirection:  ";
+      if (it->second.redirection.first)
+        std::cout << it->second.redirection.first << " "
+                  << it->second.redirection.second;
+      std::cout << std::endl;
     }
-    std::cout << std::endl;
   }
 }
 
@@ -220,16 +215,15 @@ std::string extractHtmlContent(const std::string &filePath)
   return (buffer.str());
 }
 
-
-bool	lineIsEmpty(std::string line)
+bool lineIsEmpty(std::string line)
 {
-	for (int i = 0; line[i]; i++)
-	{
-		std::cout << (int)line[i] << ", ";
-		if ((line[i] < 9 || line[i] > 13) && line[i] != 32)
-			return (false);
-	}
-	std::cout << std::endl;
-	std::cout << ORANGE << "Line is empty!\n" << RESET;
-	return (true);
+  for (int i = 0; line[i]; i++)
+  {
+    std::cout << (int)line[i] << ", ";
+    if ((line[i] < 9 || line[i] > 13) && line[i] != 32)
+      return (false);
+  }
+  std::cout << std::endl;
+  std::cout << ORANGE << "Line is empty!\n" << RESET;
+  return (true);
 }
