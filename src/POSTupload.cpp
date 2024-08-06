@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/05 12:53:10 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/06 12:29:54 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,34 +141,71 @@ std::string	POST::skipBoundaryPart(void)
 	return (extractBoundary(contentType));
 }
 
+/* void	getASCIIvalues(std::string str)
+{
+	for (int i = 0; str[i]; i++)
+		std::cout << RED << (int)str[i] << " ";
+	std::cout << RESET << std::endl;
+} */
+
+void	POST::parseContentDisposition(int index, const std::string &content)
+{
+	std::string key;
+	std::string	value;
+	std::istringstream stream(content);
+	std::string	lastWorld;
+	(void)index;
+	std::cout << "\n" << "----------------------- PARSE CONTENT DISPOSITION-----------------------\n";
+	std::cout << ORANGE << "content = " << content << RESET << std::endl;
+	//skip form/data
+	std::getline(stream, key, ';');
+	std::cout << BLUE << "key = " << key << RESET << std::endl;
+	//stream >> key;
+	/* stream >> key;
+	std::getline(stream, key, ';'); */
+	while (true)
+	{
+		std::getline(stream, key, '=');
+		std::cout << BLUE << "key = " << key << RESET << std::endl;
+		if (lineIsEmpty(key) == true || lastWorld == key)
+			break ;
+		else if (!strncmp(key.c_str(), " name", 4) || key == "name")
+		{
+			std::getline(stream, value, ';');
+			std::cout << YELLOW << "name = " << value << RESET << std::endl;
+		}
+		else if (!strncmp(key.c_str(), " filename", 8))
+		{
+			std::getline(stream, value, ';');
+			std::cout << YELLOW << "filename = " << value << RESET << std::endl;
+		}
+		else if (key.empty() == true || lineIsEmpty(key) == true || lastWorld == key)
+			break ;
+		lastWorld = key;
+	}
+	std::cout << "\n" << "----------------------------------------------\n\n";
+}
+
 int	POST::parseContent(int index)
 {
 	std::string	key;
 
 	std::cout << "index = " << index << std::endl;
-	for (int i = 0; i < index; i++)
+	for (int i = 0; i <= index; i++)
 	{
 		if (HasContentDisposition[i] == false)
 		{
 			std::cout << RED << index << " has not content disposition!" << RESET << std::endl;
 			return (FAILURE);
 		}
-		key = extractFirstWord(contentDispositionMap[index]);
+		key = extractFirstWord(contentDispositionMap[i]);
 		std::cout << BLUE << "key = " <<  key << RESET << std::endl;
 		if (key != "form-data;" && key != "form-data;")
 			std::cout << RED << "Webserver can only handle form-data key of content disposition!\n" << RESET << std::endl;
 		else
 		{
-			
-		}
-		
-		/* std::istringstream stream(contentDispositionMap[index]);
-		stream >> str;
-		while (str.empty() == false)
-		{
-			
-		} */
-		
+			parseContentDisposition(i, contentDispositionMap[i]);
+		}	
 	}
 	return (SUCCESS);
 }

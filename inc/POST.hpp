@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 19:55:42 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/06 12:36:07 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,18 @@
   "ERROR: Multipart/Form-Data must include closing boundary!"
 #define HAS_NOT_BOUNDARY_ERROR                                                 \
   "ERROR: Multipart/Form-Data must include boundary separation!"
+
+class Content {
+	bool	contentHasContentTypeTypeMap;
+	bool	HasContentDisposition;
+	bool	HasBody;
+	std::string	contentDisposition;
+	std::string contentType;
+	std::string	body;	
+};
+
 class POST
 {
-
 private:
   // Request line
   std::map<std::string, std::string> headers;
@@ -50,6 +59,7 @@ private:
   std::map<int, bool> HasContentType;
   std::map<int, bool> HasContentDisposition;
   std::map<int, bool> HasBody;
+	std::map<int, Content> contentMap;
   int ClientFD;
   //Util
   void extractFirstLine();
@@ -68,6 +78,7 @@ private:
   bool isClosingBoundary(std::string line, std::string boundary);
   std::string makeCopy(const std::string &original);
   int parseContent(int index);
+	void	parseContentDisposition(int index, const std::string &content);
 
   bool hasClosingBoundary;
   std::string skipBoundaryPart(void);

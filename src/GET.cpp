@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/05 19:55:57 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/06 11:35:33 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ GET::GET(/* Webserv &server, */ int serverFD, int clientFD,
 
   // std::cout << RED << countJumpLine(clientInput)
   //         << " jumplines in client request!" << RESET << std::endl;
-  if (countJumpLine(clientInput) < 3)
+  if (countJumpLine(clientInput) < 3) //Change with if receive a blank line => erase buffer
     return;
   std::istringstream isLine(clientInput);
   std::string key;
