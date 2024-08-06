@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 17:35:52 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/06 17:19:11 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,29 @@
 #include "Webserv.hpp"
 
 //Send form data to a URL and get a response back
+
+void POST::sendResponse(int clientFD, std::string responseBody)
+{
+  //The format of an HTTP response is defined by the HTTP specification (RFC 2616 for HTTP/1.1).
+  //Here it is convenient to use ostring to concatenate
+  std::ostringstream response;
+  //Status Line: Specifies the HTTP version, status code, and status message.
+  response << "HTTP/1.1 200 OK\r\n";
+  //Headers: Metadata about the response.
+  response << "Content-Type: text/html\r\n";
+  response << "Content-Length: " << responseBody.size() << "\r\n";
+  response << "\r\n";
+  response << responseBody;
+
+  std::string responseStr = response.str();
+  // std::cout << "responseStr: \n" << responseStr << std::endl;
+  //send function is similar to write, but it is specific to socket.
+  //Supports additional flags to modify behavior (e.g., MSG_NOSIGNAL to prevent sending a SIGPIPE signal).
+  //Syntax: ssize_t send(int sockfd, const void *buf, size_t len, int flags);
+
+  if (sendall(clientFD, responseStr.c_str(), responseStr.size()) == -1)
+    perror("Data failed to be sent to the client");
+}
 
 void POST::extractBody(int clientFD)
 {
@@ -31,17 +54,10 @@ void POST::extractBody(int clientFD)
     delete[] buffer;
     std::cout << "body: " << body << std::endl;
     // 200 = code for success received, OK = brief description of the status, text/plain = type of the response
-    std::string response
-        = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n";
-    response += "POST data received.\n";
-    std::cout << "Enviando datos al cliente..." << std::endl;
-    std::cout << "Datos: " << response << std::endl;
-    if (sendall(clientFD, response.c_str(), response.size()) == -1)
-      perror("Data failed to be sent to the client");
-    //send(clientFD, response.c_str(), response.size(), 0);
+    sendResponse(clientFD, "Form received correctly");
   }
   else
-    sendErrorResponse(clientFD, "411", "Length required");
+    sendErrorResponse(clientFD, "411", "Length required", "");
   //close(clientFD);
 }
 

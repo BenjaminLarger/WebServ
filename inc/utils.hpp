@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 19:52:44 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/06 17:23:24 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 
 #include "ServerConfig.hpp"
 #include "dependencies.hpp"
+#include "core.hpp"
 
 // Checks whether a string is all whitespace
 bool isAllWhitespace(const std::string &str);
@@ -44,5 +45,14 @@ void displayServerConfigs(std::vector<ServerConfig> &serverConfigs);
 
 // Extract the first world of a line
 std::string extractFirstWord(const std::string &str);
+
+// Extract the html content and return it as a string
+std::string extractHtmlContent(const std::string &filePath);
+
+// Send a response to the client
+void sendResponse(int clientFD, std::string responseBody);
+
+// Check if a line is empty
+bool	lineIsEmpty(std::string line);
 
 #endif

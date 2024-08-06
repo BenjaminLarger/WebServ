@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/06 17:13:34 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/06 17:45:04 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,8 +227,9 @@ GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
   catch (const std::exception &e)
   {
     std::cerr << RED << e.what() << RESET << '\n';
-    std::cout << "Sending 404 error" << std::endl;
-    sendErrorResponse(clientFD, "404", "Error 404: Not Found");
+    std::cout << "Sending default error" << std::endl;
+    sendDefaultErrorPage(clientFD, "404",
+                         serverConfigs[serverIndex].errorPages);
   }
 }
 
