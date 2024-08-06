@@ -56,6 +56,7 @@ public:
                            const std::vector<ServerConfig> &serverConfigs);
   void handleClientRequest(size_t index,
                            const std::vector<ServerConfig> &serverConfigs);
+  //void manageRequestLocation(size_t serverIndex, const std::vector<ServerConfig> &serverConfigs);
   void closeConnection(size_t index);
 
   //SIGNAL
