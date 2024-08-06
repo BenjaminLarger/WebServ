@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 17:05:53 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/06 18:23:03 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,12 @@ private:
 	std::map<int, Content> contentMap;
   int ClientFD;
   //Util
-  void extractFirstLine();
-  void extractHeaders();
-  void extractBody(int clientFD);
-  int extractMultipartFormData();
-  void sendResponse(int clientFD, std::string responseBody);
+  void        extractFirstLine();
+  void        extractHeaders();
+  void        extractBody(int clientFD);
+  std::string buildHtmlResponse();
+  int         extractMultipartFormData();
+  void        sendResponse(int clientFD, std::string responseBody);
 
   //Util uplaod file
   void readAllRequest(void); //can delete before submit project

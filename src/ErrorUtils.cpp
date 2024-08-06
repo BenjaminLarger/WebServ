@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:54:52 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 17:22:01 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/06 19:25:47 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,15 @@ void sendErrorResponse(int clientSocket, std::string statusCode,
     perror("Data failed to be sent to the client");
 }
 
-void sendDefaultErrorPage(int clientSocket, std::string statusCode, std::map<int, std::string> errorPages)
+void sendDefaultErrorPage(int clientSocket, std::string statusCode, std::string errorMessage,  std::map<int, std::string> errorPages)
 {
   std::string response;
   
   if (errorPages.find(std::atoi(statusCode.c_str())) == errorPages.end())
-    response = "HTTP/1.1 " + statusCode + " " + "Not Found\r\n";
+    response = "HTTP/1.1 " + statusCode + " " + errorMessage + "\r\n";
   else
     response = extractHtmlContent("var/www/errors" + errorPages[std::atoi(statusCode.c_str())]);
-  sendErrorResponse(clientSocket, statusCode, "Error", response);
+  sendErrorResponse(clientSocket, statusCode, errorMessage, response);
 }
 
 
