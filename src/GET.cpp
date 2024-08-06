@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/06 11:35:33 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/06 15:09:19 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,12 +110,29 @@ void GET::sendResponse(int clientFD, std::string responseBody)
     perror("Data failed to be sent to the client");
 }
 
-GET::GET(/* Webserv &server, */ int serverFD, int clientFD,
-         std::string &clientInput)
+std::string  GET::handleLocations(std::string pathToResource, int serverIndex, const std::vector<ServerConfig> &serverConfigs)
+{
+  std::string responseBody;
+  std::map<std::string, LocationConfig> locations = serverConfigs[serverIndex].locations;
+  std::map<std::string, LocationConfig>::iterator it = locations.find(pathToResource);
+
+  if (it != locations.end()) {
+    std::string index = it->second.index;
+    std::string root = it->second.root;
+    trimTrailingWS(index);
+    trimTrailingWS(root);
+    responseBody =  extractHtmlContent("." + root + "/" + index);
+    return (responseBody);
+  } else {
+    throw std::runtime_error("Location not found for path: " + pathToResource);
+  }
+}
+
+GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
+         std::string &clientInput, const std::vector<ServerConfig> &serverConfigs)
 {
   // (void)server;
   (void)clientInput;
-  (void)serverFD;
   (void)clientFD;
 
   // std::cout << RED << countJumpLine(clientInput)
@@ -159,20 +176,15 @@ GET::GET(/* Webserv &server, */ int serverFD, int clientFD,
     if (this->pathToRessource.find(".php") != std::string::npos)
       responseBody = executePhp(this->pathToRessource);
     else
-    {
-      if (this->pathToRessource == "/silence")
-        responseBody = extractHtmlContent("var/www/silence.html");
-      else if (this->pathToRessource == "/")
-        responseBody = extractHtmlContent("var/www/index.html");
-      else
-        responseBody = extractHtmlContent("var/www/errors/404.html");
-    }
+      responseBody = handleLocations(pathToRessource, serverIndex, serverConfigs);
     sendResponse(clientFD, responseBody);
     // std::cout << "response sent." << std::endl;
   }
   catch (const std::exception &e)
   {
     std::cerr << RED << e.what() << RESET << '\n';
+    std::cout << "Sending 404 error" << std::endl;
+    sendErrorResponse(clientFD, "404", "Error 404: Not Found");
   }
 }
 
