@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/06 19:03:16 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/06 19:24:58 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,10 +218,10 @@ GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
     // std::cout << "response sent." << std::endl;
   } catch (const HttpException &e) {
       std::cerr << RED << e.what() << RESET << '\n';
-      sendDefaultErrorPage(clientFD, e.getStatusCode(), serverConfigs[serverIndex].errorPages);
+      sendDefaultErrorPage(clientFD, e.getStatusCode(), e.getErrorMessage(), serverConfigs[serverIndex].errorPages);
   } catch (const std::exception &e) {
       std::cerr << RED << e.what() << RESET << '\n';
-      sendDefaultErrorPage(clientFD, "500", serverConfigs[serverIndex].errorPages);
+      sendDefaultErrorPage(clientFD, "500", "Internal Server Error", serverConfigs[serverIndex].errorPages);
   }
 }
 
