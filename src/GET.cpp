@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/07 16:42:38 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 20:29:19 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,17 +78,26 @@ std::string GET::handleLocations(std::string pathToResource)
 {
   std::string response;
   std::map<std::string, LocationConfig> locations = serverConfig.locations;
-  std::map<std::string, LocationConfig>::iterator it
-      = locations.find(pathToResource);
+  std::map<std::string, LocationConfig>::const_iterator it;
+
+  pathOrParentFolderExistsInLocations(pathToResource, locations, it);
 
   if (it != locations.end()) // pathToResource == it->first
   {
+    std::cout << "pathToResource: " << pathToResource
+              << ", found location: " << it->first << std::endl;
+
     std::string path;
     std::string root = it->second.root;
 
+    // is already a folder
     if (!pathToResource.empty()
         && pathToResource[pathToResource.size() - 1] == '/')
       path = "." + root + pathToResource;
+    // is a file inside a folder located at it->first
+    else if (pathToResource != it->first)
+      path = "." + root + pathToResource;
+    // is a folder without a "/"
     else
       path = "." + root + pathToResource + "/";
 
@@ -97,7 +106,8 @@ std::string GET::handleLocations(std::string pathToResource)
 
     if (pathToResource == "/favicon.ico")
     {
-      return (addOkResponseHeaderToBody("")); // a bit weird, sorry
+      // a bit weird for now, should be 404
+      return (composeOkHtmlResponse(""));
     }
     // Check if the location has a redirection
     if (it->second.redirection.first)
@@ -105,15 +115,15 @@ std::string GET::handleLocations(std::string pathToResource)
       std::cout << "redirection: " << it->second.redirection.first << " "
                 << it->second.redirection.second << std::endl;
 
-      response = redirectionHeader(it->second.redirection.first,
-                                   it->second.redirection.second);
+      response = createRedirectResponse(it->second.redirection.first,
+                                        it->second.redirection.second);
       return (response);
     }
     // Check if the location has a file to serve
     else if (!it->second.index.empty())
     {
       path += it->second.index;
-      response = addOkResponseHeaderToBody(extractHtmlContentFromFile(path));
+      response = composeOkHtmlResponse(extractHtmlContentFromFile(path));
       return (response);
     }
     // If location doesn't have a file, is a folder, and autoindex on
@@ -122,8 +132,24 @@ std::string GET::handleLocations(std::string pathToResource)
     {
       std::vector<std::string> contents = listDirectoryContent(path);
 
-      response = addOkResponseHeaderToBody(
+      response = composeOkHtmlResponse(
           generateDirectoryListing(pathToResource + "/", contents));
+      return (response);
+    }
+    // pathToResource doesn't match a location, but is contained in one which is a folder
+    else if (pathToResource != it->first && !isDirectory(path)
+             && isDirectory("." + root + it->first))
+    {
+      // std::cout << "pathToResource != it->first && !isDirectory(path). "
+      //              "Checking isDirectory(\".\" + root + it->first): "
+      //           << isDirectory("." + root + it->first) << std::endl;
+
+      // Save binary file to char vector
+      std::vector<char> fileContent = readFile(path);
+      if (fileContent.empty())
+        throw HttpException("404", "Not Found.");
+
+      response = composeFileResponse(fileContent, pathToResource);
       return (response);
     }
     // Else: no file, is a folder, but autoindex off
@@ -186,7 +212,7 @@ GET::GET(int clientFD, std::string &clientInput,
     // Body: The actual content (e.g., HTML, JSON).
     std::string response;
     if (this->pathToRessource.find(".php") != std::string::npos)
-      response = addOkResponseHeaderToBody(executePhp(this->pathToRessource));
+      response = composeOkHtmlResponse(executePhp(this->pathToRessource));
     else
       response = handleLocations(pathToRessource);
     sendRGeneric(clientFD, response);

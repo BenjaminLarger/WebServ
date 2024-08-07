@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/07 16:05:23 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 19:07:03 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,16 @@ bool isAllWhitespace(const std::string &str)
   return (true);
 }
 
-std::string intToString(int value)
+std::string toString(int num)
 {
   std::ostringstream oss;
-  oss << value;
+  oss << num;
+  return (oss.str());
+}
+std::string toString(size_t num)
+{
+  std::ostringstream oss;
+  oss << num;
   return (oss.str());
 }
 

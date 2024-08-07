@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 16:05:15 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 19:47:20 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,7 @@ void POST::extractBody(int clientFD)
       delete[] buffer;
       std::cout << "body: " << body << std::endl;
       // 200 = code for success received, OK = brief description of the status, text/plain = type of the response
-      sendRGeneric(ClientFD,
-                   addOkResponseHeaderToBody(buildPostHtmlResponse()));
+      sendRGeneric(ClientFD, composeOkHtmlResponse(buildPostHtmlResponse()));
     }
     else
       sendErrorResponse(clientFD, "411", "Length required", "");
