@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 19:07:35 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 20:37:28 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,5 +49,8 @@ std::string extractFirstWord(const std::string &str);
 
 // Check if a line is empty
 bool lineIsEmpty(std::string line);
+
+// Delete quotes of a string
+void trimQuotes(std::string &str);
 
 #endif

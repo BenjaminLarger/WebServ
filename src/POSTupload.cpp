@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/06 19:23:13 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/07 17:56:51 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,13 @@ void	POST::parseContentDisposition(int index, const std::string &content)
 		else if (!strncmp(key.c_str(), " name", 4) || key == "name")
 		{
 			std::getline(stream, contentMap[index].name, ';');
+			trimQuotes(contentMap[index].name);
 			std::cout << YELLOW << "name = " << contentMap[index].name << RESET << std::endl;
 		}
 		else if (!strncmp(key.c_str(), " filename", 8))
 		{
 			std::getline(stream, contentMap[index].filename, ';');
+			trimQuotes(contentMap[index].filename);
 			std::cout << YELLOW << "filename = " << contentMap[index].filename << RESET << std::endl;
 		}
 		else if (key.empty() == true || lineIsEmpty(key) == true || lastWorld == key)
@@ -134,6 +136,8 @@ int	POST::extractMultipartFormData()
 	hasClosingBoundary = false;
 	contentMap[0].HasContentType = false;
 	contentMap[0].HasContentDisposition = false;
+	int	contentRead = 0;
+	int lastContentSize = 0;
 	
 
 	std::cout << "\nUPLOAD BODY :\n";
@@ -147,8 +151,13 @@ int	POST::extractMultipartFormData()
 		//sendall(ClientFD, HAS_NOT_BOUNDARY_ERROR, strlen(HAS_NOT_BOUNDARY_ERROR));
 		return (FAILURE); //handle error
 	}
-	while (std::getline(requestStream, line) && line[line.size() - 1] == '\r')
+	while (contentRead < contentLength)
 	 {
+		contentRead += line.size();
+		if (lastContentSize == contentRead)
+			break ;
+		lastContentSize = contentRead;
+		std::cout << RED << "content read = " << contentRead << RESET << std::endl;
 		std::cout << BLUE << line << std::endl;
 		key = extractFirstWord(line);
 		std::cout << "key = " << MAGENTA << key << RESET << std::endl;
@@ -185,6 +194,8 @@ int	POST::extractMultipartFormData()
 		{
 			//Body apppears at the right place
 			std::cout << YELLOW << "Extracting Body\n" << RESET;
+			if (contentMap[index].HasBody == true)
+				contentMap[index].body += '\n';
 			contentMap[index].body += line;
 			std::cout << "Body[" << index << "] = " << YELLOW << contentMap[index].body << RESET << std::endl;
 			contentMap[index].HasBody = true;
@@ -223,14 +234,7 @@ int POST::handleFileUpload(int index)
 				return (FAILURE);
 				//throw error
 			}
-			std::string fileData = 
-    "\x89PNG\r\n\x1A\n\x00\x00\x00\rIHDR\x00\x00\x00\x0C\x00\x00\x00\x0C"
-    "\x08\x06\x00\x00\x00\x9D\x9B\xD1\xA0\x00\x00\x00\x0CIDATx\xDA\x63"
-    "\x60\x60\x60\xF8\xCF\xC0\xC0\xC0\xF0\x9F\xC3\xC0\xA0\xD4\x07\x00"
-    "\x0A\xE9\x03\x4E\x4D\x00\x00\x00\x00IEND\xAE\x42\x60\x82";
-			std::cout << "Writting " << contentMap[i].body.c_str() << " into file.\n";
-		//outFile.write(contentMap[i].body.c_str(), contentMap[i].body.size());
-		outFile.write(fileData.c_str(), fileData.size());
+		outFile.write(contentMap[i].body.c_str(), contentMap[i].body.size());
 		outFile.close();
 		std::cout << GREEN << "File uploaded successfully: " << filePath << RESET << std::endl;
 		}

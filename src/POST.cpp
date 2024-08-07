@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 19:47:20 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 20:37:15 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,13 +88,13 @@ void POST::extractBody(int clientFD)
       sendRGeneric(ClientFD, composeOkHtmlResponse(buildPostHtmlResponse()));
     }
     else
-      sendErrorResponse(clientFD, "411", "Length required", "");
+      throw HttpException("400", "Bad Request: Content-Length is missing");
   }
   catch (const HttpException &e)
   {
     std::cerr << RED << "Error: " << e.what() << RESET << '\n';
-    // sendDefaultErrorPage(clientFD, e.getStatusCode(), e.getErrorMessage(),
-    //                      serverConfigs[serverIndex].errorPages);
+    sendDefaultErrorPage(clientFD, e.getStatusCode(), e.getErrorMessage(),
+                         serverConfig.errorPages);
   }
   //close(clientFD);
 }
@@ -167,8 +167,9 @@ void POST::extractFirstLine()
 }
 
 //We extract all the content of a POST request
-POST::POST(int serverFD, int clientFD, std::string &clientInput)
-    : contentLength(0), ClientFD(clientFD)
+POST::POST(int serverFD, int clientFD, std::string &clientInput,
+           const ServerConfig &serverConfig)
+    : contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
 {
   (void)serverFD;
   (void)clientFD;
@@ -180,7 +181,11 @@ POST::POST(int serverFD, int clientFD, std::string &clientInput)
   if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded", 33))
     extractBody(clientFD);
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
-    extractMultipartFormData();
+  {
+
+    if (extractMultipartFormData() == SUCCESS)
+      clientInput.erase();
+  }
 }
 
 POST::~POST(void) {}
