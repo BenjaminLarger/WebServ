@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/07 13:39:06 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/07 15:08:32 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,7 @@ std::string GET::extractHtmlContent(const std::string &filePath)
 std::string GET::handleLocations(std::string pathToResource)
 {
   std::string responseBody;
-  std::map<std::string, LocationConfig> locations
-      = serverConfigs[serverIndex].locations;
+  std::map<std::string, LocationConfig> locations = serverConfig.locations;
   std::map<std::string, LocationConfig>::iterator it
       = locations.find(pathToResource);
 
@@ -119,11 +118,10 @@ std::string GET::handleLocations(std::string pathToResource)
     {
       std::cout << "redirection: " << it->second.redirection.first << " "
                 << it->second.redirection.second << std::endl;
-      // it->second.redirection.
+
       // HTTP/1.1 301 Moved Permanently
       // Location: http://www.example.com/new-url
       // Content-Length: 0
-      // Cache-Control: no-cache
       responseBody = redirectionHeader(it->second.redirection.second);
       return (responseBody);
     }
@@ -139,8 +137,9 @@ std::string GET::handleLocations(std::string pathToResource)
              && it->second.autoIndexOn)
     {
       std::vector<std::string> contents = listDirectoryContent(path);
-      
-      responseBody = ResponseHtmlOkBody(generateDirectoryListing(pathToResource + "/", contents));
+
+      responseBody = ResponseHtmlOkBody(
+          generateDirectoryListing(pathToResource + "/", contents));
       return (responseBody);
     }
     // Else: no file, is a folder, but autoindex off
@@ -156,10 +155,9 @@ std::string GET::handleLocations(std::string pathToResource)
   }
 }
 
-GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
-         std::string &clientInput,
-         const std::vector<ServerConfig> &serverConfigs)
-         : serverConfigs(serverConfigs), serverIndex(serverIndex)
+GET::GET(int clientFD, std::string &clientInput,
+         const ServerConfig &serverConfig)
+    : serverConfig(serverConfig)
 {
   // (void)server;
   (void)clientInput;
@@ -206,8 +204,7 @@ GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
     if (this->pathToRessource.find(".php") != std::string::npos)
       responseBody = ResponseHtmlOkBody(executePhp(this->pathToRessource));
     else
-      responseBody
-          = handleLocations(pathToRessource);
+      responseBody = handleLocations(pathToRessource);
     sendRGeneric(clientFD, responseBody);
     // std::cout << "response sent." << std::endl;
   }
@@ -215,7 +212,7 @@ GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
   {
     std::cerr << RED << "Error: " << e.what() << RESET << '\n';
     sendDefaultErrorPage(clientFD, e.getStatusCode(), e.getErrorMessage(),
-                         serverConfigs[serverIndex].errorPages);
+                         serverConfig.errorPages);
   }
 }
 

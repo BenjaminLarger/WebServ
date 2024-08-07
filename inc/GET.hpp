@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 13:39:02 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/07 15:09:36 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 #define GET_HPP
 
 #include "ErrorUtils.hpp"
-#include "Webserv.hpp"
 #include "HttpExceptions.hpp"
+#include "Webserv.hpp"
 
 class GET
 {
@@ -32,13 +32,11 @@ private:
   std::string accept;
   // Body
   std::string body;
-  // ServerConfigs
-  const std::vector<ServerConfig> &serverConfigs;
-  int serverIndex;
+  // ServerConfig
+  const ServerConfig &serverConfig;
 
 public:
-  GET(size_t serverIndex, int clientFD, std::string &clientInput,
-      const std::vector<ServerConfig> &serverConfigs);
+  GET(int clientFD, std::string &clientInput, const ServerConfig &serverConfig);
   ~GET(void);
 
   void setHost(const std::string &_host);
