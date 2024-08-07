@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ErrorUtils.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:54:52 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 15:58:30 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 20:33:55 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,10 @@ void sendErrorResponse(int clientSocket, std::string statusCode,
 
   std::string responseStr = response.str();
   if (sendall(clientSocket, responseStr.c_str(), responseStr.size()) == -1)
+  {
     throw HttpException(
         "500", "Internal Server Error: Data failed to be sent to the client");
+  }
 }
 
 void sendDefaultErrorPage(int clientSocket, std::string statusCode,
@@ -41,12 +43,5 @@ void sendDefaultErrorPage(int clientSocket, std::string statusCode,
   else
     response = extractHtmlContentFromFile(
         "var/www/errors" + errorPages[std::atoi(statusCode.c_str())]);
-  try
-  {
-    sendErrorResponse(clientSocket, statusCode, errorMessage, response);
-  }
-  catch (const HttpException &e)
-  {
-    std::cerr << RED << "Error: " << e.what() << RESET << '\n';
-  }
+  sendErrorResponse(clientSocket, statusCode, errorMessage, response);
 }

@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:35 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/07 17:23:20 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/07 20:36:15 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,49 +22,52 @@ std::string DELETE::getIfMatch(void) const { return this->if_match; }
 
 void DELETE::checkPreconditions(std::string expectedEtag, std::string expectedAuth)
 {
+	// std::cout << "Expected Etag: " << expectedEtag << std::endl;
+	// std::cout << "If-Match: " << getIfMatch() << std::endl;
+	// std::cout << "Expected Auth: " << expectedAuth << std::endl;
+	// std::cout << "Authorization: " << getAuthorization() << std::endl;
 	if (expectedEtag != getIfMatch())
 		throw HttpException("412", "Precondition Failed: ETag does not match");
 	if (expectedAuth != getAuthorization())
 		throw HttpException("401", "Unauthorized");
 }
 
-void DELETE::findHeader(std::string &key, std::istringstream &isLine)
+void DELETE::findHeader(std::istringstream &isLine)
 {
-	std::string newKey;
-	typedef void (DELETE::*HeaderSetter)(const std::string &);
-	std::map<std::string, HeaderSetter> headersMap;
+	std::string line;
+	bool isFirstLine = true;
+	std::map<std::string,std::string> headers;
+	isLine.clear();
+    isLine.seekg(0);
+  //Reads line by line until it finds an empty line
+  while (std::getline(isLine, line) && line != "\r")
+  {
+    std::cout << MAGENTA << line << std::endl;
+    size_t colonPos = line.find(":");
+    if (colonPos != std::string::npos)
+    {
+      std::string headerName = line.substr(0, colonPos);
+      std::string headerValue = line.substr(colonPos + 1);
+      // Trim whitespace
+      headerValue.erase(0, headerValue.find_first_not_of(" \t"));
+      headerValue.erase(headerValue.find_last_not_of(" \t") + 1);
+      headers[headerName] = headerValue;
+      isFirstLine = false;
+      if (headerName == "Host")
+        setHost(headerValue);
+      else if (headerName == "Authorization")
+        setAuthorization(headerValue);
+      else if (headerName == "If-Match")
+        setIfMatch(headerValue);
+    }
+    else if (isFirstLine == false)
+      break;
+  }
 
-	headersMap["Host:"] = &DELETE::setHost;
-	headersMap["Authorization:"] = &DELETE::setAuthorization;
-	headersMap["If-Match:"] = &DELETE::setIfMatch;
-
-	std::map<std::string, HeaderSetter>::iterator it = headersMap.begin();
-
-	while (it != headersMap.end())
-	{ // Loop through all headers
-		if (it->first == key)
-		{
-			std::cout << GREEN << "Header found ! " << key << std::endl;
-			isLine >> newKey;
-			std::cout << ORANGE << "new key = " << newKey << std::endl;
-			while (isLine.peek() != '\n' && isLine.peek() != 13
-					&& isLine.peek() != EOF)
-			{
-				std::string temp;
-				isLine >> temp;
-				newKey += temp;
-			}
-			std::cout << RED << "new key = " << newKey << std::endl;
-			if (key != newKey)
-			{
-				//We use the link to the map to call the function that will set the value of the object
-				(this->*(it->second))(newKey);
-				isLine >> newKey;
-				findHeader(newKey, isLine);
-			}
-		}
-		++it;
-	}
+  std::cout << RESET << "\nEXTRACT HEADER :\n";
+  std::cout << YELLOW << "Host: " << getHost() << std::endl;
+  std::cout << "Authorization: " << getAuthorization() << std::endl;
+  std::cout << "If-Match: " << getIfMatch() << RESET << std::endl;
 }
 
 void DELETE::parseRequest(std::string &clientInput)
@@ -78,27 +81,38 @@ void DELETE::parseRequest(std::string &clientInput)
 	isLine >> HTTPversion;
 	// START PARSING HEADER
 	isLine >> key;
-	findHeader(key, isLine);
+	
+	findHeader(isLine);
 }
 
-DELETE::DELETE(int clientFD, std::string &clientInput, const ServerConfig &serverConfig)
-	: serverConfig(serverConfig)
+DELETE::DELETE(int clientFD, std::string &clientInput, const ServerConfig &_serverConfig)
+	: serverConfig(_serverConfig)
 {
+	std::string response;
+
 	try
 	{
 		parseRequest(clientInput);
 		// Example of tag. Then we maybe need to create them dynamicaly
-		std::string expectedEtag = "\"e0023aa4e\""; 
+		std::string expectedEtag = "anytag";
 		std::string expectedAuth = "anytoken";
-		checkPreconditions(expectedEtag, expectedAuth);
+		//checkPreconditions(expectedEtag, expectedAuth);
+		
+		pathToRessource.insert(pathToRessource.begin(), '.');
+		std::cout << "Path to ressource: " << pathToRessource << std::endl;
 		if (remove(pathToRessource.c_str()) != 0)
 			throw HttpException("500", "Internal Server Error");
-		//sendResponse
+		else
+			response = addOkResponseHeaderToBody(extractHtmlContentFromFile("var/www/delete/delete_response.html"));
+		std::cout << GREEN << "Sending delete OK response" << RESET << std::endl;
+		sendRGeneric(clientFD, response);
 	}
 	catch (const HttpException &e)
 	{
-		std::cerr << RED << "Error: " << e.what() << RESET << '\n';
 		sendDefaultErrorPage(clientFD, e.getStatusCode(), e.getErrorMessage(),
                          serverConfig.errorPages);
+		std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what() << RESET << '\n';
 	}
 }
+
+DELETE::~DELETE(){}

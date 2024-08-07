@@ -6,12 +6,13 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 17:25:53 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/07 17:26:49 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GET.hpp"
 #include "POST.hpp"
+#include "DELETE.hpp"
 #include "Webserv.hpp"
 
 void Webserv::handleClientRequest(
@@ -62,6 +63,8 @@ void Webserv::handleClientRequest(
         GET method(fds[i].fd, clientBuffer, serverConfigs[serverIndex]);
       else if (!strncmp("POST ", clientBuffer.c_str(), 5))
         POST method(serverIndex, fds[i].fd, clientBuffer, serverConfigs[serverIndex]);
+      else if (!strncmp("DELETE ", clientBuffer.c_str(), 7))
+        DELETE method(fds[i].fd, clientBuffer, serverConfigs[serverIndex]);
       else
       {
         clientBuffer.erase();
