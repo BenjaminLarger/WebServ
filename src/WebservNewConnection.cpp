@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   WebservNewConnection.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:01 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 12:30:00 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 11:51:57 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
+#include "HttpExceptions.hpp"
 
 void Webserv::handleNewConnection(
     size_t i, const std::vector<ServerConfig> &serverConfigs)
@@ -33,14 +34,14 @@ void Webserv::handleNewConnection(
         break;
       }
     }
-
-    if (setNonBlocking(newSocket) < 0)
+    try
     {
-      close(newSocket);
-      perror("Failed to set non-blocking for new connection");
-      continue;
-    }
-
+      if (setNonBlocking(newSocket) < 0)
+      {
+        close(newSocket);
+        throw HttpException(
+          "500", "Internal Server Error: Data failed to be sent to the client");
+      }
     std::cout << "New connection accepted: " << newSocket
               << ", on port: " << clients[i].port << std::endl;
 
@@ -57,5 +58,11 @@ void Webserv::handleNewConnection(
     ci.serverIndex = clients[i].serverIndex;
     ci.port = clients[i].port;
     clients.push_back(ci);
+    }
+    catch (const HttpException &e)
+    {
+      std::cerr << "Error: " << e.what() << '\n';
+      continue;
+    }
   }
 }

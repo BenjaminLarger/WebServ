@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/06 19:31:47 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 13:39:06 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,31 +88,7 @@ std::string GET::extractHtmlContent(const std::string &filePath)
   return (buffer.str());
 }
 
-void GET::sendResponse(int clientFD, std::string responseBody)
-{
-  //The format of an HTTP response is defined by the HTTP specification (RFC 2616 for HTTP/1.1).
-  //Here it is convenient to use ostring to concatenate
-  std::ostringstream response;
-  //Status Line: Specifies the HTTP version, status code, and status message.
-  response << "HTTP/1.1 200 OK\r\n";
-  //Headers: Metadata about the response.
-  response << "Content-Type: text/html\r\n";
-  response << "Content-Length: " << responseBody.size() << "\r\n";
-  response << "\r\n";
-  response << responseBody;
-
-  std::string responseStr = response.str();
-  // std::cout << "responseStr: \n" << responseStr << std::endl;
-  //send function is similar to write, but it is specific to socket.
-  //Supports additional flags to modify behavior (e.g., MSG_NOSIGNAL to prevent sending a SIGPIPE signal).
-  //Syntax: ssize_t send(int sockfd, const void *buf, size_t len, int flags);
-
-  if (sendall(clientFD, responseStr.c_str(), responseStr.size()) == -1)
-    perror("Data failed to be sent to the client");
-}
-
-std::string GET::handleLocations(std::string pathToResource, int serverIndex,
-                                 const std::vector<ServerConfig> &serverConfigs)
+std::string GET::handleLocations(std::string pathToResource)
 {
   std::string responseBody;
   std::map<std::string, LocationConfig> locations
@@ -148,13 +124,14 @@ std::string GET::handleLocations(std::string pathToResource, int serverIndex,
       // Location: http://www.example.com/new-url
       // Content-Length: 0
       // Cache-Control: no-cache
-      return ("");
+      responseBody = redirectionHeader(it->second.redirection.second);
+      return (responseBody);
     }
     // Check if the location has a file to serve
     else if (!it->second.index.empty())
     {
       path += it->second.index;
-      responseBody = extractHtmlContent(path);
+      responseBody = ResponseHtmlOkBody(extractHtmlContent(path));
       return (responseBody);
     }
     // If location doesn't have a file, is a folder, and autoindex on
@@ -162,8 +139,8 @@ std::string GET::handleLocations(std::string pathToResource, int serverIndex,
              && it->second.autoIndexOn)
     {
       std::vector<std::string> contents = listDirectoryContent(path);
-      responseBody = generateDirectoryListing(pathToResource + "/", contents);
-
+      
+      responseBody = ResponseHtmlOkBody(generateDirectoryListing(pathToResource + "/", contents));
       return (responseBody);
     }
     // Else: no file, is a folder, but autoindex off
@@ -171,7 +148,6 @@ std::string GET::handleLocations(std::string pathToResource, int serverIndex,
     {
       throw HttpException(
           "403", "You don't have permission to access this directory.");
-      return (responseBody);
     }
   }
   else
@@ -183,6 +159,7 @@ std::string GET::handleLocations(std::string pathToResource, int serverIndex,
 GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
          std::string &clientInput,
          const std::vector<ServerConfig> &serverConfigs)
+         : serverConfigs(serverConfigs), serverIndex(serverIndex)
 {
   // (void)server;
   (void)clientInput;
@@ -226,29 +203,20 @@ GET::GET(/* Webserv &server, */ size_t serverIndex, int clientFD,
     // getResponseBody()
     // Body: The actual content (e.g., HTML, JSON).
     std::string responseBody;
-    std::cout << "pathToRessource: " << pathToRessource << std::endl;
     if (this->pathToRessource.find(".php") != std::string::npos)
-      responseBody = executePhp(this->pathToRessource);
+      responseBody = ResponseHtmlOkBody(executePhp(this->pathToRessource));
     else
       responseBody
-          = handleLocations(pathToRessource, serverIndex, serverConfigs);
-    sendResponse(clientFD, responseBody);
+          = handleLocations(pathToRessource);
+    sendRGeneric(clientFD, responseBody);
     // std::cout << "response sent." << std::endl;
   }
   catch (const HttpException &e)
   {
-    std::cerr << RED << e.what() << RESET << '\n';
+    std::cerr << RED << "Error: " << e.what() << RESET << '\n';
     sendDefaultErrorPage(clientFD, e.getStatusCode(), e.getErrorMessage(),
                          serverConfigs[serverIndex].errorPages);
   }
-  catch (const std::exception &e)
-  {
-    std::cerr << RED << e.what() << RESET << '\n';
-    sendDefaultErrorPage(clientFD, "500", "Internal Server Error",
-                         serverConfigs[serverIndex].errorPages);
-  }
 }
-
-GET::GET() {};
 
 GET::~GET() {};

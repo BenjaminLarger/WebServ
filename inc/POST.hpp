@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 18:23:03 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/07 13:51:44 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ private:
   // Body
   std::string body;
 
+
   //BodyUplaod
   //Header
 	
@@ -64,7 +65,7 @@ private:
   void        extractFirstLine();
   void        extractHeaders();
   void        extractBody(int clientFD);
-  std::string buildHtmlResponse();
+  std::string buildPostHtmlResponse();
   int         extractMultipartFormData();
   void        sendResponse(int clientFD, std::string responseBody);
 

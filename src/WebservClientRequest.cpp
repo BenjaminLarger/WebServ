@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 19:20:09 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/07 13:48:10 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,51 +19,57 @@ void Webserv::handleClientRequest(
 {
   (void)serverConfigs;
   char buffer[100000];
-  ssize_t bytes_read = read(fds[i].fd, buffer, sizeof(buffer));
-  if (bytes_read < 0)
+
+  try 
   {
-    if (errno != EAGAIN && errno != EWOULDBLOCK)
+    ssize_t bytes_read = read(fds[i].fd, buffer, sizeof(buffer));
+    if (bytes_read < 0)
     {
-      perror("Failed to read from client.");
+      if (errno != EAGAIN && errno != EWOULDBLOCK) // [Isaac] Need to talk about if this exception could break the logic
+      {
+        closeConnection(i);
+        --i;
+        throw HttpException(
+          "500", "Internal Server Error: Data failed to be sent to the client");
+      }
+    }
+    else if (bytes_read == 0)
+    {
       closeConnection(i);
       --i;
     }
-  }
-  else if (bytes_read == 0)
-  {
-    closeConnection(i);
-    --i;
-  }
-  else
-  {
-    // Handle incoming data (e.g., parse HTTP request)
-    buffer[bytes_read] = '\0';
-    size_t serverIndex = clients[i].serverIndex;
-
-    std::cout << "Received on serverIndex " << serverIndex << ", port "
-              << clients[i].port << ", clients[i].socketFD "
-              << clients[i].socketFD << ": " << buffer << "root: " << serverConfigs[serverIndex].serverRoot << std::endl;
-
-    std::string &clientBuffer = clients[i].req.buffer;
-    clientBuffer += buffer;
-
-    // parseClientRequest();
-    if (!strncmp("GET ", clientBuffer.c_str(), 4))
-      GET method(serverIndex, fds[i].fd, clientBuffer, serverConfigs);
-    else if (!strncmp("POST ", clientBuffer.c_str(), 5))
-      POST method(serverIndex, fds[i].fd, clientBuffer);
     else
     {
-      // Send HTTP/1.0 501 Not Implemented or HTTP/1.0 400 Bad Request
+      // Handle incoming data (e.g., parse HTTP request)
+      buffer[bytes_read] = '\0';
+      size_t serverIndex = clients[i].serverIndex;
 
-      std::cout << RED << "Unknown instruction received!"
-                << " clientBuffer = " << clientBuffer << RESET << std::endl;
-      clientBuffer.erase();
+      std::cout << "Received on serverIndex " << serverIndex << ", port "
+                << clients[i].port << ", clients[i].socketFD "
+                << clients[i].socketFD << ": " << buffer << "root: " << serverConfigs[serverIndex].serverRoot << std::endl;
 
-      // closeConnection(i); // commented while testing
-      // --i; // commented while testing
+      std::string &clientBuffer = clients[i].req.buffer;
+      clientBuffer += buffer;
+
+      // parseClientRequest();
+      if (!strncmp("GET ", clientBuffer.c_str(), 4))
+        GET method(serverIndex, fds[i].fd, clientBuffer, serverConfigs);
+      else if (!strncmp("POST ", clientBuffer.c_str(), 5))
+        POST method(serverIndex, fds[i].fd, clientBuffer);
+      else
+      {
+        clientBuffer.erase();
+        throw HttpException("400", "Bad request");
+      }
+        // closeConnection(i); // commented while testing
+        // --i; // commented while testing
     }
-
-    // cleanupClientRequest()
+      // cleanupClientRequest()
+  }
+  catch (const HttpException &e)
+  {
+    std::cerr << RED << "Error: " << e.what() << RESET << '\n';
+    sendDefaultErrorPage(fds[i].fd, e.getStatusCode(), e.getErrorMessage(),
+                         serverConfigs[clients[i].serverIndex].errorPages);
   }
 }

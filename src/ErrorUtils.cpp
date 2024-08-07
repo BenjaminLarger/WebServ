@@ -6,11 +6,12 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:54:52 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 19:31:53 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/07 13:20:58 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ErrorUtils.hpp"
+#include "HttpExceptions.hpp"
 
 void sendErrorResponse(int clientSocket, std::string statusCode,
                        const std::string &statusMessage, std::string errorBody)
@@ -24,7 +25,8 @@ void sendErrorResponse(int clientSocket, std::string statusCode,
 
   std::string responseStr = response.str();
   if (sendall(clientSocket, responseStr.c_str(), responseStr.size()) == -1)
-    perror("Data failed to be sent to the client");
+        throw HttpException(
+          "500", "Internal Server Error: Data failed to be sent to the client");
 }
 
 void sendDefaultErrorPage(int clientSocket, std::string statusCode, std::string errorMessage,  std::map<int, std::string> errorPages)
@@ -32,10 +34,17 @@ void sendDefaultErrorPage(int clientSocket, std::string statusCode, std::string 
   std::string response;
   
   if (errorPages.find(std::atoi(statusCode.c_str())) == errorPages.end())
-    response = "HTTP/1.1 " + statusCode + " " + errorMessage + "\r\n";
+    response = "<html><body><h1>" + statusCode + " " + errorMessage + "</h1></body></html>";
   else
     response = extractHtmlContent("var/www/errors" + errorPages[std::atoi(statusCode.c_str())]);
-  sendErrorResponse(clientSocket, statusCode, errorMessage, response);
+  try
+  {
+    sendErrorResponse(clientSocket, statusCode, errorMessage, response);
+  }
+  catch (const HttpException &e)
+  {
+    std::cerr << RED << "Error: " << e.what() << RESET << '\n';
+  }
 }
 
 

@@ -6,39 +6,41 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 18:22:56 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/07 13:54:15 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "POST.hpp"
 #include "Webserv.hpp"
+#include "HttpExceptions.hpp"
 
 //Send form data to a URL and get a response back
 
-void POST::sendResponse(int clientFD, std::string responseBody)
-{
-  //The format of an HTTP response is defined by the HTTP specification (RFC 2616 for HTTP/1.1).
-  //Here it is convenient to use ostring to concatenate
-  std::ostringstream response;
-  //Status Line: Specifies the HTTP version, status code, and status message.
-  response << "HTTP/1.1 200 OK\r\n";
-  //Headers: Metadata about the response.
-  response << "Content-Type: text/html\r\n";
-  response << "Content-Length: " << responseBody.size() << "\r\n";
-  response << "\r\n";
-  response << responseBody;
+// void POST::sendResponse(int clientFD, std::string responseBody)
+// {
+//   //The format of an HTTP response is defined by the HTTP specification (RFC 2616 for HTTP/1.1).
+//   //Here it is convenient to use ostring to concatenate
+//   std::ostringstream response;
+//   //Status Line: Specifies the HTTP version, status code, and status message.
+//   response << "HTTP/1.1 200 OK\r\n";
+//   //Headers: Metadata about the response.
+//   response << "Content-Type: text/html\r\n";
+//   response << "Content-Length: " << responseBody.size() << "\r\n";
+//   response << "\r\n";
+//   response << responseBody;
 
-  std::string responseStr = response.str();
-  // std::cout << "responseStr: \n" << responseStr << std::endl;
-  //send function is similar to write, but it is specific to socket.
-  //Supports additional flags to modify behavior (e.g., MSG_NOSIGNAL to prevent sending a SIGPIPE signal).
-  //Syntax: ssize_t send(int sockfd, const void *buf, size_t len, int flags);
+//   std::string responseStr = response.str();
+//   // std::cout << "responseStr: \n" << responseStr << std::endl;
+//   //send function is similar to write, but it is specific to socket.
+//   //Supports additional flags to modify behavior (e.g., MSG_NOSIGNAL to prevent sending a SIGPIPE signal).
+//   //Syntax: ssize_t send(int sockfd, const void *buf, size_t len, int flags);
 
-  if (sendall(clientFD, responseStr.c_str(), responseStr.size()) == -1)
-    perror("Data failed to be sent to the client");
-}
+//   if (sendall(clientFD, responseStr.c_str(), responseStr.size()) == -1)
+//     throw HttpException(
+//       "500", "Internal Server Error: Data failed to be sent to the client");
+// }
 
-std::string POST::buildHtmlResponse()
+std::string POST::buildPostHtmlResponse()
 {
   std::string responseBody;
   std::map<std::string, std::string> formValues;
@@ -67,22 +69,31 @@ void POST::extractBody(int clientFD)
 {
 	//std::cout << "length = " << contentLength << std::endl;
   // Read body
-  if (contentLength > 0)
+  try
   {
-    char *buffer = new char[contentLength + 1];
+    if (contentLength > 0)
+    {
+      char *buffer = new char[contentLength + 1];
 
-    //Reads the content of the body from the actual position of the stream
-    requestStream.read(buffer, contentLength);
-    buffer[contentLength] = '\0';
-    //Converts the buffer to a string to make it easier to manipulate
-    body = buffer;
-    delete[] buffer;
-    std::cout << "body: " << body << std::endl;
-    // 200 = code for success received, OK = brief description of the status, text/plain = type of the response
-    sendResponse(clientFD, buildHtmlResponse());
+      //Reads the content of the body from the actual position of the stream
+      requestStream.read(buffer, contentLength);
+      buffer[contentLength] = '\0';
+      //Converts the buffer to a string to make it easier to manipulate
+      body = buffer;
+      delete[] buffer;
+      std::cout << "body: " << body << std::endl;
+      // 200 = code for success received, OK = brief description of the status, text/plain = type of the response
+      sendRGeneric(ClientFD, ResponseHtmlOkBody(buildPostHtmlResponse()));
+    }
+    else
+      sendErrorResponse(clientFD, "411", "Length required", "");
   }
-  else
-    sendErrorResponse(clientFD, "411", "Length required", "");
+  catch (const HttpException &e)
+  {
+    std::cerr << RED << "Error: " << e.what() << RESET << '\n';
+    // sendDefaultErrorPage(clientFD, e.getStatusCode(), e.getErrorMessage(),
+    //                      serverConfigs[serverIndex].errorPages);
+  }
   //close(clientFD);
 }
 
@@ -146,6 +157,7 @@ void POST::extractFirstLine()
   std::cout << YELLOW << "path-to-resource: " << this->pathToRessource << RESET
             << std::endl;
   std::cout << YELLOW << "HTTP: " << this->HTTPversion << RESET << std::endl;
+  //Reset the stream to the beginning
   requestStream.clear();
   requestStream.seekg(0);
 }
@@ -165,7 +177,6 @@ POST::POST(int serverFD, int clientFD, std::string &clientInput)
   	extractBody(clientFD);
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
 		extractMultipartFormData();
-	//clientInput.erase();
 }
 
 POST::~POST(void) {}

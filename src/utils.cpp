@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/06 19:25:45 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 12:55:46 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.hpp"
+#include "HttpExceptions.hpp"
 
 bool isAllWhitespace(const std::string &str)
 {
@@ -179,7 +180,8 @@ std::string extractFirstWord(const std::string &str)
   return (firstWord);
 }
 
-void sendResponse(int clientFD, std::string responseBody)
+// Return a HTML response with the given body
+std::string ResponseHtmlOkBody(std::string responseBody)
 {
   //The format of an HTTP response is defined by the HTTP specification (RFC 2616 for HTTP/1.1).
   //Here it is convenient to use ostring to concatenate
@@ -198,8 +200,39 @@ void sendResponse(int clientFD, std::string responseBody)
   //Supports additional flags to modify behavior (e.g., MSG_NOSIGNAL to prevent sending a SIGPIPE signal).
   //Syntax: ssize_t send(int sockfd, const void *buf, size_t len, int flags);
 
+  return (responseStr);
+}
+
+std::string  okHeaderHtml(void)
+{
+  std::string response = "HTTP/1.1 200 OK\r\n";
+  response += "Content-Type: text/html\r\n";
+  response += "Content-Length: 0\r\n";
+  response += "Cache-Control: no-cache";
+  response += "Connection: close\r\n";
+  response += "\r\n";
+  
+  return (response);
+}
+
+std::string  redirectionHeader(const std::string &location)
+{
+  std::cout << BLUE << "Building redirection header : " << location << std::endl;
+  std::string response = "HTTP/1.1 301 Moved Permanently\r\n";
+  response += "Location: " + location + "\r\n";
+  response += "Content-Length: 0\r\n";
+  response += "Cache-Control: no-cache";
+  response += "Connection: close\r\n";
+  response += "\r\n";
+  
+  return (response);
+}
+
+void  sendRGeneric(int clientFD, std::string responseStr)
+{
   if (sendall(clientFD, responseStr.c_str(), responseStr.size()) == -1)
-    perror("Data failed to be sent to the client");
+    throw HttpException(
+      "500", "Internal Server Error: Data failed to be sent to the client");
 }
 
 std::string extractHtmlContent(const std::string &filePath)
