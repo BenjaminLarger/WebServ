@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 11:28:00 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/07 16:05:28 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
-#include "HttpExceptions.hpp"
+#include "core.hpp"
 /* --------------CONSTRUCTORS */
 //The socket() function shall create an unbound socket in a communications domain,
 //and return a file descriptor that can be used in later function calls that operate on sockets.
@@ -51,9 +51,12 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
         else
         {
           // Data from a connected client ~= processConnectionData()
-          try {
+          try
+          {
             handleClientRequest(i, serverConfigs);
-          } catch (const HttpException &e) {
+          }
+          catch (const HttpException &e)
+          {
             std::cerr << RED << "Error: " << e.what() << RESET << '\n';
           }
           //break ;

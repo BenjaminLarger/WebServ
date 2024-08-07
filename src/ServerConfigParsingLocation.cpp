@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 18:23:26 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 19:24:26 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 16:46:51 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,10 @@ void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
     {
       long long valueLong;
       ss >> valueLong >> valueStr;
+
       if (!valueStr.size() || streamHasRemainingContent(ss)
-          || (valueLong != 301 && valueLong != 302 && valueLong != 303
-              && valueLong != 307 && valueLong != 308))
+          || (!(valueLong >= 300 && valueLong <= 305) && valueLong != 307
+              && valueLong != 308))
         file.close(),
             throw(std::runtime_error(
                 "Incorrect HTTP redirection in location block: " + line));
@@ -110,7 +111,7 @@ void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
     else if (key.size() && key[0] == '}')
     {
       // Closing location block
-      if (!this->locations[urlPattern].allowedMethods.size())
+      if (this->locations[urlPattern].allowedMethods.empty())
         this->locations[urlPattern].allowedMethods.push_back("GET");
 
       // Set default root

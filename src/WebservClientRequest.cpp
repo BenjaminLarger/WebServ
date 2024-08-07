@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 15:07:00 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 17:25:53 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,12 @@ void Webserv::handleClientRequest(
       buffer[bytes_read] = '\0';
       size_t serverIndex = clients[i].serverIndex;
 
-      std::cout << "Received on serverIndex " << serverIndex << ", port "
-                << clients[i].port << ", clients[i].socketFD "
+      std::cout << "Request received on serverIndex " << serverIndex
+                << ", port " << clients[i].port << ", clients[i].socketFD "
                 << clients[i].socketFD
                 << ", root: " << serverConfigs[serverIndex].serverRoot
                 << std::endl;
-      std::cout << "Request: \n" << buffer << std::endl;
+      // std::cout << "Request: \n" << buffer << std::endl;
 
       std::string &clientBuffer = clients[i].req.buffer;
       clientBuffer += buffer;
@@ -61,7 +61,7 @@ void Webserv::handleClientRequest(
       if (!strncmp("GET ", clientBuffer.c_str(), 4))
         GET method(fds[i].fd, clientBuffer, serverConfigs[serverIndex]);
       else if (!strncmp("POST ", clientBuffer.c_str(), 5))
-        POST method(serverIndex, fds[i].fd, clientBuffer);
+        POST method(serverIndex, fds[i].fd, clientBuffer, serverConfigs[serverIndex]);
       else
       {
         clientBuffer.erase();

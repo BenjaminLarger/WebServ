@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 13:51:44 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/07 15:51:40 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,13 +54,14 @@ private:
   int contentLength;
   // Body
   std::string body;
-
+  // ServerConfig
+  int ClientFD;
+	std::map<int, Content> contentMap;
+  const ServerConfig &serverConfig;
 
   //BodyUplaod
   //Header
 	
-	std::map<int, Content> contentMap;
-  int ClientFD;
   //Util
   void        extractFirstLine();
   void        extractHeaders();
@@ -88,7 +89,7 @@ private:
   POST& operator=(const POST&);
 	
 public:
-  POST(int serverFD, int clientFD, std::string &clientInput);
+  POST(int serverFD, int clientFD, std::string &clientInput, const ServerConfig &serverConfig);
   POST();
   ~POST(void);
 };

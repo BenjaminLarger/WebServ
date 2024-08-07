@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   WebservNewConnection.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:01 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 11:51:57 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/07 16:05:51 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
-#include "HttpExceptions.hpp"
+#include "core.hpp"
 
 void Webserv::handleNewConnection(
     size_t i, const std::vector<ServerConfig> &serverConfigs)
@@ -40,24 +40,25 @@ void Webserv::handleNewConnection(
       {
         close(newSocket);
         throw HttpException(
-          "500", "Internal Server Error: Data failed to be sent to the client");
+            "500",
+            "Internal Server Error: Data failed to be sent to the client");
       }
-    std::cout << "New connection accepted: " << newSocket
-              << ", on port: " << clients[i].port << std::endl;
+      std::cout << "New connection accepted: " << newSocket
+                << ", on port: " << clients[i].port << std::endl;
 
-    // Add the new socket to the pollfd vector
-    pollfd pfd;
-    pfd.fd = newSocket;
-    pfd.events = POLLIN;
-    pfd.revents = 0;
-    fds.push_back(pfd);
+      // Add the new socket to the pollfd vector
+      pollfd pfd;
+      pfd.fd = newSocket;
+      pfd.events = POLLIN;
+      pfd.revents = 0;
+      fds.push_back(pfd);
 
-    // Add the new client info to the clients vector
-    ClientInfo ci;
-    ci.socketFD = newSocket;
-    ci.serverIndex = clients[i].serverIndex;
-    ci.port = clients[i].port;
-    clients.push_back(ci);
+      // Add the new client info to the clients vector
+      ClientInfo ci;
+      ci.socketFD = newSocket;
+      ci.serverIndex = clients[i].serverIndex;
+      ci.port = clients[i].port;
+      clients.push_back(ci);
     }
     catch (const HttpException &e)
     {
