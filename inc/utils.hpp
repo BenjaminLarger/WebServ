@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 12:48:54 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/07 16:03:53 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 #define UTILS_HPP
 
 #include "ServerConfig.hpp"
-#include "dependencies.hpp"
 #include "core.hpp"
+#include "dependencies.hpp"
 
 // Checks whether a string is all whitespace
 bool isAllWhitespace(const std::string &str);
@@ -46,19 +46,7 @@ void displayServerConfigs(std::vector<ServerConfig> &serverConfigs);
 // Extract the first world of a line
 std::string extractFirstWord(const std::string &str);
 
-// Extract the html content and return it as a string
-std::string extractHtmlContent(const std::string &filePath);
-
-// Return a response to the client
-std::string ResponseHtmlOkBody(std::string responseBody);
-
-// Return a 200 OK HTML type header response
-std::string  okHeaderHtml(void);
-
-// Return a redirection header response
-std::string  redirectionHeader(const std::string &location);
-
 // Check if a line is empty
-bool	lineIsEmpty(std::string line);
+bool lineIsEmpty(std::string line);
 
 #endif

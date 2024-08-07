@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 14:33:15 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 14:48:37 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 16:58:03 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,15 +221,15 @@ bool ServerConfig::checkConfig(std::vector<int> &tempPorts)
     this->maxBodySize = 1000000;
 
   // Set default root
-  if (this->serverRoot.size() == 0)
+  if (this->serverRoot.empty())
     this->serverRoot = "/var/www";
 
   // Set default index file
-  // if (this->serverIndex.size() == 0)
+  // if (this->serverIndex.empty())
   //   this->serverIndex = "index.html";
 
   // Add default host if needed
-  if (this->getHost().size() == 0)
+  if (this->getHost().empty())
   {
     std::string value = "127.0.0.1";
     this->host = value.c_str();
@@ -244,7 +244,7 @@ bool ServerConfig::checkConfig(std::vector<int> &tempPorts)
   }
 
   // Check port present
-  if (tempPorts.size() == 0)
+  if (tempPorts.empty())
     return (false);
 
   return (true);

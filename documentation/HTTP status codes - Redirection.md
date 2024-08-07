@@ -1,4 +1,21 @@
-# There are several types of HTTP status codes used for redirection, each serving different purposes. Here are the common ones:
+301 example with content-body:
+GET / HTTP/1.1
+host: google.com
+
+HTTP/1.1 301 Moved Permanently
+Location: http://www.google.com/
+Content-Type: text/html; charset=UTF-8
+Content-Length: 219
+
+<HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<TITLE>301 Moved</TITLE></HEAD><BODY>
+<H1>301 Moved</H1>
+The document has moved
+<A HREF="http://www.google.com/">here</A>.
+</BODY></HTML>
+
+
+## There are several types of HTTP status codes used for redirection, each serving different purposes. Here are the common ones:
 
 1. **301 Moved Permanently**:
    - Indicates that the resource has been permanently moved to a new URL.

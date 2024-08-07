@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 15:09:36 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 16:04:39 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #define GET_HPP
 
 #include "ErrorUtils.hpp"
-#include "HttpExceptions.hpp"
 #include "Webserv.hpp"
 
 class GET
@@ -45,10 +44,9 @@ public:
 
   void findHeader(std::string &key, std::istringstream &isLine);
   std::string createResponseBody(void);
-  std::string extractHtmlContent(const std::string &filePath);
   std::string handleLocations(std::string pathToResource);
 
-  // Return vector of all files names in folder
+  // Return vector of all file names in folder
   std::vector<std::string> listDirectoryContent(const std::string &path);
 
   // Generate html page with directory listing

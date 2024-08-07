@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/07 15:08:32 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 16:42:38 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,23 +74,9 @@ int countJumpLine(std::string str)
   return (count);
 }
 
-std::string GET::extractHtmlContent(const std::string &filePath)
-{
-  std::cout << "filePath: " << filePath << std::endl;
-  std::ifstream file(filePath.c_str());
-  if (!file.is_open())
-    throw std::runtime_error("Could not open file: " + filePath);
-
-  std::stringstream buffer;
-  buffer << file.rdbuf();
-  buffer << "\r\n";
-
-  return (buffer.str());
-}
-
 std::string GET::handleLocations(std::string pathToResource)
 {
-  std::string responseBody;
+  std::string response;
   std::map<std::string, LocationConfig> locations = serverConfig.locations;
   std::map<std::string, LocationConfig>::iterator it
       = locations.find(pathToResource);
@@ -111,7 +97,7 @@ std::string GET::handleLocations(std::string pathToResource)
 
     if (pathToResource == "/favicon.ico")
     {
-      return ("");
+      return (addOkResponseHeaderToBody("")); // a bit weird, sorry
     }
     // Check if the location has a redirection
     if (it->second.redirection.first)
@@ -119,28 +105,26 @@ std::string GET::handleLocations(std::string pathToResource)
       std::cout << "redirection: " << it->second.redirection.first << " "
                 << it->second.redirection.second << std::endl;
 
-      // HTTP/1.1 301 Moved Permanently
-      // Location: http://www.example.com/new-url
-      // Content-Length: 0
-      responseBody = redirectionHeader(it->second.redirection.second);
-      return (responseBody);
+      response = redirectionHeader(it->second.redirection.first,
+                                   it->second.redirection.second);
+      return (response);
     }
     // Check if the location has a file to serve
     else if (!it->second.index.empty())
     {
       path += it->second.index;
-      responseBody = ResponseHtmlOkBody(extractHtmlContent(path));
-      return (responseBody);
+      response = addOkResponseHeaderToBody(extractHtmlContentFromFile(path));
+      return (response);
     }
     // If location doesn't have a file, is a folder, and autoindex on
-    else if (!it->second.index.size() && isDirectory(path)
+    else if (it->second.index.empty() && isDirectory(path)
              && it->second.autoIndexOn)
     {
       std::vector<std::string> contents = listDirectoryContent(path);
 
-      responseBody = ResponseHtmlOkBody(
+      response = addOkResponseHeaderToBody(
           generateDirectoryListing(pathToResource + "/", contents));
-      return (responseBody);
+      return (response);
     }
     // Else: no file, is a folder, but autoindex off
     else
@@ -198,14 +182,14 @@ GET::GET(int clientFD, std::string &clientInput,
 
   try
   {
-    // getResponseBody()
+    // getresponse()
     // Body: The actual content (e.g., HTML, JSON).
-    std::string responseBody;
+    std::string response;
     if (this->pathToRessource.find(".php") != std::string::npos)
-      responseBody = ResponseHtmlOkBody(executePhp(this->pathToRessource));
+      response = addOkResponseHeaderToBody(executePhp(this->pathToRessource));
     else
-      responseBody = handleLocations(pathToRessource);
-    sendRGeneric(clientFD, responseBody);
+      response = handleLocations(pathToRessource);
+    sendRGeneric(clientFD, response);
     // std::cout << "response sent." << std::endl;
   }
   catch (const HttpException &e)
