@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/07 16:42:38 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 17:25:04 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ void GET::setUserAgent(const std::string &_userAgent)
 {
   this->userAgent = _userAgent;
 }
-//-----> use a map container to associate a string key found with a function that set  object value (eg: key = "Host:" || function = setHost(std::string value) {this->host = value})
+//-----> use a map container to associate a string key found with a function
+//that set  object value (eg: key = "Host:" || function = setHost(std::string value) {this->host = value})
 void GET::findHeader(std::string &key, std::istringstream &isLine)
 {
   std::string newKey;

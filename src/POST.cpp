@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 16:05:15 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 17:25:42 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,13 +89,13 @@ void POST::extractBody(int clientFD)
                    addOkResponseHeaderToBody(buildPostHtmlResponse()));
     }
     else
-      sendErrorResponse(clientFD, "411", "Length required", "");
+      throw HttpException("400", "Bad Request: Content-Length is missing");
   }
   catch (const HttpException &e)
   {
     std::cerr << RED << "Error: " << e.what() << RESET << '\n';
-    // sendDefaultErrorPage(clientFD, e.getStatusCode(), e.getErrorMessage(),
-    //                      serverConfigs[serverIndex].errorPages);
+    sendDefaultErrorPage(clientFD, e.getStatusCode(), e.getErrorMessage(),
+                          serverConfig.errorPages);
   }
   //close(clientFD);
 }
@@ -168,8 +168,8 @@ void POST::extractFirstLine()
 }
 
 //We extract all the content of a POST request
-POST::POST(int serverFD, int clientFD, std::string &clientInput)
-    : contentLength(0), ClientFD(clientFD)
+POST::POST(int serverFD, int clientFD, std::string &clientInput, const ServerConfig &serverConfig)
+    : contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
 {
   (void)serverFD;
   (void)clientFD;
