@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/07 12:55:46 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/07 16:33:34 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,4 +259,14 @@ bool lineIsEmpty(std::string line)
   std::cout << std::endl;
   std::cout << ORANGE << "Line is empty!\n" << RESET;
   return (true);
+}
+
+void trimQuotes(std::string &str)
+{
+	trimBothEnds(str);
+	std::cout << RED << "len = " << str.length() << ", [0] = " << str[0] << ", [end] = " << str[str.length() - 1] << RESET << std::endl;
+    if (str.length() >= 2 && str[0] == '"' && str[str.length() - 1] == '"')
+		{
+			str = str.substr(1, str.length() - 2);
+    }
 }

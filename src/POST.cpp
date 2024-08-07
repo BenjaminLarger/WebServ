@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 13:54:15 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/07 17:26:45 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,11 @@ POST::POST(int serverFD, int clientFD, std::string &clientInput)
   if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded", 33))
   	extractBody(clientFD);
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
-		extractMultipartFormData();
+	{
+
+		if (extractMultipartFormData() == SUCCESS)
+			clientInput.erase();
+	}
 }
 
 POST::~POST(void) {}

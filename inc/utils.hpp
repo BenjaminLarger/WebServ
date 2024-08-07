@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 12:48:54 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/07 16:33:18 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,5 +60,9 @@ std::string  redirectionHeader(const std::string &location);
 
 // Check if a line is empty
 bool	lineIsEmpty(std::string line);
+
+// Delete quotes of a string
+void trimQuotes(std::string &str);
+
 
 #endif
