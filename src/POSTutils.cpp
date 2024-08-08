@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/06 16:21:51 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/08 13:47:54 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	POST::readAllRequest()
 	requestStream.clear();
 	requestStream.seekg(0);
 	std::cout << "\n--------------READING ALL CONTENT--------------";
-	while (std::getline(requestStream, line) && line[line.size() - 1] == '\r')
+	while (std::getline(requestStream, line))
 	 {
 		std::cout << "\n" << MAGENTA << line << RESET;
 	 }
@@ -101,7 +101,7 @@ std::string	POST::skipBoundaryPart(void)
 	requestStream.clear();
 	requestStream.seekg(0);
 	//skip until bundary
-	 while (std::getline(requestStream, line) && line[line.size() - 1] == '\r')
+	 while (std::getline(requestStream, line))
 	 {
 		//std::cout << "\n" << MAGENTA << "line = "<< line << RESET << std::endl;
 		if (!strncmp(line.c_str(), "--", 2))

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 18:11:11 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/08 13:27:32 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ POST::POST(int serverFD, int clientFD, std::string &clientInput, const ServerCon
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
 	{
 
-		if (extractMultipartFormData() == SUCCESS)
+		if (extractMultipartFormData(clientInput) == SUCCESS)
 			clientInput.erase();
 	}
 }
