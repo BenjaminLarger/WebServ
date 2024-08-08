@@ -4,7 +4,7 @@
 <title>Delete Files</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
+    font-family: Arial, sans-serif, monospace;
     background-color: #000000;
     margin: 0;
     padding: 0;
@@ -17,16 +17,23 @@
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(240, 233, 233, 0.788);
+    max-width: 80%;
+    margin: auto;
   }
   h1 {
+    font-family: Arial, sans-serif, monospace;
     text-align: center;
-    color: #333;
+    color: #5cd41b;
+    margin-right: 180px;
   }
   table {
     width: 100%;
+    max-width: 1000px;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 20px auto;
+    margin-right: 50;
+    background-color: #fff;
   }
   th, td {
     padding: 12px;
@@ -50,6 +57,9 @@
   button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+  }
+  .narrow {
+    width: 100px; /* Ajusta este valor según sea necesario */
   }
 </style>
 <script>
