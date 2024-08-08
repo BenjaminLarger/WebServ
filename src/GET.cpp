@@ -6,17 +6,13 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/08 17:21:58 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/08 17:34:17 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GET.hpp"
 #include "CGI.hpp"
 #include "core.hpp"
-
-void GET::setAccept(const std::string &_accept) { this->accept = _accept; }
-void GET::setHost(const std::string &_host) { this->host = _host; }
-void GET::setUserAgent(const std::string &_userAgent) { this->userAgent = _userAgent; }
 
 std::string createHtmlDeleteRequest(std::vector<std::string> files, std::string uploadspth)
 {
@@ -53,47 +49,6 @@ std::string manageDeleteEndPoint()
   
   htmlDeleteBody = createHtmlDeleteRequest(files, uploadspth);
   return (htmlDeleteBody);
-}
-
-void GET::findHeader(std::string &key, std::istringstream &isLine)
-{
-  std::string newKey;
-  typedef void (GET::*HeaderSetter)(const std::string &);
-  std::map<std::string, HeaderSetter> headersMap;
-
-  headersMap["Host:"] = &GET::setHost;
-  headersMap["User-Agent:"] = &GET::setUserAgent;
-  headersMap["Accept:"] = &GET::setAccept;
-
-  std::map<std::string, HeaderSetter>::iterator it = headersMap.begin();
-
-  while (it != headersMap.end())
-  { // Loop through all headers
-    if (it->first == key)
-    {
-      std::cout << GREEN << "Header found ! " << key << std::endl;
-      isLine >> newKey;
-      std::cout << ORANGE << "new key = " << newKey << std::endl;
-      while (isLine.peek() != '\n' && isLine.peek() != 13
-             && isLine.peek() != EOF)
-      {
-        std::string temp;
-        isLine >> temp;
-        newKey += temp;
-      }
-      std::cout << RED << "new key = " << newKey << std::endl;
-      if (key != newKey)
-      {
-        (this->*(it->second))(newKey);
-        isLine >> newKey;
-        findHeader(newKey, isLine);
-      }
-    }
-    ++it;
-  }
-  isLine >> newKey;
-  if (key != newKey)
-    findHeader(newKey, isLine);
 }
 
 std::string GET::handleLocations(std::string pathToResource)
