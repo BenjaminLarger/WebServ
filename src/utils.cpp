@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/07 20:37:06 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 14:19:40 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,4 +208,16 @@ void trimQuotes(std::string &str)
   {
     str = str.substr(1, str.length() - 2);
   }
+}
+
+int countJumpLine(std::string str)
+{
+  int count = 0;
+
+  for (int i = 0; str[i]; i++)
+  {
+    if (str[i] == '\n')
+      count++;
+  }
+  return (count);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 13:58:45 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/08 16:23:53 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,12 +88,15 @@ void POST::extractBody(int clientFD)
       sendRGeneric(ClientFD, composeOkHtmlResponse(buildPostHtmlResponse()));
     }
     else
-      throw HttpException("400", "Bad Request: Content-Length is missing");
+      throw HttpException(400, "Bad Request: Content-Length is missing");
   }
   catch (const HttpException &e)
   {
-    std::cerr << RED << "Error: " << e.what() << RESET << '\n';
-    sendDefaultErrorPage(clientFD, e.getStatusCode(), e.getErrorMessage(),
+    std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
+              << RESET << '\n';
+
+    sendDefaultErrorPage(clientFD, e.getStatusCode(),
+                         getReasonPhrase(e.getStatusCode()),
                          serverConfig.errorPages);
   }
   //close(clientFD);
@@ -167,10 +170,11 @@ void POST::extractFirstLine()
 }
 
 //We extract all the content of a POST request
-POST::POST(int serverFD, int clientFD, std::string &clientInput,
-           const ServerConfig &serverConfig)
+POST::POST(ClientInfo &client, int serverFD, int clientFD,
+           std::string &clientInput, const ServerConfig &serverConfig)
     : contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
 {
+  (void)client;
   (void)serverFD;
   (void)clientFD;
   this->requestStream.str(clientInput);
@@ -183,9 +187,9 @@ POST::POST(int serverFD, int clientFD, std::string &clientInput,
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
   {
 
-		if (extractMultipartFormData(clientInput) == SUCCESS)
-			clientInput.erase();
-	}
+    if (extractMultipartFormData(clientInput) == SUCCESS)
+      clientInput.erase();
+  }
 }
 
 POST::~POST(void) {}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/07 20:37:21 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 17:21:58 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,45 @@
 
 void GET::setAccept(const std::string &_accept) { this->accept = _accept; }
 void GET::setHost(const std::string &_host) { this->host = _host; }
-void GET::setUserAgent(const std::string &_userAgent)
+void GET::setUserAgent(const std::string &_userAgent) { this->userAgent = _userAgent; }
+
+std::string createHtmlDeleteRequest(std::vector<std::string> files, std::string uploadspth)
 {
-  this->userAgent = _userAgent;
+    std::ostringstream html;
+    
+    html << extractHtmlContentFromFile("./var/www/delete/delete_request.html");
+    html << "<body>";
+    html << "<h1>Files in " << uploadspth << "</h1>";
+    html << "<table border='1'>";
+    html << "<tr><th>File Name</th><th>Action</th></tr>";
+
+    for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it)
+    {
+        html << "<tr>";
+        html << "<td>" << *it << "</td>";
+        html << "<td>";
+        html << "<button onclick=\"deleteFile('" << *it << "', this)\">Delete</button>";
+        html << "</td>";
+        html << "</tr>";
+    }
+
+    html << "</table>";
+    html << "</body>";
+    html << "</html>";
+
+    return html.str();
 }
-//-----> use a map container to associate a string key found with a function
-//that set  object value (eg: key = "Host:" || function = setHost(std::string value) {this->host = value})
+
+std::string manageDeleteEndPoint()
+{
+  std::string uploadspth = "var/www/uploads";
+  std::vector<std::string> files = listFilesInDirectory(uploadspth);
+  std::string htmlDeleteBody;
+  
+  htmlDeleteBody = createHtmlDeleteRequest(files, uploadspth);
+  return (htmlDeleteBody);
+}
+
 void GET::findHeader(std::string &key, std::istringstream &isLine)
 {
   std::string newKey;
@@ -63,18 +96,6 @@ void GET::findHeader(std::string &key, std::istringstream &isLine)
     findHeader(newKey, isLine);
 }
 
-int countJumpLine(std::string str)
-{
-  int count = 0;
-
-  for (int i = 0; str[i]; i++)
-  {
-    if (str[i] == '\n')
-      count++;
-  }
-  return (count);
-}
-
 std::string GET::handleLocations(std::string pathToResource)
 {
   std::string response;
@@ -83,14 +104,15 @@ std::string GET::handleLocations(std::string pathToResource)
 
   pathOrParentFolderExistsInLocations(pathToResource, locations, it);
 
-  if (it != locations.end()) // pathToResource == it->first
+  if (it != locations.end()) // it->first
   {
     std::cout << "pathToResource: " << pathToResource
               << ", found location: " << it->first << std::endl;
-
     std::string path;
     std::string root = it->second.root;
 
+    if (it->first == "/delete")
+      return (composeOkHtmlResponse(manageDeleteEndPoint()));
     // is already a folder
     if (!pathToResource.empty()
         && pathToResource[pathToResource.size() - 1] == '/')
@@ -105,11 +127,6 @@ std::string GET::handleLocations(std::string pathToResource)
     std::cout << "path: '" << path
               << "' isDirectory(path): " << isDirectory(path) << std::endl;
 
-    if (pathToResource == "/favicon.ico")
-    {
-      // a bit weird for now, should be 404
-      return (composeOkHtmlResponse(""));
-    }
     // Check if the location has a redirection
     if (it->second.redirection.first)
     {
@@ -133,8 +150,7 @@ std::string GET::handleLocations(std::string pathToResource)
     {
       std::vector<std::string> contents = listDirectoryContent(path);
 
-      response = composeOkHtmlResponse(
-          generateDirectoryListing(pathToResource + "/", contents));
+      response = composeOkHtmlResponse(createFileListHtml(path));
       return (response);
     }
     // pathToResource doesn't match a location, but is contained in one which is a folder
@@ -148,7 +164,7 @@ std::string GET::handleLocations(std::string pathToResource)
       // Save binary file to char vector
       std::vector<char> fileContent = readFile(path);
       if (fileContent.empty())
-        throw HttpException("404", "Not Found.");
+        throw HttpException(404, "Not Found.");
 
       response = composeFileResponse(fileContent, pathToResource);
       return (response);
@@ -157,54 +173,25 @@ std::string GET::handleLocations(std::string pathToResource)
     else
     {
       throw HttpException(
-          "403", "You don't have permission to access this directory.");
+          403, "You don't have permission to access this directory.");
     }
   }
   else
   {
-    throw HttpException("404", "Not Found");
+    throw HttpException(404, "Not Found");
   }
 }
 
-GET::GET(int clientFD, std::string &clientInput,
+GET::GET(ClientInfo &client, int clientFD, std::string &clientInput,
          const ServerConfig &serverConfig)
     : serverConfig(serverConfig)
 {
-  // (void)server;
-  (void)clientInput;
-  (void)clientFD;
-
-  // std::cout << RED << countJumpLine(clientInput)
-  //         << " jumplines in client request!" << RESET << std::endl;
   if (countJumpLine(clientInput)
       < 3) //Change with if receive a blank line => erase buffer
     return;
-  std::istringstream isLine(clientInput);
+  std::istringstream iss(clientInput);
   std::string key;
 
-  std::cout << MAGENTA << clientInput << RESET << std::endl;
-  isLine >> key;
-  isLine >> this->pathToRessource;
-  isLine >> this->HTTPversion;
-  // END OF FIRST LINE
-
-  // START PARSING HEADER AND BODY
-  isLine >> key; // Header
-
-  // Read client input => Using flag ? using a "readline"
-  /* if (key == "Host:" || key == "User-Agent:" || key == "Accept:")
-     */
-  findHeader(key, isLine);
-  //write(clientFD, "GET client info\n", 14);
-  std::cout << "pathToRessource = " << YELLOW << this->pathToRessource << RESET
-            << std::endl;
-  std::cout << "HTTPversion = " << YELLOW << this->HTTPversion << RESET
-            << std::endl;
-  std::cout << "host = " << YELLOW << this->host << RESET << std::endl;
-  std::cout << "userAgent = " << YELLOW << this->userAgent << RESET
-            << std::endl;
-  std::cout << "accept = " << YELLOW << this->accept << RESET << std::endl;
-  std::cout << RESET;
   clientInput.erase();
 
   try
@@ -212,17 +199,17 @@ GET::GET(int clientFD, std::string &clientInput,
     // getresponse()
     // Body: The actual content (e.g., HTML, JSON).
     std::string response;
-    if (this->pathToRessource.find(".php") != std::string::npos)
-      response = composeOkHtmlResponse(executePhp(this->pathToRessource));
+    if (client.req.pathToRessource.find(".php") != std::string::npos)
+      response = composeOkHtmlResponse(executePhp(client.req.pathToRessource));
     else
-      response = handleLocations(pathToRessource);
+      response = handleLocations(client.req.pathToRessource);
     sendRGeneric(clientFD, response);
     // std::cout << "response sent." << std::endl;
   }
   catch (const HttpException &e)
   {
-    std::cerr << RED << "Error: " << e.what() << RESET << '\n';
-    sendDefaultErrorPage(clientFD, e.getStatusCode(), e.getErrorMessage(),
+    sendDefaultErrorPage(clientFD, e.getStatusCode(),
+                         getReasonPhrase(e.getStatusCode()),
                          serverConfig.errorPages);
   }
 }

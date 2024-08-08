@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   coreResponse.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:49:50 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 20:32:03 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 17:20:12 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ std::string extractHtmlContentFromFile(const std::string &filePath)
 {
   std::ifstream file(filePath.c_str());
   if (!file.is_open())
-    throw std::runtime_error("Could not open file: " + filePath);
+    throw HttpException(404, "Not Found " + filePath);
 
   std::stringstream buffer;
   buffer << file.rdbuf();
@@ -34,6 +34,16 @@ std::string composeOkHtmlResponse(std::string responseBody)
            << "Cache-Control: no-cache\r\n"
            << "\r\n"
            << responseBody;
+
+  return (response.str());
+}
+
+std::string createDeleteOkResponse()
+{
+  std::ostringstream response;
+  response << "HTTP/1.1 204 No Content\r\n";
+  response << "Content-Length: 0\r\n";
+  response << "Connection: close\r\n\r\n";
 
   return (response.str());
 }
@@ -56,7 +66,7 @@ void sendRGeneric(int clientFD, std::string responseStr)
 {
   if (sendall(clientFD, responseStr.c_str(), responseStr.size()) == -1)
     throw HttpException(
-        "500", "Internal Server Error: Data failed to be sent to the client");
+        500, "Internal Server Error: Data failed to be sent to the client");
 }
 
 std::vector<char> readFile(const std::string &filename)
