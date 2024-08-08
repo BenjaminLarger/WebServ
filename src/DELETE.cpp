@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   DELETE.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:35 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/08 16:24:06 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 17:21:16 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "DELETE.hpp"
 #include "HttpExceptions.hpp"
+#include "core.hpp"
 
 void DELETE::setHost(const std::string &_host) { this->host = _host; }
 void DELETE::setAuthorization(const std::string &_authorization)
@@ -49,7 +50,6 @@ void DELETE::findHeader(std::istringstream &isLine)
   //Reads line by line until it finds an empty line
   while (std::getline(isLine, line) && line != "\r")
   {
-    std::cout << MAGENTA << line << std::endl;
     size_t colonPos = line.find(":");
     if (colonPos != std::string::npos)
     {

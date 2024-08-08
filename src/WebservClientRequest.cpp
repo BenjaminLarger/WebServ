@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 16:22:08 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 17:22:26 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ void Webserv::handleClientRequest(
     {
       if (errno != EAGAIN
           && errno
-                 != EWOULDBLOCK) // [Isaac] Need to talk about if this exception could break the logic
+                 != EWOULDBLOCK)
       {
         closeConnection(i);
         --i;
@@ -147,7 +147,6 @@ void Webserv::handleClientRequest(
                 << client.socketFD
                 << ", root: " << serverConfigs[serverIndex].serverRoot
                 << std::endl;
-      // std::cout << "Request: \n" << buffer << std::endl;
 
       clientInput += buffer;
 

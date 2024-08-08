@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 14:21:58 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 17:19:50 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,28 @@ bool isDirectory(const std::string &path)
     return (false);
   }
   return (S_ISDIR(path_stat.st_mode));
+}
+
+std::vector<std::string> listFilesInDirectory(const std::string &dirPath)
+{
+	std::vector<std::string> files;
+
+  std::cout << "DIRPATH: " << dirPath << std::endl;
+	DIR* dirp = opendir(dirPath.c_str());// Pointer to a folder
+	if (dirp != NULL)
+	{
+		struct dirent *dirlist;// Structure used to represent the entries of a directory
+		while ((dirlist = readdir(dirp)) != NULL)
+		{
+			if (dirlist->d_type == DT_REG) //Verifies if it is a regular file
+				files.push_back(dirlist->d_name);
+		}
+		closedir(dirp);
+	}
+	else
+		throw HttpException("500", "Failed to open directory " + dirPath);
+
+	return (files);
 }
 
 bool pathOrParentFolderExistsInLocations(

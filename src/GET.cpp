@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/08 16:21:01 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 17:21:58 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,86 @@
 #include "CGI.hpp"
 #include "core.hpp"
 
-int countJumpLine(std::string str)
-{
-  int count = 0;
+void GET::setAccept(const std::string &_accept) { this->accept = _accept; }
+void GET::setHost(const std::string &_host) { this->host = _host; }
+void GET::setUserAgent(const std::string &_userAgent) { this->userAgent = _userAgent; }
 
-  for (int i = 0; str[i]; i++)
-  {
-    if (str[i] == '\n')
-      count++;
+std::string createHtmlDeleteRequest(std::vector<std::string> files, std::string uploadspth)
+{
+    std::ostringstream html;
+    
+    html << extractHtmlContentFromFile("./var/www/delete/delete_request.html");
+    html << "<body>";
+    html << "<h1>Files in " << uploadspth << "</h1>";
+    html << "<table border='1'>";
+    html << "<tr><th>File Name</th><th>Action</th></tr>";
+
+    for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it)
+    {
+        html << "<tr>";
+        html << "<td>" << *it << "</td>";
+        html << "<td>";
+        html << "<button onclick=\"deleteFile('" << *it << "', this)\">Delete</button>";
+        html << "</td>";
+        html << "</tr>";
+    }
+
+    html << "</table>";
+    html << "</body>";
+    html << "</html>";
+
+    return html.str();
+}
+
+std::string manageDeleteEndPoint()
+{
+  std::string uploadspth = "var/www/uploads";
+  std::vector<std::string> files = listFilesInDirectory(uploadspth);
+  std::string htmlDeleteBody;
+  
+  htmlDeleteBody = createHtmlDeleteRequest(files, uploadspth);
+  return (htmlDeleteBody);
+}
+
+void GET::findHeader(std::string &key, std::istringstream &isLine)
+{
+  std::string newKey;
+  typedef void (GET::*HeaderSetter)(const std::string &);
+  std::map<std::string, HeaderSetter> headersMap;
+
+  headersMap["Host:"] = &GET::setHost;
+  headersMap["User-Agent:"] = &GET::setUserAgent;
+  headersMap["Accept:"] = &GET::setAccept;
+
+  std::map<std::string, HeaderSetter>::iterator it = headersMap.begin();
+
+  while (it != headersMap.end())
+  { // Loop through all headers
+    if (it->first == key)
+    {
+      std::cout << GREEN << "Header found ! " << key << std::endl;
+      isLine >> newKey;
+      std::cout << ORANGE << "new key = " << newKey << std::endl;
+      while (isLine.peek() != '\n' && isLine.peek() != 13
+             && isLine.peek() != EOF)
+      {
+        std::string temp;
+        isLine >> temp;
+        newKey += temp;
+      }
+      std::cout << RED << "new key = " << newKey << std::endl;
+      if (key != newKey)
+      {
+        (this->*(it->second))(newKey);
+        isLine >> newKey;
+        findHeader(newKey, isLine);
+      }
+    }
+    ++it;
   }
-  return (count);
+  isLine >> newKey;
+  if (key != newKey)
+    findHeader(newKey, isLine);
 }
 
 std::string GET::handleLocations(std::string pathToResource)
@@ -38,10 +108,11 @@ std::string GET::handleLocations(std::string pathToResource)
   {
     std::cout << "pathToResource: " << pathToResource
               << ", found location: " << it->first << std::endl;
-
     std::string path;
     std::string root = it->second.root;
 
+    if (it->first == "/delete")
+      return (composeOkHtmlResponse(manageDeleteEndPoint()));
     // is already a folder
     if (!pathToResource.empty()
         && pathToResource[pathToResource.size() - 1] == '/')
@@ -79,8 +150,7 @@ std::string GET::handleLocations(std::string pathToResource)
     {
       std::vector<std::string> contents = listDirectoryContent(path);
 
-      response = composeOkHtmlResponse(
-          generateDirectoryListing(pathToResource + "/", contents));
+      response = composeOkHtmlResponse(createFileListHtml(path));
       return (response);
     }
     // pathToResource doesn't match a location, but is contained in one which is a folder
