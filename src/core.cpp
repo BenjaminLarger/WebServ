@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 14:21:58 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 18:14:43 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,17 @@ int sendall(int s, const char *buf, int len)
 bool isDirectory(const std::string &path)
 {
   struct stat path_stat;
-  if (stat(path.c_str(), &path_stat) != 0)
-  {
-    return (false);
-  }
-  return (S_ISDIR(path_stat.st_mode));
+  if (stat(path.c_str(), &path_stat) == 0)
+    return (S_ISDIR(path_stat.st_mode));
+  return (false);
+}
+
+bool isFile(const std::string &path)
+{
+  struct stat buffer;
+  if (stat(path.c_str(), &buffer) == 0)
+    return (S_ISREG(buffer.st_mode));
+  return (false);
 }
 
 bool pathOrParentFolderExistsInLocations(

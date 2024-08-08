@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 16:22:08 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 17:59:36 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,11 +141,11 @@ void Webserv::handleClientRequest(
       ClientInfo &client = clients[i];
       size_t &serverIndex = client.serverIndex;
       std::string &clientInput = client.req.buffer;
+      const ServerConfig &serverConfig = serverConfigs[serverIndex];
 
       std::cout << "Request received on serverIndex " << serverIndex
                 << ", port " << client.port << ", client.socketFD "
-                << client.socketFD
-                << ", root: " << serverConfigs[serverIndex].serverRoot
+                << client.socketFD << ", root: " << serverConfig.serverRoot
                 << std::endl;
       // std::cout << "Request: \n" << buffer << std::endl;
 
@@ -153,9 +153,9 @@ void Webserv::handleClientRequest(
 
       parseClientRequest(client.req);
 
-      // Display parsed header request
       {
-        std::cout << "Parsed request: \n"
+        // Display parsed header request
+        std::cout << "Parsed request header: \n"
                   << MAGENTA << client.req.method << " "
                   << client.req.pathToRessource << " " << client.req.HTTPversion
                   << std::endl;
@@ -168,18 +168,18 @@ void Webserv::handleClientRequest(
         std::cout << RESET << std::endl;
       }
 
+      handleLocations(client.req, serverConfig);
+
       if (client.req.method == "GET")
-        GET method(client, fds[i].fd, clientInput, serverConfigs[serverIndex]);
+        GET method(client, fds[i].fd, clientInput, serverConfig);
       else if (client.req.method == "POST")
-        POST method(client, serverIndex, fds[i].fd, clientInput,
-                    serverConfigs[serverIndex]);
+        POST method(client, serverIndex, fds[i].fd, clientInput, serverConfig);
       else if (client.req.method == "DELETE")
-        DELETE method(client, fds[i].fd, clientInput,
-                      serverConfigs[serverIndex]);
+        DELETE method(client, fds[i].fd, clientInput, serverConfig);
       else
       {
         clientInput.erase();
-        throw HttpException(400, "Bad request");
+        throw HttpException(405, "Method is not allowed on that path");
       }
       // closeConnection(i); // commented while testing
       // --i; // commented while testing
