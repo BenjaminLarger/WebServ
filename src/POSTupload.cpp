@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/08 13:57:03 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/08 17:29:28 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,63 @@ void	POST::parseContentDisposition(int index, const std::string &content)
 	std::cout << "\n" << "----------------------------------------------\n\n";
 }
 
+void	POST::trimImageBody(std::string &binaryFileContent)
+{
+	const std::string IEND = "\x00\x00\x00\x00\x49\x45\x4E\x44\xAE\x42\x60\x82";
+	size_t pos = binaryFileContent.rfind(IEND);
+	
+	if (pos != std::string::npos)
+	{
+  	binaryFileContent = binaryFileContent.substr(0, pos + IEND.size() - 1);
+	}
+	std::cout << CYAN << binaryFileContent << RESET << std::endl;
+	
+}
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <cstring> // Include this header for memcmp
+#include <iomanip> // Include this header for std::hex and std::setw
+
+bool isValidPNG(const std::string& filename)
+{
+    std::ifstream file(filename.c_str(), std::ios::binary);
+    if (!file)
+		{
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return false;
+    }
+
+    // Check the PNG signature
+    const unsigned char pngSignature[8] = {0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};
+    unsigned char fileSignature[8];
+    file.read(reinterpret_cast<char*>(fileSignature), 8);
+    if (!file || std::memcmp(pngSignature, fileSignature, 8) != 0) {
+        return false;
+    }
+
+    // Check the IEND chunk at the end of the file
+    const unsigned char iendChunk[12] = {0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82};
+    file.seekg(-12, std::ios::end);
+    unsigned char fileEnd[12];
+    file.read(reinterpret_cast<char*>(fileEnd), 12);
+    if (!file || std::memcmp(iendChunk, fileEnd, 12) != 0) {
+        std::cout << "Bad iendChunk signature!\n";
+        std::cout << "Expected: ";
+        for (int i = 0; i < 12; ++i) {
+            std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(iendChunk[i]) << " ";
+        }
+        std::cout << "\nActual:   ";
+        for (int i = 0; i < 12; ++i) {
+            std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(fileEnd[i]) << " ";
+        }
+        std::cout << std::endl;
+        return false;
+    }
+		std::cout << GREEN << "ufc file valid !\n" << RESET;
+    return true;
+}
+
 void	POST::parseContentType(int index, std::string &content)
 {
 	std::cout << "\n" << "----------------------- PARSE CONTENT DISPOSITION-----------------------\n";
@@ -123,6 +180,11 @@ int	POST::parseContent(int index)
 			std::cout << MAGENTA << i << RESET << std::endl;
 		}
 		parseContentType(i, contentMap[i].contentType);
+		if (contentMap[index].HasContentType == true && !strncmp(contentMap[index].name.c_str(), "image", 5))
+		{
+			std::cout << "content type is image!\n";
+			trimImageBody(contentMap[index].body);
+		}
 	}
 	return (handleFileUpload(index));
 }
@@ -243,9 +305,13 @@ int POST::handleFileUpload(int index)
 				//throw error
 			}
 		outFile.write(contentMap[i].body.c_str(), contentMap[i].body.size());
+		
 		outFile.close();
 		std::cout << GREEN << "File uploaded successfully: " << filePath << RESET << std::endl;
+		
 		}
+	if (contentMap[i].filename == "ufc.png" && isValidPNG("upload/ufc.png") == false)
+		return (FAILURE);
 	}
 	return (SUCCESS);
 }

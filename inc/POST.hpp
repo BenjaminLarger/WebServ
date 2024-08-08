@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 13:27:05 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/08 16:48:10 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ private:
   bool hasClosingBoundary;
   std::string skipBoundaryPart(void);
 	int handleFileUpload(int index);
+	void	trimImageBody(std::string &binaryFileContent);
 
 	POST(const POST&);
   POST& operator=(const POST&);

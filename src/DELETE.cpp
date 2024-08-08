@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DELETE.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:35 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/07 20:36:15 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/08 14:00:17 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ DELETE::DELETE(int clientFD, std::string &clientInput, const ServerConfig &_serv
 		if (remove(pathToRessource.c_str()) != 0)
 			throw HttpException("500", "Internal Server Error");
 		else
-			response = addOkResponseHeaderToBody(extractHtmlContentFromFile("var/www/delete/delete_response.html"));
+			response = composeOkHtmlResponse(extractHtmlContentFromFile("var/www/delete/delete_response.html"));
 		std::cout << GREEN << "Sending delete OK response" << RESET << std::endl;
 		sendRGeneric(clientFD, response);
 	}
