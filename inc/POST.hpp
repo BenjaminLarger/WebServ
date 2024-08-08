@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 15:51:40 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/08 13:27:05 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ private:
   void        extractHeaders();
   void        extractBody(int clientFD);
   std::string buildPostHtmlResponse();
-  int         extractMultipartFormData();
+  int         extractMultipartFormData(std::string clientRequest);
   void        sendResponse(int clientFD, std::string responseBody);
 
   //Util uplaod file

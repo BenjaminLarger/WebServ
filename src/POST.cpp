@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 14:05:53 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 14:11:00 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ POST::POST(int serverFD, int clientFD, std::string &clientInput,
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
   {
 
-    if (extractMultipartFormData() == SUCCESS)
+    if (extractMultipartFormData(clientInput) == SUCCESS)
       clientInput.erase();
   }
 }

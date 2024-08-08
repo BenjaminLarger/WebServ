@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   dependencies.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/06 17:44:47 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 10:03:46 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <vector>
+
+// ---------------------BUFFER
+#define BUFFER_SIZE 4096
 
 // ---------------------COLORS
 #define RESET "\033[0m"

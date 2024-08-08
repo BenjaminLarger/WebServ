@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/07 17:56:51 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/08 13:57:03 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,13 +120,14 @@ int	POST::parseContent(int index)
 		else
 		{
 			parseContentDisposition(i, contentMap[i].contentDisposition);
+			std::cout << MAGENTA << i << RESET << std::endl;
 		}
 		parseContentType(i, contentMap[i].contentType);
 	}
 	return (handleFileUpload(index));
 }
 
-int	POST::extractMultipartFormData()
+int	POST::extractMultipartFormData(std::string clientRequest)//mah have to delete client request
 {
 	std::string	key;
 	std::string	value;
@@ -137,22 +138,27 @@ int	POST::extractMultipartFormData()
 	contentMap[0].HasContentType = false;
 	contentMap[0].HasContentDisposition = false;
 	int	contentRead = 0;
-	int lastContentSize = 0;
+	int lastContentSize = -1;
+	std::cout << CYAN << "--------------New buffer --------------------\n" << clientRequest << RESET << std::endl;
 	
-
+	(void)clientRequest;
 	std::cout << "\nUPLOAD BODY :\n";
 //Parse the Content-Type header to get the boundary string. => done
 //Ensure the boundary string is correctly identified and doesn't appear in the data. => to implement
 	boundary = skipBoundaryPart();
 	std::cout << "boundary = " << boundary << std::endl;
+	std::cout << BLUE << line << RESET << std::endl;
 	if (boundary.empty())
 	{
 		std::cout << RED << "Boundary separartion not found!\n" << RESET;
 		//sendall(ClientFD, HAS_NOT_BOUNDARY_ERROR, strlen(HAS_NOT_BOUNDARY_ERROR));
 		return (FAILURE); //handle error
 	}
+	//requestStream.str(clientRequest);
 	while (contentRead < contentLength)
 	 {
+		std::getline(requestStream, line);
+		//std::getline(requestStream, line);
 		contentRead += line.size();
 		if (lastContentSize == contentRead)
 			break ;
@@ -200,21 +206,23 @@ int	POST::extractMultipartFormData()
 			std::cout << "Body[" << index << "] = " << YELLOW << contentMap[index].body << RESET << std::endl;
 			contentMap[index].HasBody = true;
 		}
-		else if (lineIsEmpty(line) == false)
+		/* else if (lineIsEmpty(line) == false && )
 		{
 			//Body appears before / without content disposition
 			std::cout << YELLOW << "Body appears before / without content disposition\n"<< RESET ;
 			//sendall(ClientFD, CONTENT_AFTER_BODY_ERROR, strlen(CONTENT_AFTER_BODY_ERROR));
 			return (FAILURE); //throw error
-		}
+		} */
 	 }
-/* 	if (hasClosingBoundary == false)
+	std::cout << "Content read = " << contentRead << std::endl;
+	if (hasClosingBoundary == false)
 	{
 		sendall(ClientFD, CLOSING_BOUNDARY_ERROR, strlen(CLOSING_BOUNDARY_ERROR));
+		std::cout << RED << "Has not closing boundary ==> return FAILURE\n" << RESET << std::endl; 
 		return (FAILURE);
-	} */
-	std::cout << GREEN << "Has not closing boundary ==> return SUCCESS\n" << RESET << std::endl;
-	return (parseContent(index));
+	}
+	std::cout << GREEN << "Has closing boundary ==> return SUCCESS\n" << RESET << std::endl;
+	return (FAILURE);
 }
 
 int POST::handleFileUpload(int index)

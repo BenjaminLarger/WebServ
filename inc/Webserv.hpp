@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 19:44:56 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 10:32:31 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,9 @@ private:
   // ServerConfig config;
   // unsigned int port;
   // int serverFD;
-  std::vector<pollfd> fds;
-  std::vector<ClientInfo> clients;
+  std::vector<pollfd>			fds;
+  std::vector<ClientInfo>	clients;
+	int											contentLength;
 
   // std::vector<int> serverFds;
 
@@ -50,6 +51,8 @@ public:
   // void processClientInput(std::string clientInput, int serverFD, int clientFD,
   //                         std::string &staticBuffer);
 
+	ssize_t recvAll(int sockfd, std::string &buffer);
+	
   void createServers(std::vector<ServerConfig> &serverConfigs);
 
   void handleNewConnection(size_t index,
