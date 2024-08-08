@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:35 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/08 17:49:51 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/08 18:05:56 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,8 @@
 #include "core.hpp"
 
 void DELETE::setHost(const std::string &_host) { this->host = _host; }
-void DELETE::setAuthorization(const std::string &_authorization)
-{
-  this->authorization = _authorization;
-}
-void DELETE::setIfMatch(const std::string &_if_match)
-{
-  this->if_match = _if_match;
-}
+void DELETE::setAuthorization(const std::string &_authorization) {this->authorization = _authorization;}
+void DELETE::setIfMatch(const std::string &_if_match) { this->if_match = _if_match; }
 std::string DELETE::getHost(void) const { return this->host; }
 std::string DELETE::getAuthorization(void) const { return this->authorization; }
 std::string DELETE::getIfMatch(void) const { return this->if_match; }
@@ -112,8 +106,7 @@ DELETE::DELETE(ClientInfo &client, int clientFD, std::string &clientInput,
     if (remove(pathToRessource.c_str()) != 0)
       throw HttpException(500, "Internal Server Error");
     else
-      response = composeOkHtmlResponse(
-          extractHtmlContentFromFile("var/www/delete/delete_response.html"));
+      response = createDeleteOkResponse();
     std::cout << GREEN << "Sending delete OK response" << RESET << std::endl;
     sendRGeneric(clientFD, response);
   }
