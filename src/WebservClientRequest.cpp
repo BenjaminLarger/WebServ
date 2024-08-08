@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 17:26:49 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/08 14:07:10 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "DELETE.hpp"
 #include "GET.hpp"
 #include "POST.hpp"
-#include "DELETE.hpp"
 #include "Webserv.hpp"
 
 void Webserv::handleClientRequest(
@@ -33,8 +33,7 @@ void Webserv::handleClientRequest(
         closeConnection(i);
         --i;
         throw HttpException(
-            "500",
-            "Internal Server Error: Data failed to be sent to the client");
+            500, "Internal Server Error: Data failed to be sent to the client");
       }
     }
     else if (bytes_read == 0)
@@ -62,13 +61,14 @@ void Webserv::handleClientRequest(
       if (!strncmp("GET ", clientBuffer.c_str(), 4))
         GET method(fds[i].fd, clientBuffer, serverConfigs[serverIndex]);
       else if (!strncmp("POST ", clientBuffer.c_str(), 5))
-        POST method(serverIndex, fds[i].fd, clientBuffer, serverConfigs[serverIndex]);
+        POST method(serverIndex, fds[i].fd, clientBuffer,
+                    serverConfigs[serverIndex]);
       else if (!strncmp("DELETE ", clientBuffer.c_str(), 7))
         DELETE method(fds[i].fd, clientBuffer, serverConfigs[serverIndex]);
       else
       {
         clientBuffer.erase();
-        throw HttpException("400", "Bad request");
+        throw HttpException(400, "Bad request");
       }
       // closeConnection(i); // commented while testing
       // --i; // commented while testing
@@ -77,8 +77,11 @@ void Webserv::handleClientRequest(
   }
   catch (const HttpException &e)
   {
-    std::cerr << RED << "Error: " << e.what() << RESET << '\n';
-    sendDefaultErrorPage(fds[i].fd, e.getStatusCode(), e.getErrorMessage(),
+    std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
+              << RESET << '\n';
+
+    sendDefaultErrorPage(fds[i].fd, e.getStatusCode(),
+                         getReasonPhrase(e.getStatusCode()),
                          serverConfigs[clients[i].serverIndex].errorPages);
   }
 }

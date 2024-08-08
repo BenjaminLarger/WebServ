@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:49:50 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 20:32:03 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 14:08:32 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ std::string extractHtmlContentFromFile(const std::string &filePath)
 {
   std::ifstream file(filePath.c_str());
   if (!file.is_open())
-    throw std::runtime_error("Could not open file: " + filePath);
+    throw HttpException(404, "Not Found " + filePath);
 
   std::stringstream buffer;
   buffer << file.rdbuf();
@@ -56,7 +56,7 @@ void sendRGeneric(int clientFD, std::string responseStr)
 {
   if (sendall(clientFD, responseStr.c_str(), responseStr.size()) == -1)
     throw HttpException(
-        "500", "Internal Server Error: Data failed to be sent to the client");
+        500, "Internal Server Error: Data failed to be sent to the client");
 }
 
 std::vector<char> readFile(const std::string &filename)

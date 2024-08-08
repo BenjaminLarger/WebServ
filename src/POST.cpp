@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 20:37:15 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 14:05:53 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,12 +88,15 @@ void POST::extractBody(int clientFD)
       sendRGeneric(ClientFD, composeOkHtmlResponse(buildPostHtmlResponse()));
     }
     else
-      throw HttpException("400", "Bad Request: Content-Length is missing");
+      throw HttpException(400, "Bad Request: Content-Length is missing");
   }
   catch (const HttpException &e)
   {
-    std::cerr << RED << "Error: " << e.what() << RESET << '\n';
-    sendDefaultErrorPage(clientFD, e.getStatusCode(), e.getErrorMessage(),
+    std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
+              << RESET << '\n';
+
+    sendDefaultErrorPage(clientFD, e.getStatusCode(),
+                         getReasonPhrase(e.getStatusCode()),
                          serverConfig.errorPages);
   }
   //close(clientFD);

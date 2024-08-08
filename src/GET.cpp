@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/07 20:37:21 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 14:07:05 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ std::string GET::handleLocations(std::string pathToResource)
       // Save binary file to char vector
       std::vector<char> fileContent = readFile(path);
       if (fileContent.empty())
-        throw HttpException("404", "Not Found.");
+        throw HttpException(404, "Not Found.");
 
       response = composeFileResponse(fileContent, pathToResource);
       return (response);
@@ -157,12 +157,12 @@ std::string GET::handleLocations(std::string pathToResource)
     else
     {
       throw HttpException(
-          "403", "You don't have permission to access this directory.");
+          403, "You don't have permission to access this directory.");
     }
   }
   else
   {
-    throw HttpException("404", "Not Found");
+    throw HttpException(404, "Not Found");
   }
 }
 
@@ -221,8 +221,8 @@ GET::GET(int clientFD, std::string &clientInput,
   }
   catch (const HttpException &e)
   {
-    std::cerr << RED << "Error: " << e.what() << RESET << '\n';
-    sendDefaultErrorPage(clientFD, e.getStatusCode(), e.getErrorMessage(),
+    sendDefaultErrorPage(clientFD, e.getStatusCode(),
+                         getReasonPhrase(e.getStatusCode()),
                          serverConfig.errorPages);
   }
 }

@@ -6,16 +6,17 @@
 
 class HttpException : public std::exception
 {
-	private:
-		std::string statusCode;
-		std::string errorMessage;
+private:
+  int statusCode;
+  std::string errorMessage;
 
-	public:
-		HttpException(const std::string &code, const std::string &message);
-		virtual ~HttpException() throw();
-		virtual const char *what() const throw();
-		std::string getStatusCode() const;
-		std::string getErrorMessage() const;
+public:
+  HttpException(const int &code, const std::string &message);
+  virtual ~HttpException() throw();
+  virtual const char *what() const throw();
+
+  int getStatusCode() const;
+  std::string getErrorMessage() const;
 };
 
 #endif
