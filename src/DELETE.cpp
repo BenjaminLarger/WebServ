@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DELETE.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:35 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/08 18:05:56 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/08 18:12:06 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ DELETE::DELETE(ClientInfo &client, int clientFD, std::string &clientInput,
     std::string expectedAuth = "anytoken";
     //checkPreconditions(expectedEtag, expectedAuth);
 
-    pathToRessource.insert(pathToRessource.begin(), '.');
+    pathToRessource = "./var/www" + pathToRessource;
     std::cout << "Path to ressource: " << pathToRessource << std::endl;
     if (remove(pathToRessource.c_str()) != 0)
       throw HttpException(500, "Internal Server Error");
