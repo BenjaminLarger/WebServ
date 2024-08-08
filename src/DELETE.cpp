@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:35 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/08 14:06:50 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 16:24:06 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,10 +92,11 @@ void DELETE::parseRequest(std::string &clientInput)
   findHeader(isLine);
 }
 
-DELETE::DELETE(int clientFD, std::string &clientInput,
+DELETE::DELETE(ClientInfo &client, int clientFD, std::string &clientInput,
                const ServerConfig &_serverConfig)
     : serverConfig(_serverConfig)
 {
+  (void)client;
   std::string response;
 
   try

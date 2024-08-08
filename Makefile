@@ -23,7 +23,7 @@ SRC_FILES		= main.cpp ClientProcessMethods.cpp Webserv.cpp \
 	ServerConfig.cpp ServerConfigParsing.cpp ServerConfigParsingLocation.cpp \
 	ClientInfo.cpp \
 	GET.cpp GETdirectoryListing.cpp CGI.cpp POST.cpp POSTupload.cpp  POSTutils.cpp\
-	WebservCreateServers.cpp WebservClientRequest.cpp WebservNewConnection.cpp WebservSignal.cpp \
+	WebservCreateServers.cpp WebservClientRequest.cpp WebservNewConnection.cpp WebservSignal.cpp WebservClientRequestHeader.cpp \
 	ManageWriteReadClientCapability.cpp HttpExceptions.cpp \
 	coreResponse.cpp coreResponseHeaderStatusLine.cpp DELETE.cpp coreResponseMediaType.cpp \
 	

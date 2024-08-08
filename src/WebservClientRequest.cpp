@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 14:11:08 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 16:22:08 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ ssize_t Webserv::recvAll(int sockfd, std::string &buffer)
     if (bytesReceived == -1)
     {
       // Handle error
-      perror("recv");
+      throw HttpException(400, "Bad request");
       break;
     }
     else if (bytesReceived == 0)
@@ -96,7 +96,7 @@ ssize_t Webserv::recvAll(int sockfd, std::string &buffer)
       else if (hasContentLength == true && totalBytesReceived >= contentLength)
       {
         //We have read all the content specified by content length
-        std::cout << GREEN << "All the request content has been readen!\n"
+        std::cout << GREEN << "All the request content has been read\n"
                   << RESET;
         break;
       }
@@ -138,29 +138,47 @@ void Webserv::handleClientRequest(
     {
       // Handle incoming data (e.g., parse HTTP request)
       //buffer[bytes_read] = '\0';
-      size_t serverIndex = clients[i].serverIndex;
+      ClientInfo &client = clients[i];
+      size_t &serverIndex = client.serverIndex;
+      std::string &clientInput = client.req.buffer;
 
       std::cout << "Request received on serverIndex " << serverIndex
-                << ", port " << clients[i].port << ", clients[i].socketFD "
-                << clients[i].socketFD
+                << ", port " << client.port << ", client.socketFD "
+                << client.socketFD
                 << ", root: " << serverConfigs[serverIndex].serverRoot
                 << std::endl;
       // std::cout << "Request: \n" << buffer << std::endl;
 
-      std::string &clientBuffer = clients[i].req.buffer;
-      clientBuffer += buffer;
+      clientInput += buffer;
 
-      // parseClientRequest();
-      if (!strncmp("GET ", clientBuffer.c_str(), 4))
-        GET method(fds[i].fd, clientBuffer, serverConfigs[serverIndex]);
-      else if (!strncmp("POST ", clientBuffer.c_str(), 5))
-        POST method(serverIndex, fds[i].fd, clientBuffer,
+      parseClientRequest(client.req);
+
+      // Display parsed header request
+      {
+        std::cout << "Parsed request: \n"
+                  << MAGENTA << client.req.method << " "
+                  << client.req.pathToRessource << " " << client.req.HTTPversion
+                  << std::endl;
+        for (std::map<std::string, std::string>::iterator it
+             = client.req.fields.begin();
+             it != client.req.fields.end(); it++)
+        {
+          std::cout << it->first << ": " << it->second << std::endl;
+        }
+        std::cout << RESET << std::endl;
+      }
+
+      if (client.req.method == "GET")
+        GET method(client, fds[i].fd, clientInput, serverConfigs[serverIndex]);
+      else if (client.req.method == "POST")
+        POST method(client, serverIndex, fds[i].fd, clientInput,
                     serverConfigs[serverIndex]);
-      else if (!strncmp("DELETE ", clientBuffer.c_str(), 7))
-        DELETE method(fds[i].fd, clientBuffer, serverConfigs[serverIndex]);
+      else if (client.req.method == "DELETE")
+        DELETE method(client, fds[i].fd, clientInput,
+                      serverConfigs[serverIndex]);
       else
       {
-        clientBuffer.erase();
+        clientInput.erase();
         throw HttpException(400, "Bad request");
       }
       // closeConnection(i); // commented while testing

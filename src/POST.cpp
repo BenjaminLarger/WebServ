@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 14:11:00 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 16:23:53 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,10 +170,11 @@ void POST::extractFirstLine()
 }
 
 //We extract all the content of a POST request
-POST::POST(int serverFD, int clientFD, std::string &clientInput,
-           const ServerConfig &serverConfig)
+POST::POST(ClientInfo &client, int serverFD, int clientFD,
+           std::string &clientInput, const ServerConfig &serverConfig)
     : contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
 {
+  (void)client;
   (void)serverFD;
   (void)clientFD;
   this->requestStream.str(clientInput);

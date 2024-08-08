@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 20:28:07 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 14:21:58 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,29 +49,23 @@ bool pathOrParentFolderExistsInLocations(
   // Initialize the path to check
   std::string currentPath = pathToResource;
 
-  // Iterate to check the path and its trimmed versions
-  while (!currentPath.empty())
-  {
-    // Check if the current path exists in the map
+  // Check if the current path exists in the map
+  it = locations.find(currentPath);
+  if (it != locations.end())
+    return (true);
+
+  // Trim the path by removing the last segment
+  size_t lastSlashPos = currentPath.find_last_of('/');
+  if (lastSlashPos == std::string::npos) // nothing left to trim
+    return (false);
+
+  // Update the currentPath to remove the last segment
+  currentPath.erase(lastSlashPos);
+
+  if (!currentPath.empty())
     it = locations.find(currentPath);
-    if (it != locations.end())
-    {
-      // Path found
-      return (true);
-    }
+  if (it != locations.end())
+    return (true);
 
-    // Trim the path by removing the last segment
-    size_t lastSlashPos = currentPath.find_last_of('/');
-    if (lastSlashPos == std::string::npos)
-    {
-      // No more slashes to trim, exit the loop
-      break;
-    }
-
-    // Update the currentPath to remove the last segment
-    currentPath.erase(lastSlashPos);
-  }
-
-  // No path found
   return (false);
 }
