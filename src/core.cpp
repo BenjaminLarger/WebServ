@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 18:30:37 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 18:34:46 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,39 +51,16 @@ std::vector<std::string> listFilesInDirectory(const std::string &dirPath)
 {
   std::vector<std::string> files;
 
-  std::cout << "DIRPATH: " << dirPath << std::endl;
+  // std::cout << "DIRPATH: " << dirPath << std::endl;
   DIR *dirp = opendir(dirPath.c_str()); // Pointer to a folder
-  if (dirp != NULL)
+  if (dirp)
   {
-    struct dirent
-        *dirlist; // Structure used to represent the entries of a directory
-    while ((dirlist = readdir(dirp)) != NULL)
+    // Structure used to represent the entries of a directory
+    struct dirent *entry;
+    while ((entry = readdir(dirp)) != NULL)
     {
-      if (dirlist->d_type == DT_REG) //Verifies if it is a regular file
-        files.push_back(dirlist->d_name);
-    }
-    closedir(dirp);
-  }
-  else
-    throw HttpException(500, "Failed to open directory " + dirPath);
-
-  return (files);
-}
-
-std::vector<std::string> listFilesInDirectory(const std::string &dirPath)
-{
-  std::vector<std::string> files;
-
-  std::cout << "DIRPATH: " << dirPath << std::endl;
-  DIR *dirp = opendir(dirPath.c_str()); // Pointer to a folder
-  if (dirp != NULL)
-  {
-    struct dirent
-        *dirlist; // Structure used to represent the entries of a directory
-    while ((dirlist = readdir(dirp)) != NULL)
-    {
-      if (dirlist->d_type == DT_REG) //Verifies if it is a regular file
-        files.push_back(dirlist->d_name);
+      if (entry->d_type == DT_REG) //Verifies if it is a regular file
+        files.push_back(entry->d_name);
     }
     closedir(dirp);
   }
