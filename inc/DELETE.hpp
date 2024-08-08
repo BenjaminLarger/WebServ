@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DELETE.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:51 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/08 16:23:15 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 17:18:04 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,8 @@ public:
   void parseRequest(std::string &clientInput);
   void findHeader(std::istringstream &isLine);
   void checkPreconditions(std::string expectedEtag, std::string expectedAuth);
+	std::string	handleLocations(std::string pathToResource);
+	std::string replaceLocationByRoot(std::string pathToResource
+							, std::string oldPrefix, std::string newPrefix);
 };
 #endif

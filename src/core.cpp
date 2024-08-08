@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 18:14:43 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 18:30:37 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,52 @@ bool isFile(const std::string &path)
   if (stat(path.c_str(), &buffer) == 0)
     return (S_ISREG(buffer.st_mode));
   return (false);
+}
+
+std::vector<std::string> listFilesInDirectory(const std::string &dirPath)
+{
+  std::vector<std::string> files;
+
+  std::cout << "DIRPATH: " << dirPath << std::endl;
+  DIR *dirp = opendir(dirPath.c_str()); // Pointer to a folder
+  if (dirp != NULL)
+  {
+    struct dirent
+        *dirlist; // Structure used to represent the entries of a directory
+    while ((dirlist = readdir(dirp)) != NULL)
+    {
+      if (dirlist->d_type == DT_REG) //Verifies if it is a regular file
+        files.push_back(dirlist->d_name);
+    }
+    closedir(dirp);
+  }
+  else
+    throw HttpException(500, "Failed to open directory " + dirPath);
+
+  return (files);
+}
+
+std::vector<std::string> listFilesInDirectory(const std::string &dirPath)
+{
+  std::vector<std::string> files;
+
+  std::cout << "DIRPATH: " << dirPath << std::endl;
+  DIR *dirp = opendir(dirPath.c_str()); // Pointer to a folder
+  if (dirp != NULL)
+  {
+    struct dirent
+        *dirlist; // Structure used to represent the entries of a directory
+    while ((dirlist = readdir(dirp)) != NULL)
+    {
+      if (dirlist->d_type == DT_REG) //Verifies if it is a regular file
+        files.push_back(dirlist->d_name);
+    }
+    closedir(dirp);
+  }
+  else
+    throw HttpException(500, "Failed to open directory " + dirPath);
+
+  return (files);
 }
 
 bool pathOrParentFolderExistsInLocations(

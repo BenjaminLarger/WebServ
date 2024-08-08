@@ -1,0 +1,3 @@
+Some questions about the code:
+
+	- Think that we should change the way we build the path to the resource by the one specified in the subject. Replacing the endpoint by the root path

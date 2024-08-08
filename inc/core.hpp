@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:52:13 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 18:14:05 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 18:30:49 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,9 @@ std::vector<char> readFile(const std::string &filename);
 std::string composeFileResponse(const std::vector<char> &fileContent,
                                 std::string filepath);
 
+// Retruns a 204 No content response
+std::string createDeleteOkResponse();
+
 // Returns the media type (Content-Type) based on the file extension
 std::string getMediaType(const std::string &filename);
 
@@ -61,5 +64,11 @@ bool pathOrParentFolderExistsInLocations(
     const std::string &pathToResource,
     const std::map<std::string, LocationConfig> &locations,
     std::map<std::string, LocationConfig>::const_iterator &it);
+
+// Returns a vector with the name of the files inside a directory
+std::vector<std::string> listFilesInDirectory(const std::string &dirPath);
+
+//Returns a html that list the files inside the directory sent as parameter
+std::string createFileListHtml(const std::string &dirPath);
 
 #endif

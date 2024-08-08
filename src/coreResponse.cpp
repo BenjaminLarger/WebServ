@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   coreResponse.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:49:50 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 14:08:32 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 17:20:12 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,16 @@ std::string composeOkHtmlResponse(std::string responseBody)
            << "Cache-Control: no-cache\r\n"
            << "\r\n"
            << responseBody;
+
+  return (response.str());
+}
+
+std::string createDeleteOkResponse()
+{
+  std::ostringstream response;
+  response << "HTTP/1.1 204 No Content\r\n";
+  response << "Content-Length: 0\r\n";
+  response << "Connection: close\r\n\r\n";
 
   return (response.str());
 }

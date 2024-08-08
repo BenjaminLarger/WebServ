@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 16:22:45 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 17:37:35 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ private:
   bool hasClosingBoundary;
   std::string skipBoundaryPart(void);
   int handleFileUpload(int index);
+	void	trimImageBody(std::string &binaryFileContent);
 
   POST(const POST &);
   POST &operator=(const POST &);

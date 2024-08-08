@@ -3,28 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/08 16:21:01 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 18:04:02 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GET.hpp"
 #include "CGI.hpp"
 #include "core.hpp"
-
-int countJumpLine(std::string str)
-{
-  int count = 0;
-
-  for (int i = 0; str[i]; i++)
-  {
-    if (str[i] == '\n')
-      count++;
-  }
-  return (count);
-}
 
 std::string GET::handleLocations(std::string pathToResource)
 {
@@ -38,10 +26,10 @@ std::string GET::handleLocations(std::string pathToResource)
   {
     std::cout << "pathToResource: " << pathToResource
               << ", found location: " << it->first << std::endl;
-
     std::string path;
     std::string root = it->second.root;
-
+    if (it->first == "/delete")
+      return (composeOkHtmlResponse(manageDeleteEndPoint()));
     // is already a folder
     if (!pathToResource.empty()
         && pathToResource[pathToResource.size() - 1] == '/')
@@ -79,8 +67,7 @@ std::string GET::handleLocations(std::string pathToResource)
     {
       std::vector<std::string> contents = listDirectoryContent(path);
 
-      response = composeOkHtmlResponse(
-          generateDirectoryListing(pathToResource + "/", contents));
+      response = composeOkHtmlResponse(createFileListHtml(path));
       return (response);
     }
     // pathToResource doesn't match a location, but is contained in one which is a folder

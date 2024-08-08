@@ -1,38 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DELETE Request Example</title>
-    <script>
-        async function sendDeleteRequest() {
-            try {
-                const response = await fetch('http://localhost:8082/var/www/delete/file_to_delete', {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': 'anytoken',
-                        'If-Match': 'anytag', // ETag for conditional deletion
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                const result = await response.json(); // O response.text() si esperas texto
-                console.log('Success:', result);
-                document.getElementById('result').innerText = 'File deleted successfully!';
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('result').innerText = 'Error deleting file!';
-            }
-        }
-    </script>
+<title>Delete Files</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #000000;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background-color: #f2f2f2;
+  }
+  tr:hover {
+    background-color: #f1f1f1;
+  }
+  button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+</style>
+<script>
+  function deleteFile(filename, button) {
+    if (button.disabled) return;
+    button.disabled = true; // Disable the button to prevent multiple requests
+  
+    fetch('/uploads/' + encodeURIComponent(filename), {
+      method: 'DELETE'
+    }).then(response => {
+      if (response.status === 204) {
+        // Mostrar mensaje de éxito en el DOM
+        showMessage('File deleted successfully', 'success');
+        
+        // Realizar una solicitud GET para recargar la página después de la eliminación
+        window.location.href = window.location.href; // Recargar la página sin parámetros de consulta
+        
+      } else {
+        // Mostrar mensaje de error en el DOM
+        showMessage('Failed to delete file', 'error');
+        button.disabled = false; // Re-enable the button if the request fails
+      }
+    }).catch(error => {
+      // Mostrar mensaje de error en el DOM
+      showMessage('Failed to delete file', 'error');
+      button.disabled = false; // Re-enable the button if there's an error
+    });
+  }
+  
+  // Función para mostrar mensajes en el DOM
+  function showMessage(message, type) {
+    var messageContainer = document.createElement('div');
+    messageContainer.textContent = message;
+    messageContainer.className = type === 'success' ? 'message success' : 'message error';
+    document.body.appendChild(messageContainer);
+    
+    // Remover el mensaje después de unos segundos
+    setTimeout(() => {
+      messageContainer.remove();
+    }, 3000);
+  }
+  
+  // Prevent form submission or other default actions
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('button').forEach(button => {
+      button.addEventListener('click', function(event) {
+        event.preventDefault();
+      });
+    });
+  });
+</script>
 </head>
-<body>
-    <h1>DELETE Request Example</h1>
-    <button onclick="sendDeleteRequest()">Delete File</button>
-    <p id="result"></p>
-</body>
-</html>

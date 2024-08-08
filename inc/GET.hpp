@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 16:20:27 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 17:58:28 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,12 @@ public:
   // Generate html page with directory listing
   std::string generateDirectoryListing(
       const std::string &path, const std::vector<std::string> &contents);
+
+  // Generate html page with delete endpoint
+  std::string createHtmlDeleteRequest(std::vector<std::string> files, std::string uploadspth);
+
+  // Manage delete endpoint
+  std::string manageDeleteEndPoint();
 };
 
 #endif

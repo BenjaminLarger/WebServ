@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 17:59:36 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 18:28:20 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,9 +119,7 @@ void Webserv::handleClientRequest(
     ssize_t bytes_read = recvAll(fds[i].fd, buffer);
     if (bytes_read < 0)
     {
-      if (errno != EAGAIN
-          && errno
-                 != EWOULDBLOCK) // [Isaac] Need to talk about if this exception could break the logic
+      if (errno != EAGAIN && errno != EWOULDBLOCK)
       {
         closeConnection(i);
         --i;
@@ -147,7 +145,6 @@ void Webserv::handleClientRequest(
                 << ", port " << client.port << ", client.socketFD "
                 << client.socketFD << ", root: " << serverConfig.serverRoot
                 << std::endl;
-      // std::cout << "Request: \n" << buffer << std::endl;
 
       clientInput += buffer;
 

@@ -3,25 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   DELETE.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:35 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/08 16:24:06 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 18:12:06 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "DELETE.hpp"
 #include "HttpExceptions.hpp"
+#include "core.hpp"
 
 void DELETE::setHost(const std::string &_host) { this->host = _host; }
-void DELETE::setAuthorization(const std::string &_authorization)
-{
-  this->authorization = _authorization;
-}
-void DELETE::setIfMatch(const std::string &_if_match)
-{
-  this->if_match = _if_match;
-}
+void DELETE::setAuthorization(const std::string &_authorization) {this->authorization = _authorization;}
+void DELETE::setIfMatch(const std::string &_if_match) { this->if_match = _if_match; }
 std::string DELETE::getHost(void) const { return this->host; }
 std::string DELETE::getAuthorization(void) const { return this->authorization; }
 std::string DELETE::getIfMatch(void) const { return this->if_match; }
@@ -49,7 +44,6 @@ void DELETE::findHeader(std::istringstream &isLine)
   //Reads line by line until it finds an empty line
   while (std::getline(isLine, line) && line != "\r")
   {
-    std::cout << MAGENTA << line << std::endl;
     size_t colonPos = line.find(":");
     if (colonPos != std::string::npos)
     {
@@ -107,13 +101,12 @@ DELETE::DELETE(ClientInfo &client, int clientFD, std::string &clientInput,
     std::string expectedAuth = "anytoken";
     //checkPreconditions(expectedEtag, expectedAuth);
 
-    pathToRessource.insert(pathToRessource.begin(), '.');
+    pathToRessource = "./var/www" + pathToRessource;
     std::cout << "Path to ressource: " << pathToRessource << std::endl;
     if (remove(pathToRessource.c_str()) != 0)
       throw HttpException(500, "Internal Server Error");
     else
-      response = composeOkHtmlResponse(
-          extractHtmlContentFromFile("var/www/delete/delete_response.html"));
+      response = createDeleteOkResponse();
     std::cout << GREEN << "Sending delete OK response" << RESET << std::endl;
     sendRGeneric(clientFD, response);
   }
