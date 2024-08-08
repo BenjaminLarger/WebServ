@@ -5,3 +5,10 @@ We cannot connect to localhost:<port> through Firefox. The connection is establi
 
 
 Crash:
+
+To implement:
+1)
+GET => process GET commmand if valid GET request input
+
+2)
+Download image
