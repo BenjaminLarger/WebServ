@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 17:19:50 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/08 17:25:53 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ std::vector<std::string> listFilesInDirectory(const std::string &dirPath)
 		closedir(dirp);
 	}
 	else
-		throw HttpException("500", "Failed to open directory " + dirPath);
+		throw HttpException(500, "Failed to open directory " + dirPath);
 
 	return (files);
 }
