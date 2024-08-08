@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 18:25:41 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 19:41:09 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,4 +53,16 @@ void Webserv::handleLocations(ClientRequest &req,
   {
     throw HttpException(404, "Not Found");
   }
+}
+
+bool isMethodAllowedAtLoc(std::string method, ClientRequest &req,
+                          const ServerConfig &serverConfig)
+{
+  // std::string locToCheck;
+  // if (client.req.pathToRessource != client.req.pathFolder
+  //     && !isDirectory(client.req.pathOnServer))
+  //   locToCheck;
+  // std::vector<std::string> allowedMethods;
+
+  return (true);
 }
