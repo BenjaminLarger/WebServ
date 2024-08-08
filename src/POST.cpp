@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 13:27:32 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/08 13:58:45 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,7 @@ void POST::extractBody(int clientFD)
       delete[] buffer;
       std::cout << "body: " << body << std::endl;
       // 200 = code for success received, OK = brief description of the status, text/plain = type of the response
-      sendRGeneric(ClientFD,
-                   addOkResponseHeaderToBody(buildPostHtmlResponse()));
+      sendRGeneric(ClientFD, composeOkHtmlResponse(buildPostHtmlResponse()));
     }
     else
       throw HttpException("400", "Bad Request: Content-Length is missing");
@@ -95,7 +94,7 @@ void POST::extractBody(int clientFD)
   {
     std::cerr << RED << "Error: " << e.what() << RESET << '\n';
     sendDefaultErrorPage(clientFD, e.getStatusCode(), e.getErrorMessage(),
-                          serverConfig.errorPages);
+                         serverConfig.errorPages);
   }
   //close(clientFD);
 }
@@ -168,7 +167,8 @@ void POST::extractFirstLine()
 }
 
 //We extract all the content of a POST request
-POST::POST(int serverFD, int clientFD, std::string &clientInput, const ServerConfig &serverConfig)
+POST::POST(int serverFD, int clientFD, std::string &clientInput,
+           const ServerConfig &serverConfig)
     : contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
 {
   (void)serverFD;
@@ -181,7 +181,7 @@ POST::POST(int serverFD, int clientFD, std::string &clientInput, const ServerCon
   if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded", 33))
     extractBody(clientFD);
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
-	{
+  {
 
 		if (extractMultipartFormData(clientInput) == SUCCESS)
 			clientInput.erase();

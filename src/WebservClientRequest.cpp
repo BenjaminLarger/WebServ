@@ -6,12 +6,13 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 13:17:57 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/08 13:58:53 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GET.hpp"
 #include "POST.hpp"
+#include "DELETE.hpp"
 #include "Webserv.hpp"
 
 /* ssize_t read_all(int fd, char *buffer, size_t buffer_size)
@@ -146,6 +147,8 @@ void Webserv::handleClientRequest(
         GET method(fds[i].fd, clientBuffer, serverConfigs[serverIndex]);
       else if (!strncmp("POST ", clientBuffer.c_str(), 5))
         POST method(serverIndex, fds[i].fd, clientBuffer, serverConfigs[serverIndex]);
+      else if (!strncmp("DELETE ", clientBuffer.c_str(), 7))
+        DELETE method(fds[i].fd, clientBuffer, serverConfigs[serverIndex]);
       else
       {
         clientBuffer.erase();

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/07 18:11:21 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/07 20:37:06 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,16 @@ bool isAllWhitespace(const std::string &str)
   return (true);
 }
 
-std::string intToString(int value)
+std::string toString(int num)
 {
   std::ostringstream oss;
-  oss << value;
+  oss << num;
+  return (oss.str());
+}
+std::string toString(size_t num)
+{
+  std::ostringstream oss;
+  oss << num;
   return (oss.str());
 }
 
@@ -195,10 +201,11 @@ bool lineIsEmpty(std::string line)
 
 void trimQuotes(std::string &str)
 {
-	trimBothEnds(str);
-	std::cout << RED << "len = " << str.length() << ", [0] = " << str[0] << ", [end] = " << str[str.length() - 1] << RESET << std::endl;
-    if (str.length() >= 2 && str[0] == '"' && str[str.length() - 1] == '"')
-		{
-			str = str.substr(1, str.length() - 2);
-    }
+  trimBothEnds(str);
+  std::cout << RED << "len = " << str.length() << ", [0] = " << str[0]
+            << ", [end] = " << str[str.length() - 1] << RESET << std::endl;
+  if (str.length() >= 2 && str[0] == '"' && str[str.length() - 1] == '"')
+  {
+    str = str.substr(1, str.length() - 2);
+  }
 }

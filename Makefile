@@ -25,7 +25,8 @@ SRC_FILES		= main.cpp ClientProcessMethods.cpp Webserv.cpp \
 	GET.cpp GETdirectoryListing.cpp CGI.cpp POST.cpp POSTupload.cpp  POSTutils.cpp\
 	WebservCreateServers.cpp WebservClientRequest.cpp WebservNewConnection.cpp WebservSignal.cpp \
 	ManageWriteReadClientCapability.cpp HttpExceptions.cpp \
-	coreResponse.cpp coreResponseHeaderStatusLine.cpp \
+	coreResponse.cpp coreResponseHeaderStatusLine.cpp DELETE.cpp coreResponseMediaType.cpp \
+	
 
 SRCS				= $(addprefix $(SRCS_DIR),$(SRC_FILES))
 

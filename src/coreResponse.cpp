@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:49:50 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 16:33:06 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/07 20:32:03 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@ std::string extractHtmlContentFromFile(const std::string &filePath)
   return (buffer.str());
 }
 
-// Return a HTML response with the given body
-std::string addOkResponseHeaderToBody(std::string responseBody)
+std::string composeOkHtmlResponse(std::string responseBody)
 {
   std::ostringstream response;
   response << "HTTP/1.1 200 OK\r\n"
@@ -39,7 +38,7 @@ std::string addOkResponseHeaderToBody(std::string responseBody)
   return (response.str());
 }
 
-std::string redirectionHeader(const int &code, const std::string &location)
+std::string createRedirectResponse(const int &code, const std::string &location)
 {
   std::cout << BLUE << "Building redirection header : " << location
             << std::endl;
@@ -58,4 +57,44 @@ void sendRGeneric(int clientFD, std::string responseStr)
   if (sendall(clientFD, responseStr.c_str(), responseStr.size()) == -1)
     throw HttpException(
         "500", "Internal Server Error: Data failed to be sent to the client");
+}
+
+std::vector<char> readFile(const std::string &filename)
+{
+  std::ifstream file(filename.c_str(), std::ios::binary | std::ios::ate);
+  if (!file)
+  {
+    std::cerr << "Failed to open file" << std::endl;
+    std::vector<char> buffer;
+    return (buffer);
+  }
+
+  std::streamsize size = file.tellg();
+  file.seekg(0, std::ios::beg);
+
+  std::vector<char> buffer(size);
+  if (!file.read(&buffer[0], size))
+  {
+    std::cerr << "Failed to read file" << std::endl;
+    buffer.clear();
+    return (buffer);
+  }
+
+  return (buffer);
+}
+
+std::string composeFileResponse(const std::vector<char> &fileContent,
+                                std::string filepath)
+{
+  std::string response;
+  response += "HTTP/1.1 200 OK\r\n";
+  response += "Content-Type: " + getMediaType(filepath) + "\r\n";
+  response += "Content-Length: " + toString(fileContent.size()) + "\r\n";
+  response += "Cache-Control: no-cache\r\n";
+  response += "\r\n";
+
+  // Body (binary data)
+  response.append(&fileContent[0], fileContent.size());
+
+  return (response);
 }
