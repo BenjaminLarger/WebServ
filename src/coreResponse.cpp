@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:49:50 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 17:20:12 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:48:30 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,6 @@ std::string createRedirectResponse(const int &code, const std::string &location)
            << "\r\n";
 
   return (response.str());
-}
-
-void sendRGeneric(int clientFD, std::string responseStr)
-{
-  if (sendall(clientFD, responseStr.c_str(), responseStr.size()) == -1)
-    throw HttpException(
-        500, "Internal Server Error: Data failed to be sent to the client");
 }
 
 std::vector<char> readFile(const std::string &filename)

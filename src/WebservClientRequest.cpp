@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 13:26:10 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/09 14:25:41 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "Webserv.hpp"
 #include "DELETE.hpp"
 #include "GET.hpp"
 #include "POST.hpp"
-#include "Webserv.hpp"
 
 /* ssize_t read_all(int fd, char *buffer, size_t buffer_size)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestHeader.cpp                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 15:45:29 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/09 13:43:11 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void Webserv::parseClientRequest(ClientRequest &req)
     lineStream >> req.HTTPversion;
 
     if ((req.method != "GET" && req.method != "POST" && req.method != "DELETE")
-        || req.HTTPversion != "HTTP/1.1")
+        /* || req.HTTPversion != "HTTP/1.1" */)
     {
       req.buffer.erase();
       throw HttpException(400, "Bad request");

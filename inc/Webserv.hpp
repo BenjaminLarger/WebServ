@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 13:29:10 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/09 14:24:37 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ public:
 
   void handleNewConnection(size_t index,
                            const std::vector<ServerConfig> &serverConfigs);
+  bool isMethodAllowedAtLoc(std::string method, ClientRequest &req,
+                            const ServerConfig &serverConfig);
   void handleClientRequest(size_t index,
                            const std::vector<ServerConfig> &serverConfigs);
   //void manageRequestLocation(size_t serverIndex, const std::vector<ServerConfig> &serverConfigs);
@@ -52,8 +54,6 @@ public:
 
   void parseClientRequest(ClientRequest &req);
   void handleLocations(ClientRequest &req, const ServerConfig &serverConfig);
-  bool isMethodAllowedAtLoc(std::string method, ClientRequest &req,
-                            const ServerConfig &serverConfig);
 
   //SIGNAL
   static void sigInt(int code);

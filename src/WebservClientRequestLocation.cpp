@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestLocation.cpp                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 13:21:19 by blarger          ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2024/08/09 14:25:58 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "Webserv.hpp"
 #include "core.hpp"
@@ -21,7 +22,6 @@ std::string pathParentOnServer; //./var/www/new
 void Webserv::handleLocations(ClientRequest &req,
                               const ServerConfig &serverConfig)
 {
-
   std::string response;
   std::map<std::string, LocationConfig> locations = serverConfig.locations;
   std::map<std::string, LocationConfig>::const_iterator it;

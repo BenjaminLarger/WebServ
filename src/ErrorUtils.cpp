@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ErrorUtils.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:54:52 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 13:59:05 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/09 13:53:23 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,13 @@ void sendDefaultErrorPage(int clientSocket, int statusCode,
 {
   std::string response;
 
-  if (errorPages.find(statusCode) == errorPages.end())
-    response = "<html><body><h1>" + toString(statusCode) + " " + errorMessage
-               + "</h1></body></html>";
-  else
+  // if code found
+  if (errorPages.find(statusCode) != errorPages.end())
     response
         = extractHtmlContentFromFile("var/www/errors" + errorPages[statusCode]);
+  else // 
+    response = "<html><body><h1>" + toString(statusCode) + " " + errorMessage
+               + "</h1></body></html>";
 
   sendErrorResponse(clientSocket, statusCode, errorMessage, response);
 }

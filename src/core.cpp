@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 18:34:46 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/09 13:48:59 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,13 @@ int sendall(int s, const char *buf, int len)
 
   len = totalBytesSent;      // return number actually sent here
   return (n == -1 ? -1 : 0); // return -1 on failure, 0 on success
+}
+
+void sendRGeneric(int clientFD, std::string responseStr)
+{
+  if (sendall(clientFD, responseStr.c_str(), responseStr.size()) == -1)
+    throw HttpException(
+        500, "Internal Server Error: Data failed to be sent to the client");
 }
 
 bool isDirectory(const std::string &path)

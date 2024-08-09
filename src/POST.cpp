@@ -3,42 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   POST.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 18:20:47 by blarger          ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2024/08/09 14:25:19 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
 
 #include "POST.hpp"
 #include "Webserv.hpp"
 #include "core.hpp"
-
-//Send form data to a URL and get a response back
-
-// void POST::sendResponse(int clientFD, std::string responseBody)
-// {
-//   //The format of an HTTP response is defined by the HTTP specification (RFC 2616 for HTTP/1.1).
-//   //Here it is convenient to use ostring to concatenate
-//   std::ostringstream response;
-//   //Status Line: Specifies the HTTP version, status code, and status message.
-//   response << "HTTP/1.1 200 OK\r\n";
-//   //Headers: Metadata about the response.
-//   response << "Content-Type: text/html\r\n";
-//   response << "Content-Length: " << responseBody.size() << "\r\n";
-//   response << "\r\n";
-//   response << responseBody;
-
-//   std::string responseStr = response.str();
-//   // std::cout << "responseStr: \n" << responseStr << std::endl;
-//   //send function is similar to write, but it is specific to socket.
-//   //Supports additional flags to modify behavior (e.g., MSG_NOSIGNAL to prevent sending a SIGPIPE signal).
-//   //Syntax: ssize_t send(int sockfd, const void *buf, size_t len, int flags);
-
-//   if (sendall(clientFD, responseStr.c_str(), responseStr.size()) == -1)
-//     throw HttpException(
-//       "500", "Internal Server Error: Data failed to be sent to the client");
-// }
 
 std::string POST::buildPostHtmlResponse()
 {
@@ -69,7 +45,6 @@ std::string POST::buildPostHtmlResponse()
 
 void POST::extractBody(int clientFD)
 {
-  //std::cout << "length = " << contentLength << std::endl;
   // Read body
   try
   {
@@ -205,6 +180,7 @@ POST::POST(ClientInfo &client, int serverFD, int clientFD,
 			sendRGeneric(clientFD, response); */
 		}
   }
+  //I think we should send the generic response from here and use just the divided part to build the response depending on the type
 }
 
 POST::~POST(void) {}
