@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/08 14:19:40 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/09 19:04:30 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,4 +220,17 @@ int countJumpLine(std::string str)
       count++;
   }
   return (count);
+}
+
+std::string getCurrentTimeHttpFormat() {
+    std::time_t now = std::time(NULL);
+
+    // Convert it to UTC
+    std::tm* gmt = std::gmtime(&now);
+
+    char buffer[100];
+    std::strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", gmt);
+
+    // Devolver el string resultante
+    return std::string(buffer);
 }

@@ -3,15 +3,127 @@
 /*                                                        :::      ::::::::   */
 /*   POSTutils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/08 13:47:54 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/09 19:30:49 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "POST.hpp"
 #include "Webserv.hpp"
+
+std::string POST::createPostOkResponse(std::map<std::string, std::string> formValues)
+{
+    std::stringstream httpResponse;
+	std::string responseBody;
+	
+	responseBody = extractHtmlContentFromFile("./var/www/form/form_response.html");
+	responseBody += "            <tbody>\n";
+	responseBody += "                <tr>\n";
+	responseBody += "                    <td>Name</td>\n";
+	responseBody += "                    <td>" + formValues["name"] + "</td>\n";
+	responseBody += "                </tr>\n";
+	responseBody += "                <tr>\n";
+	responseBody += "                    <td>Age</td>\n";
+	responseBody += "                    <td>" + formValues["age"] + "</td>\n";
+	responseBody += "                </tr>\n";
+	responseBody += "            </tbody>\n";
+	responseBody += "        </table>\n";
+	responseBody += "        <a href=\"/\" class=\"button\">Back to Home</a>\n";
+	responseBody += "    </div>\n";
+	responseBody += "</body>\n";
+	responseBody += "</html>\n";
+
+    // Headers
+	httpResponse << "HTTP/1.1 201 Created\r\n";
+    httpResponse << "Content-Type: text/html\r\n";
+    httpResponse << "Content-Length: " << responseBody.size() << "\r\n";
+    httpResponse << "Date: " << getCurrentTimeHttpFormat() << "\r\n";
+    httpResponse << "\r\n";
+	httpResponse << responseBody;
+
+	std::cout << GREEN << "Response: " << httpResponse.str() << std::endl;
+	return (httpResponse.str());
+}
+
+bool POST::saveInLogFile(std::map<std::string, std::string> formValues)
+{
+	std::string	logFilePth = "./var/www/uploads/form_logs/form.log";
+	std::ofstream logFileStream(logFilePth.c_str(), std::ios_base::app);
+
+	if (!logFileStream.is_open())
+	{
+		throw HttpException(500, "Internal Server Error: Uneable to open logfile.");
+		return (false);
+	}
+	else
+	{
+		for (std::map<std::string, std::string>::iterator it = formValues.begin(); it != formValues.end(); ++it)
+			logFileStream << it->first << ": " << it->second << std::endl;
+	}
+	logFileStream << "----------------------------------------" << std::endl;
+	logFileStream.close();
+	
+	return (true);
+}
+
+std::string generateClientID() {
+    // Obtener la fecha y hora actual
+    std::time_t now = std::time(0);
+    std::tm* now_tm = std::localtime(&now);
+
+    // Obtener los milisegundos actuales
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    long ms = ts.tv_nsec / 1000000;
+
+    // Convertir la fecha y hora a una cadena
+    std::ostringstream ss;
+    ss << (now_tm->tm_year + 1900)
+       << std::setw(2) << std::setfill('0') << (now_tm->tm_mon + 1)
+       << std::setw(2) << std::setfill('0') << now_tm->tm_mday
+       << std::setw(2) << std::setfill('0') << now_tm->tm_hour
+       << std::setw(2) << std::setfill('0') << now_tm->tm_min
+       << std::setw(2) << std::setfill('0') << now_tm->tm_sec
+       << std::setw(3) << std::setfill('0') << ms;
+
+    return ss.str();
+}
+	
+std::map<std::string, std::string>	POST::formValuestoMap(std::string body)
+{
+	std::map<std::string, std::string> formValues;
+	std::istringstream bodyStream(body);
+	std::string keyValuePair;
+
+  while (std::getline(bodyStream, keyValuePair, '&'))
+  {
+    size_t pos = keyValuePair.find('=');
+    if (pos != std::string::npos)
+    {
+      std::string key = keyValuePair.substr(0, pos);
+      std::string value = keyValuePair.substr(pos + 1);
+      formValues[key] = value;
+    }
+  }
+  formValues["ID"] = generateClientID();
+  return (formValues);
+}
+
+std::string POST::buildPostApplicationHtmlResponse(std::map<std::string, std::string> formValues)
+{
+  std::string responseBody;
+
+  responseBody = "<html><body><h1>Form data received</h1><table>";
+  for (std::map<std::string, std::string>::iterator it = formValues.begin();
+       it != formValues.end(); ++it)
+  {
+    responseBody
+        += "<tr><td>" + it->first + "</td><td>" + it->second + "</td></tr>";
+  }
+  return responseBody;
+}
 
 bool	POST::isClosingBoundary(std::string line, std::string boundary)
 {

@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/09 14:25:58 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/09 17:32:54 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void Webserv::handleLocations(ClientRequest &req,
   }
   else
   {
-    throw HttpException(404, "Not Found");
+    throw HttpException(404, "Not Found: Location not found.");
   }
 }
 

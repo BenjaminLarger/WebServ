@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 13:28:42 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/09 19:07:55 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "ErrorUtils.hpp"
 #include "Webserv.hpp"
 #include "core.hpp"
+#include "dependencies.hpp"
 
 #define BODY_BEFORE_CONTENT_ERROR "ERROR: content cannot be defined after body!"
 #define CONTENT_AFTER_BODY_ERROR                                               \
@@ -41,16 +42,14 @@ class POST
 {
 private:
   // Request line
-  std::map<std::string, std::string> headers;
-  std::string pathToRessource;
+  std::string pathToResource;
   std::string HTTPversion;
   std::istringstream requestStream;
   // Header
   std::string host;
   std::string contentType;
   int contentLength;
-  // Body
-  std::string body;
+
   // ServerConfig
   int ClientFD;
   std::map<int, Content> contentMap;
@@ -62,10 +61,12 @@ private:
   //Util
   void extractFirstLine();
   void extractHeaders();
-  void extractBody(int clientFD);
-  std::string buildPostHtmlResponse();
+  std::string extractBody();
+  std::string buildPostApplicationHtmlResponse(std::map<std::string, std::string> formValues);
+  bool saveInLogFile(std::map<std::string, std::string> formValues);
+  std::map<std::string, std::string>	formValuestoMap(std::string body);
   int extractMultipartFormData(std::string clientRequest);
-  void sendResponse(int clientFD, std::string responseBody);
+  std::string createPostOkResponse(std::map<std::string, std::string> formValues);
 
   //Util uplaod file
   void readAllRequest(void); //can delete before submit project

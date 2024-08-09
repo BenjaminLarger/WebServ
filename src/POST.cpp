@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/09 14:25:19 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/09 19:33:44 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,66 +16,6 @@
 #include "Webserv.hpp"
 #include "core.hpp"
 
-std::string POST::buildPostHtmlResponse()
-{
-  std::string responseBody;
-  std::map<std::string, std::string> formValues;
-  std::istringstream bodyStream(body);
-  std::string keyValuePair;
-
-  while (std::getline(bodyStream, keyValuePair, '&'))
-  {
-    size_t pos = keyValuePair.find('=');
-    if (pos != std::string::npos)
-    {
-      std::string key = keyValuePair.substr(0, pos);
-      std::string value = keyValuePair.substr(pos + 1);
-      formValues[key] = value;
-    }
-  }
-  responseBody = "<html><body><h1>Form data received</h1><table>";
-  for (std::map<std::string, std::string>::iterator it = formValues.begin();
-       it != formValues.end(); ++it)
-  {
-    responseBody
-        += "<tr><td>" + it->first + "</td><td>" + it->second + "</td></tr>";
-  }
-  return responseBody;
-}
-
-void POST::extractBody(int clientFD)
-{
-  // Read body
-  try
-  {
-    if (contentLength > 0)
-    {
-      char *buffer = new char[contentLength + 1];
-
-      //Reads the content of the body from the actual position of the stream
-      requestStream.read(buffer, contentLength);
-      buffer[contentLength] = '\0';
-      //Converts the buffer to a string to make it easier to manipulate
-      body = buffer;
-      delete[] buffer;
-      std::cout << "body: " << body << std::endl;
-      // 200 = code for success received, OK = brief description of the status, text/plain = type of the response
-      sendRGeneric(ClientFD, composeOkHtmlResponse(buildPostHtmlResponse()));
-    }
-    else
-      throw HttpException(400, "Bad Request: Content-Length is missing");
-  }
-  catch (const HttpException &e)
-  {
-    std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
-              << RESET << '\n';
-
-    sendDefaultErrorPage(clientFD, e.getStatusCode(),
-                         getReasonPhrase(e.getStatusCode()),
-                         serverConfig.errorPages);
-  }
-  //close(clientFD);
-}
 
 std::string POST::makeCopy(const std::string &original)
 {
@@ -92,10 +32,34 @@ std::string POST::makeCopy(const std::string &original)
   return copy;
 }
 
+std::string POST::extractBody()
+{
+    std::string body;
+
+    // Read body
+    if (contentLength > 0)
+    {
+      char *buffer = new char[contentLength + 1];
+
+      //Reads the content of the body from the actual position of the stream
+      requestStream.read(buffer, contentLength);
+      buffer[contentLength] = '\0';
+      //Converts the buffer to a string to make it easier to manipulate
+      body = buffer;
+      delete[] buffer;
+      std::cout << "body: " << body << std::endl;
+    }
+    else
+      throw HttpException(400, "Bad Request: Content-Length is missing");
+
+    return (body);
+}
+
 void POST::extractHeaders()
 {
   std::string line;
   bool isFirstLine = true;
+  std::map<std::string, std::string> headers;
 
   //Reads line by line until it finds an empty line
   while (std::getline(requestStream, line) && line != "\r")
@@ -109,7 +73,7 @@ void POST::extractHeaders()
       // Trim whitespace
       headerValue.erase(0, headerValue.find_first_not_of(" \t"));
       headerValue.erase(headerValue.find_last_not_of(" \t") + 1);
-      this->headers[headerName] = headerValue;
+      headers[headerName] = headerValue;
       isFirstLine = false;
       if (headerName == "Content-Length")
         contentLength = std::atoi(headerValue.c_str());
@@ -133,10 +97,10 @@ void POST::extractFirstLine()
   std::string line;
 
   this->requestStream >> line;
-  this->requestStream >> this->pathToRessource;
+  this->requestStream >> this->pathToResource;
   this->requestStream >> this->HTTPversion;
   std::cout << "\nFIRST LINE :\n";
-  std::cout << YELLOW << "path-to-resource: " << this->pathToRessource << RESET
+  std::cout << YELLOW << "path-to-resource: " << this->pathToResource << RESET
             << std::endl;
   std::cout << YELLOW << "HTTP: " << this->HTTPversion << RESET << std::endl;
   //Reset the stream to the beginning
@@ -159,16 +123,25 @@ POST::POST(ClientInfo &client, int serverFD, int clientFD,
            std::string &clientInput, const ServerConfig &serverConfig)
     : contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
 {
+  std::string response;
+  std::string body;
+  std::map<std::string, std::string> formValues;
   (void)client;
   (void)serverFD;
   (void)clientFD;
+
   this->requestStream.str(clientInput);
-  std::string line;
   std::cout << std::endl << "--------POST request---------" << std::endl;
   extractFirstLine();
   extractHeaders();
+  // Depending on the content type of the form the body is formatted in a different way
   if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded", 33))
-    extractBody(clientFD);
+  {
+    body = extractBody();
+    formValues = formValuestoMap(body);
+    saveInLogFile(formValues);
+    response = createPostOkResponse(formValues);
+  }
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
   {
 
@@ -180,7 +153,10 @@ POST::POST(ClientInfo &client, int serverFD, int clientFD,
 			sendRGeneric(clientFD, response); */
 		}
   }
+  else
+    throw HttpException(415, "Unsupported Media Type.");
   //I think we should send the generic response from here and use just the divided part to build the response depending on the type
+  sendRGeneric(clientFD, response);
 }
 
 POST::~POST(void) {}
