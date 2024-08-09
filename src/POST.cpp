@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:08:18 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 16:23:53 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 18:20:47 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,6 +169,16 @@ void POST::extractFirstLine()
   requestStream.seekg(0);
 }
 
+std::string	createPostUploadOkResponse()
+{
+	std::ostringstream response;
+  response << "HTTP/1.1 204 No Content\r\n";
+  response << "Content-Length: 0\r\n";
+  response << "Connection: close\r\n\r\n";
+
+  return (response.str());
+}
+
 //We extract all the content of a POST request
 POST::POST(ClientInfo &client, int serverFD, int clientFD,
            std::string &clientInput, const ServerConfig &serverConfig)
@@ -188,7 +198,12 @@ POST::POST(ClientInfo &client, int serverFD, int clientFD,
   {
 
     if (extractMultipartFormData(clientInput) == SUCCESS)
+		{
       clientInput.erase();
+			/* std::string response = createPostUploadOkResponse();
+			std::cout << GREEN << "Sending post OK response" << RESET << std::endl;
+			sendRGeneric(clientFD, response); */
+		}
   }
 }
 
