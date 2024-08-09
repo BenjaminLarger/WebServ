@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 20:29:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 16:02:46 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 17:53:13 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,15 @@ struct ClientRequest
 
   // HTTP request line: GET / HTTP/1.1
   std::string method;
-  std::string pathToRessource;
+  std::string pathToRessource; // /new/new.png           /new/test
   std::string HTTPversion;
 
   // Every other header field
   std::map< std::string, std::string > fields;
+
+  std::string pathFolder;         // /new                   /new
+  std::string pathOnServer;       // ./var/www/new/new.png  ./var/www/new/test/
+  std::string pathFolderOnServer; //./var/www/new/          ./var/www/new/
 };
 
 class ClientInfo

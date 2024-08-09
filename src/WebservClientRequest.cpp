@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 17:22:26 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/08 19:41:16 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,16 @@
 
 /* ssize_t read_all(int fd, char *buffer, size_t buffer_size)
 {
-    ssize_t total_bytes_read = 0;
-    ssize_t bytes_read;
+    ssize_t total_bytesRead = 0;
+    ssize_t bytesRead;
 
-    while (total_bytes_read < buffer_size) {
-        bytes_read = read(fd, buffer + total_bytes_read, buffer_size - total_bytes_read);
-        if (bytes_read == 0) {
+    while (total_bytesRead < buffer_size) {
+        bytesRead = read(fd, buffer + total_bytesRead, buffer_size - total_bytesRead);
+        if (bytesRead == 0) {
             // End of file
             break;
         }
-        if (bytes_read == -1) {
+        if (bytesRead == -1) {
             if (errno == EINTR) {
                 // Interrupted by signal, continue reading
                 continue;
@@ -37,10 +37,10 @@
                 std::cerr << "Read error: " << strerror(errno) << std::endl;
                 return -1;
             }
-        total_bytes_read += bytes_read;
+        total_bytesRead += bytesRead;
     }
 
-    return total_bytes_read;
+    return total_bytesRead;
 } */
 
 ssize_t Webserv::recvAll(int sockfd, std::string &buffer)
@@ -109,19 +109,16 @@ ssize_t Webserv::recvAll(int sockfd, std::string &buffer)
 void Webserv::handleClientRequest(
     size_t i, const std::vector<ServerConfig> &serverConfigs)
 {
-  (void)serverConfigs;
   //char buffer[100000];
   std::string buffer;
 
   try
   {
-    //ssize_t bytes_read = read(fds[i].fd, buffer, sizeof(buffer));
-    ssize_t bytes_read = recvAll(fds[i].fd, buffer);
-    if (bytes_read < 0)
+    //ssize_t bytesRead = read(fds[i].fd, buffer, sizeof(buffer));
+    ssize_t bytesRead = recvAll(fds[i].fd, buffer);
+    if (bytesRead < 0)
     {
-      if (errno != EAGAIN
-          && errno
-                 != EWOULDBLOCK)
+      if (errno != EAGAIN && errno != EWOULDBLOCK)
       {
         closeConnection(i);
         --i;
@@ -129,7 +126,7 @@ void Webserv::handleClientRequest(
             500, "Internal Server Error: Data failed to be sent to the client");
       }
     }
-    else if (bytes_read == 0)
+    else if (bytesRead == 0)
     {
       closeConnection(i);
       --i;
@@ -137,24 +134,24 @@ void Webserv::handleClientRequest(
     else
     {
       // Handle incoming data (e.g., parse HTTP request)
-      //buffer[bytes_read] = '\0';
+      //buffer[bytesRead] = '\0';
       ClientInfo &client = clients[i];
       size_t &serverIndex = client.serverIndex;
       std::string &clientInput = client.req.buffer;
+      const ServerConfig &serverConfig = serverConfigs[serverIndex];
 
       std::cout << "Request received on serverIndex " << serverIndex
                 << ", port " << client.port << ", client.socketFD "
-                << client.socketFD
-                << ", root: " << serverConfigs[serverIndex].serverRoot
+                << client.socketFD << ", root: " << serverConfig.serverRoot
                 << std::endl;
 
       clientInput += buffer;
 
       parseClientRequest(client.req);
 
-      // Display parsed header request
       {
-        std::cout << "Parsed request: \n"
+        // Display parsed header request
+        std::cout << "Parsed request header: \n"
                   << MAGENTA << client.req.method << " "
                   << client.req.pathToRessource << " " << client.req.HTTPversion
                   << std::endl;
@@ -167,18 +164,19 @@ void Webserv::handleClientRequest(
         std::cout << RESET << std::endl;
       }
 
-      if (client.req.method == "GET")
-        GET method(client, fds[i].fd, clientInput, serverConfigs[serverIndex]);
+      handleLocations(client.req, serverConfig);
+
+      if (client.req.method == "GET"
+          && isMethodAllowedAtLoc("GET", client.req, serverConfig))
+        GET method(client, fds[i].fd, clientInput, serverConfig);
       else if (client.req.method == "POST")
-        POST method(client, serverIndex, fds[i].fd, clientInput,
-                    serverConfigs[serverIndex]);
+        POST method(client, serverIndex, fds[i].fd, clientInput, serverConfig);
       else if (client.req.method == "DELETE")
-        DELETE method(client, fds[i].fd, clientInput,
-                      serverConfigs[serverIndex]);
+        DELETE method(client, fds[i].fd, clientInput, serverConfig);
       else
       {
         clientInput.erase();
-        throw HttpException(400, "Bad request");
+        throw HttpException(405, "Method is not allowed on that path");
       }
       // closeConnection(i); // commented while testing
       // --i; // commented while testing

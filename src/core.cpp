@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 17:38:25 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/08 18:34:46 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,33 +34,40 @@ int sendall(int s, const char *buf, int len)
 bool isDirectory(const std::string &path)
 {
   struct stat path_stat;
-  if (stat(path.c_str(), &path_stat) != 0)
-  {
-    return (false);
-  }
-  return (S_ISDIR(path_stat.st_mode));
+  if (stat(path.c_str(), &path_stat) == 0)
+    return (S_ISDIR(path_stat.st_mode));
+  return (false);
+}
+
+bool isFile(const std::string &path)
+{
+  struct stat buffer;
+  if (stat(path.c_str(), &buffer) == 0)
+    return (S_ISREG(buffer.st_mode));
+  return (false);
 }
 
 std::vector<std::string> listFilesInDirectory(const std::string &dirPath)
 {
-	std::vector<std::string> files;
+  std::vector<std::string> files;
 
-  std::cout << "DIRPATH: " << dirPath << std::endl;
-	DIR* dirp = opendir(dirPath.c_str());// Pointer to a folder
-	if (dirp != NULL)
-	{
-		struct dirent *dirlist;// Structure used to represent the entries of a directory
-		while ((dirlist = readdir(dirp)) != NULL)
-		{
-			if (dirlist->d_type == DT_REG) //Verifies if it is a regular file
-				files.push_back(dirlist->d_name);
-		}
-		closedir(dirp);
-	}
-	else
-		throw HttpException(500, "Failed to open directory " + dirPath);
+  // std::cout << "DIRPATH: " << dirPath << std::endl;
+  DIR *dirp = opendir(dirPath.c_str()); // Pointer to a folder
+  if (dirp)
+  {
+    // Structure used to represent the entries of a directory
+    struct dirent *entry;
+    while ((entry = readdir(dirp)) != NULL)
+    {
+      if (entry->d_type == DT_REG) //Verifies if it is a regular file
+        files.push_back(entry->d_name);
+    }
+    closedir(dirp);
+  }
+  else
+    throw HttpException(500, "Failed to open directory " + dirPath);
 
-	return (files);
+  return (files);
 }
 
 bool pathOrParentFolderExistsInLocations(

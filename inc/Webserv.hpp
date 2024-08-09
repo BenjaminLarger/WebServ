@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 15:37:19 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/08 19:19:25 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,9 @@ public:
   void closeConnection(size_t index);
 
   void parseClientRequest(ClientRequest &req);
+  void handleLocations(ClientRequest &req, const ServerConfig &serverConfig);
+  bool isMethodAllowedAtLoc(std::string method, ClientRequest &req,
+                            const ServerConfig &serverConfig);
 
   //SIGNAL
   static void sigInt(int code);

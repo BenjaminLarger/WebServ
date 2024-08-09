@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:52:13 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 17:32:55 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/08 18:30:49 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@ int sendall(int s, const char *buf, int len);
 
 // Checks if the path is a directory
 bool isDirectory(const std::string &path);
+
+// Checks file exists
+bool isFile(const std::string &path);
 
 // Sends directly the given response to the client
 void sendRGeneric(int clientFD, std::string responseStr);
@@ -66,6 +69,6 @@ bool pathOrParentFolderExistsInLocations(
 std::vector<std::string> listFilesInDirectory(const std::string &dirPath);
 
 //Returns a html that list the files inside the directory sent as parameter
-std::string createFileListHtml(const std::string& dirPath);
+std::string createFileListHtml(const std::string &dirPath);
 
 #endif
