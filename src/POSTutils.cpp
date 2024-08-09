@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/09 19:30:49 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/09 19:46:02 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ std::string POST::createPostOkResponse(std::map<std::string, std::string> formVa
 {
     std::stringstream httpResponse;
 	std::string responseBody;
+	std::ostringstream oss;
+	oss << serverConfig.getPort();
 	
 	responseBody = extractHtmlContentFromFile("./var/www/form/form_response.html");
 	responseBody += "            <tbody>\n";
@@ -30,7 +32,9 @@ std::string POST::createPostOkResponse(std::map<std::string, std::string> formVa
 	responseBody += "                </tr>\n";
 	responseBody += "            </tbody>\n";
 	responseBody += "        </table>\n";
-	responseBody += "        <a href=\"/\" class=\"button\">Back to Home</a>\n";
+	responseBody += "        <a href=\"http://localhost:";
+	responseBody += oss.str();
+	responseBody += "/\" class=\"button\">Back to Home</a>\n";
 	responseBody += "    </div>\n";
 	responseBody += "</body>\n";
 	responseBody += "</html>\n";
@@ -43,7 +47,7 @@ std::string POST::createPostOkResponse(std::map<std::string, std::string> formVa
     httpResponse << "\r\n";
 	httpResponse << responseBody;
 
-	std::cout << GREEN << "Response: " << httpResponse.str() << std::endl;
+	std::cout << "Response: " << httpResponse.str() << std::endl;
 	return (httpResponse.str());
 }
 
@@ -109,20 +113,6 @@ std::map<std::string, std::string>	POST::formValuestoMap(std::string body)
   }
   formValues["ID"] = generateClientID();
   return (formValues);
-}
-
-std::string POST::buildPostApplicationHtmlResponse(std::map<std::string, std::string> formValues)
-{
-  std::string responseBody;
-
-  responseBody = "<html><body><h1>Form data received</h1><table>";
-  for (std::map<std::string, std::string>::iterator it = formValues.begin();
-       it != formValues.end(); ++it)
-  {
-    responseBody
-        += "<tr><td>" + it->first + "</td><td>" + it->second + "</td></tr>";
-  }
-  return responseBody;
 }
 
 bool	POST::isClosingBoundary(std::string line, std::string boundary)

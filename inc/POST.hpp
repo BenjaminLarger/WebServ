@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 19:07:55 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/09 19:35:46 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ private:
   void extractFirstLine();
   void extractHeaders();
   std::string extractBody();
-  std::string buildPostApplicationHtmlResponse(std::map<std::string, std::string> formValues);
   bool saveInLogFile(std::map<std::string, std::string> formValues);
   std::map<std::string, std::string>	formValuestoMap(std::string body);
   int extractMultipartFormData(std::string clientRequest);
