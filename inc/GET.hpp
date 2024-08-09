@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   GET.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 17:58:28 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:28:24 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-
-#ifndef GET_HPP
-#define GET_HPP
 
 #include "ErrorUtils.hpp"
 #include "Webserv.hpp"
@@ -46,4 +43,3 @@ public:
   std::string manageDeleteEndPoint();
 };
 
-#endif

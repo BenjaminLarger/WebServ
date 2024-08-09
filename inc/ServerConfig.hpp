@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 19:16:49 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/09 13:28:50 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-
-#ifndef SERVER_CONFIG_HPP
-#define SERVER_CONFIG_HPP
 
 #include "dependencies.hpp"
 
@@ -102,5 +99,3 @@ public:
 
   // std::map<int, std::string> findErrorPage(std::istringstream &iss);
 };
-
-#endif

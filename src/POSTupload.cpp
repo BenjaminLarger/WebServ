@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/08 18:08:18 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/09 13:32:23 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void	POST::trimImageBody(std::string &binaryFileContent)
 #include <cstring> // Include this header for memcmp
 #include <iomanip> // Include this header for std::hex and std::setw
 
-bool isValidPNG(const std::string& filename)
+bool isValidPNG(const std::string& filename)//can delete before submit
 {
     std::ifstream file(filename.c_str(), std::ios::binary);
     if (!file)

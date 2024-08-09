@@ -1,5 +1,4 @@
-#ifndef HTTPEXCEPTIONS_HPP
-#define HTTPEXCEPTIONS_HPP
+#pragma once
 
 #include <exception>
 #include <string>
@@ -19,4 +18,3 @@ public:
   std::string getErrorMessage() const;
 };
 
-#endif

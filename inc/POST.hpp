@@ -6,14 +6,11 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 17:37:35 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/09 13:28:42 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-
-#ifndef POST_HPP
-#define POST_HPP
 
 #include "ErrorUtils.hpp"
 #include "Webserv.hpp"
@@ -96,5 +93,3 @@ public:
   POST();
   ~POST(void);
 };
-
-#endif

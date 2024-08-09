@@ -3,15 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   DELETE.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:51 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/08 17:18:04 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:27:58 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#ifndef DELETE_HPP
-#define DELETE_HPP
 
 #include "ErrorUtils.hpp"
 #include "HttpExceptions.hpp"
@@ -49,4 +46,3 @@ public:
 	std::string replaceLocationByRoot(std::string pathToResource
 							, std::string oldPrefix, std::string newPrefix);
 };
-#endif

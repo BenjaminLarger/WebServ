@@ -6,14 +6,11 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/08 10:03:46 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/09 13:28:06 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-
-#ifndef DEPENDENCIES_HPP
-#define DEPENDENCIES_HPP
 
 // ---------------------INCLUDE
 #include <algorithm>
@@ -68,4 +65,3 @@
 // ---------------------MESSAGES
 #define DEFAULT_CONFIG_PATH "config/simple.conf"
 
-#endif

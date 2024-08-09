@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ClientInfo.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 20:29:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 17:53:13 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/09 13:27:38 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-
-#ifndef CLIENT_INFO_HPP
-#define CLIENT_INFO_HPP
 
 #include "dependencies.hpp"
 
@@ -48,4 +45,3 @@ public:
   ClientRequest req;
 };
 
-#endif

@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 14:19:50 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:29:00 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-
-#ifndef UTILS_HPP
-#define UTILS_HPP
 
 #include "ServerConfig.hpp"
 #include "core.hpp"
@@ -54,5 +51,3 @@ bool lineIsEmpty(std::string line);
 void trimQuotes(std::string &str);
 
 int countJumpLine(std::string str);
-
-#endif

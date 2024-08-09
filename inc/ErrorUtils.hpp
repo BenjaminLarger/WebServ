@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ErrorUtils.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:59 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 13:38:18 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/09 13:28:15 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
 
 #include "Webserv.hpp"
 #include "core.hpp"
@@ -27,4 +26,3 @@ void sendDefaultErrorPage(int clientSocket, int statusCode,
                           std::string errorMessage,
                           std::map<int, std::string> errorPages);
 
-#endif

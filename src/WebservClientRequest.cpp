@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 19:41:16 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/09 13:26:10 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ void Webserv::handleClientRequest(
       handleLocations(client.req, serverConfig);
 
       if (client.req.method == "GET"
-          && isMethodAllowedAtLoc("GET", client.req, serverConfig))
+          /* && isMethodAllowedAtLoc("GET", client.req, serverConfig) */)
         GET method(client, fds[i].fd, clientInput, serverConfig);
       else if (client.req.method == "POST")
         POST method(client, serverIndex, fds[i].fd, clientInput, serverConfig);

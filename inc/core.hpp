@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   core.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:52:13 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 18:30:49 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/09 13:27:51 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-
-#ifndef CORE_HPP
-#define CORE_HPP
 
 #include "HttpExceptions.hpp"
 #include "dependencies.hpp"
@@ -71,4 +68,3 @@ std::vector<std::string> listFilesInDirectory(const std::string &dirPath);
 //Returns a html that list the files inside the directory sent as parameter
 std::string createFileListHtml(const std::string &dirPath);
 
-#endif

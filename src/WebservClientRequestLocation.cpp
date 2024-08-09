@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestLocation.cpp                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/08 19:41:09 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/09 13:21:19 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,9 @@ void Webserv::handleLocations(ClientRequest &req,
 bool isMethodAllowedAtLoc(std::string method, ClientRequest &req,
                           const ServerConfig &serverConfig)
 {
+	(void)method;
+	(void)req;
+	(void)serverConfig;
   // std::string locToCheck;
   // if (client.req.pathToRessource != client.req.pathFolder
   //     && !isDirectory(client.req.pathOnServer))
