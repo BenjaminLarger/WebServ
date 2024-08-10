@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 14:25:41 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/10 16:52:12 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,8 @@ ssize_t Webserv::recvAll(int sockfd, std::string &buffer)
   std::cout << buffer << std::endl;
   return totalBytesReceived;
 }
+
+
 
 void Webserv::handleClientRequest(
     size_t i, const std::vector<ServerConfig> &serverConfigs)
