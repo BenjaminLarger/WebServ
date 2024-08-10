@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/10 20:42:26 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/10 21:03:59 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,5 +205,6 @@ std::string	POST::skipBoundaryPart(void)
 		if (!strncmp(line.c_str(), "--", 2))
 			break;		
 	 }
+	 std::cout << "------------------------------------__\n";
 	return (extractBoundary(contentType));
 }

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/10 20:32:25 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/10 21:09:10 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ int	POST::parseContent(int index)
 	{
 		if (contentMap[i].HasContentDisposition == false)
 		{
+			std::cout << RED << "Has not content disposition!" << RESET << std::endl;
 			return (FAILURE);
 		}
 		key = extractFirstWord(contentMap[i].contentDisposition);
@@ -107,8 +108,12 @@ int POST::handleFileUpload(int index)
 		
 		}
 	if (contentMap[i].filename == "ufc.png" && isValidPNG("upload/ufc.png") == false)
+	{
+		std::cout << RED << "extractValues failure!" << RESET << std::endl;
 		return (FAILURE);
 	}
+	}
+	std::cout << GREEN << "File successfully uploaded !" << RESET << std::endl;
 	return (SUCCESS);
 }
 
@@ -149,13 +154,19 @@ int	POST::extractMultipartFormData()//mah have to delete client request
 		{
 			//Content-Disposition is madatory and specifies how the content is to be handled, often indicating form field names and filenames
 			if (extractValues(line, contentMap, index, key, "Content disposition") == FAILURE)
+			{
+				std::cout << RED << "extractValues failure!" << RESET << std::endl;
 				return (FAILURE);
+			}
 		}
 		else if (key == "Content-Type:")
 		{
 			//This header is optional and specifies the media type of the content.
 			if (extractValues(line, contentMap, index, key, "Content type") == FAILURE)
+			{
+				std::cout << RED << "extractValues failure!" << RESET << std::endl;
 				return (FAILURE);
+			}
 		}
 		else if (isClosingBoundary(line) == true)
 		{
@@ -171,5 +182,6 @@ int	POST::extractMultipartFormData()//mah have to delete client request
 			contentMap[index].HasBody = true;
 		}
 	 }
+	 std::cout << RED << "has not closing boundary!" << RESET << std::endl;
 	return (FAILURE);
 }

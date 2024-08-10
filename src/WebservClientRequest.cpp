@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 20:47:59 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/10 21:15:35 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,14 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
     bytesReceived = recv(sockfd, tempBuffer, BUFFER_SIZE - 1, 0);
     if (bytesReceived == -1)
     {
+			if (errno == EAGAIN || errno == EWOULDBLOCK)
+      {
+				std::cout << "HERE!\n";
+        // Resource temporarily unavailable, retry the recv call
+        break ;
+      }
       // Handle error
+			perror(strerror(errno));
       throw HttpException(400, "Bad request: Reading socket failure.");
       break;
     }
@@ -70,6 +77,7 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
       tempBuffer[bytesReceived] = '\0';
       buffer.insert(buffer.end(), tempBuffer, tempBuffer + bytesReceived);
       totalBytesReceived += bytesReceived;
+			std::cout << "bytes received = " << bytesReceived << "\n temp buffer = " << tempBuffer << std::endl;
       // Check if the HTTP request is complete
       /* if (buffer.find("Content-Length:") != std::string::npos)
       {
@@ -156,7 +164,7 @@ void Webserv::handleClientRequest(
 			std::cout << std::endl;
 			std::string clientStr(clientInput.begin(), clientInput.end());
 			client.req.buffer = clientStr;
-      parseClientRequest(client.req, clientStr);
+      parseClientRequest(client.req);
 
       {
         // Display parsed header request

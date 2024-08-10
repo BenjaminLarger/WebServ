@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 20:49:40 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/10 20:50:22 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 void Webserv::parseClientRequest(ClientRequest &req)
 {
-  std::istringstream iss(client.req.buffer);
+  std::istringstream iss(req.buffer);
   std::string line;
 
   // Parse the first line (request line)
@@ -29,13 +29,13 @@ void Webserv::parseClientRequest(ClientRequest &req)
     if ((req.method != "GET" && req.method != "POST" && req.method != "DELETE")
         /* || req.HTTPversion != "HTTP/1.1" */)
     {
-      client.req.buffer.erase();
+      req.buffer.erase();
       throw HttpException(400, "Bad request: Method not implemented.");
     }
   }
   else
   {
-    client.req.buffer.erase();
+    req.buffer.erase();
     throw HttpException(400, "Bad request: There is no first line in header.");
   }
 
@@ -58,7 +58,7 @@ void Webserv::parseClientRequest(ClientRequest &req)
     }
     else
     {
-      client.req.buffer.erase();
+      req.buffer.erase();
       throw HttpException(400, "Bad request: Malformed header line");
     }
   }
