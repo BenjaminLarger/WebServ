@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestHeader.cpp                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 13:43:11 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/10 18:17:12 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 #include "core.hpp"
 
-void Webserv::parseClientRequest(ClientRequest &req)
+void Webserv::parseClientRequest(ClientRequest &req, std::string &clientStr)
 {
-  std::istringstream iss(req.buffer);
+  std::istringstream iss(clientStr);
   std::string line;
 
   // Parse the first line (request line)
@@ -29,14 +29,14 @@ void Webserv::parseClientRequest(ClientRequest &req)
     if ((req.method != "GET" && req.method != "POST" && req.method != "DELETE")
         /* || req.HTTPversion != "HTTP/1.1" */)
     {
-      req.buffer.erase();
-      throw HttpException(400, "Bad request");
+      clientStr.erase();
+      throw HttpException(400, "Bad request: Method not implemented.");
     }
   }
   else
   {
-    req.buffer.erase();
-    throw HttpException(400, "Bad request");
+    clientStr.erase();
+    throw HttpException(400, "Bad request: There is no first line in header.");
   }
 
   // Parse the remaining header fields
@@ -58,7 +58,7 @@ void Webserv::parseClientRequest(ClientRequest &req)
     }
     else
     {
-      req.buffer.erase();
+      clientStr.erase();
       throw HttpException(400, "Bad request: Malformed header line");
     }
   }

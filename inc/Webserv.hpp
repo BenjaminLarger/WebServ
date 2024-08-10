@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 14:24:37 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/10 18:16:31 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ public:
   // void processClientInput(std::string clientInput, int serverFD, int clientFD,
   //                         std::string &staticBuffer);
 
-  ssize_t recvAll(int sockfd, std::string &buffer);
+  ssize_t recvAll(int sockfd, std::vector<char> &buffer);
 
   void createServers(std::vector<ServerConfig> &serverConfigs);
 
@@ -52,7 +52,7 @@ public:
   //void manageRequestLocation(size_t serverIndex, const std::vector<ServerConfig> &serverConfigs);
   void closeConnection(size_t index);
 
-  void parseClientRequest(ClientRequest &req);
+  void parseClientRequest(ClientRequest &req, std::string &clientStr);
   void handleLocations(ClientRequest &req, const ServerConfig &serverConfig);
 
   //SIGNAL

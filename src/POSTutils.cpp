@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POSTutils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/09 19:46:02 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/10 20:33:50 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ std::map<std::string, std::string>	POST::formValuestoMap(std::string body)
   return (formValues);
 }
 
-bool	POST::isClosingBoundary(std::string line, std::string boundary)
+bool	POST::isClosingBoundary(std::string line)
 {
 	if (line[line.size() - 1] == '\r' && line[line.size() - 2] == '-' && line[line.size() - 3] == '-')
 	{
@@ -125,18 +125,14 @@ bool	POST::isClosingBoundary(std::string line, std::string boundary)
 	return (false);
 }
 
-bool	POST::isBoundary(std::string line, std::string boundary)
+bool	POST::isBoundary(std::string line)
 {
 	std::string newline;
 	if (line[0] == '-' && line[1] == '-')
 	{
-		std::cout << ORANGE << "line = " << line << RESET << std::endl;
 		newline = makeCopy(line);
-		std::cout << RED << newline << RESET << std::endl;
-		std::cout << RED << boundary << RESET << std::endl;
 		if (!strcmp(newline.c_str(), boundary.c_str()))
 		{
-			std::cout << ORANGE << "is boundary\n" << RESET << std::endl;
 			return (true);
 		}
 		
@@ -150,17 +146,13 @@ int	POST::extractValues(std::string line, std::map<int, Content> &myMap, int ind
 
 	if (contentMap[index].HasBody == true)
 	{
-		std::cout << RED << "Body has been defined before content\n" << RESET;
-		//sendall(ClientFD, BODY_BEFORE_CONTENT_ERROR, strlen(BODY_BEFORE_CONTENT_ERROR));
-		//send error page
-		return (FAILURE);
+		return (FAILURE); //throw error
 	}
 	values = line.substr(key.size() + 1);
 	if (content == "Content disposition")
 		myMap[index].contentDisposition = values;
 	else if (content == "Content type")
 		myMap[index].contentType = values;
-	std::cout << ORANGE << "map[" << index << "] = " << values << RESET << std::endl;	
 	if (content == "Content disposition")
 		myMap[index].HasContentDisposition = true;
 	else if (content == "Content type")
@@ -171,18 +163,15 @@ int	POST::extractValues(std::string line, std::map<int, Content> &myMap, int ind
 std::string POST::extractBoundary(const std::string& input)
 {
    std::size_t pos = input.find('=');
-	 std::cout << "input = " << input << ", " << pos << std::endl;
   if (pos != std::string::npos)
 	{
-		std::cout << input.substr(pos + 3) << std::endl;
-		std::cout << CYAN << "input.substr(pos + 1)[0] = " << input.substr(pos + 1)[0] << ", input.substr(pos + 1)[1] = " << input.substr(pos + 1)[1] << RESET << std::endl;
 		if (input.substr(pos + 1)[0] == '-' && input.substr(pos + 1)[1] == '-')
 			return input.substr(pos + 3);
 	}
 	return "";
 }
 
-void	POST::readAllRequest()
+void	POST::readAllRequest()//delete
 {
 	std::string line;
 
@@ -202,10 +191,8 @@ std::string	POST::skipBoundaryPart(void)
 	readAllRequest();
 	requestStream.clear();
 	requestStream.seekg(0);
-	//skip until bundary
 	 while (std::getline(requestStream, line))
 	 {
-		//std::cout << "\n" << MAGENTA << "line = "<< line << RESET << std::endl;
 		if (!strncmp(line.c_str(), "--", 2))
 			break;		
 	 }

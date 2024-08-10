@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/09 19:33:44 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/10 19:40:44 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,8 @@ std::string	createPostUploadOkResponse()
 
 //We extract all the content of a POST request
 POST::POST(ClientInfo &client, int serverFD, int clientFD,
-           std::string &clientInput, const ServerConfig &serverConfig)
-    : contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
+           std::vector<char> &clientInput, const ServerConfig &serverConfig)
+    : clientInputVector(clientInput), clientInputString(clientInput.begin(), clientInput.end()), contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
 {
   std::string response;
   std::string body;
@@ -130,7 +130,7 @@ POST::POST(ClientInfo &client, int serverFD, int clientFD,
   (void)serverFD;
   (void)clientFD;
 
-  this->requestStream.str(clientInput);
+  this->requestStream.str(clientInputString);
   std::cout << std::endl << "--------POST request---------" << std::endl;
   extractFirstLine();
   extractHeaders();
@@ -145,9 +145,9 @@ POST::POST(ClientInfo &client, int serverFD, int clientFD,
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
   {
 
-    if (extractMultipartFormData(clientInput) == SUCCESS)
+    if (extractMultipartFormData() == SUCCESS)
 		{
-      clientInput.erase();
+      clientInput.clear();
 			/* std::string response = createPostUploadOkResponse();
 			std::cout << GREEN << "Sending post OK response" << RESET << std::endl;
 			sendRGeneric(clientFD, response); */
