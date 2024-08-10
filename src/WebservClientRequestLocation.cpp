@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestLocation.cpp                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/10 17:22:12 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/10 17:27:10 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,19 +68,14 @@ void Webserv::resolveLocations(ClientRequest &req,
   }
 }
 
-bool isMethodAllowedAtLoc(std::string method, ClientRequest &req,
+bool Webserv::isMethodAllowedAtLoc(ClientRequest &req,
                           const ServerConfig &serverConfig)
 {
-  (void)method;
-  (void)req;
-  (void)serverConfig;
-  // if (serverConfig.locations.find(req.pathFolder) != serverConfig.locations.end())
-  // {
-  //   LocationConfig loc = serverConfig.locations[req.pathFolder];
-  //   if (loc.allowedMethods.find(method) != loc.methods.end())
-  //     return (true);
-  // }
-  // return (false);
-
-  return (true);
+  if (serverConfig.locations.find(req.pathFolder) != serverConfig.locations.end())
+  {
+    LocationConfig loc = serverConfig.locations.find(req.pathFolder)->second;
+    if (std::find(loc.allowedMethods.begin(), loc.allowedMethods.end(), req.method) != loc.allowedMethods.end())
+          return (true);
+  }
+  return (false);
 }

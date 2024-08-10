@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 17:21:38 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/10 17:26:41 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,22 +165,21 @@ void Webserv::handleClientRequest(
 
       resolveLocations(client.req, serverConfig);
 
-      if (client.req.method == "GET"
-          /* && isMethodAllowedAtLoc("GET", client.req, serverConfig) */)
-        GET method(client, fds[i].fd, clientInput, serverConfig);
-      else if (client.req.method == "POST")
-        POST method(client, serverIndex, fds[i].fd, clientInput, serverConfig);
-      else if (client.req.method == "DELETE")
-        DELETE method(client, fds[i].fd, clientInput, serverConfig);
+      if (isMethodAllowedAtLoc(client.req, serverConfig))
+      {
+        if (client.req.method == "GET")
+          GET method(client, fds[i].fd, clientInput, serverConfig);
+        else if (client.req.method == "POST")
+          POST method(client, serverIndex, fds[i].fd, clientInput, serverConfig);
+        else if (client.req.method == "DELETE")
+          DELETE method(client, fds[i].fd, clientInput, serverConfig);
+      }
       else
       {
         clientInput.erase();
         throw HttpException(405, "Method is not allowed on that path");
       }
-      // closeConnection(i); // commented while testing
-      // --i; // commented while testing
     }
-    // cleanupClientRequest()
   }
   catch (const HttpException &e)
   {

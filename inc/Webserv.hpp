@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 13:39:44 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/10 17:25:23 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ public:
 
   void handleNewConnection(size_t index,
                            const std::vector<ServerConfig> &serverConfigs);
-  bool isMethodAllowedAtLoc(std::string method, ClientRequest &req,
-                            const ServerConfig &serverConfig);
+  bool isMethodAllowedAtLoc(ClientRequest &req,
+                          const ServerConfig &serverConfig);
   void handleClientRequest(size_t index,
                            const std::vector<ServerConfig> &serverConfigs);
 
