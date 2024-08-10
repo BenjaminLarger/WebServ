@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 18:16:31 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/10 20:40:24 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ private:
   int contentLength;
 
   Webserv(void);
-  const Webserv &operator=(const Webserv &other);
 
 public:
   Webserv(std::vector<ServerConfig> &serverConfigs);
@@ -45,15 +44,16 @@ public:
 
   void handleNewConnection(size_t index,
                            const std::vector<ServerConfig> &serverConfigs);
-  bool isMethodAllowedAtLoc(std::string method, ClientRequest &req,
-                            const ServerConfig &serverConfig);
+  bool isMethodAllowedAtLoc(ClientRequest &req,
+                          const ServerConfig &serverConfig);
   void handleClientRequest(size_t index,
                            const std::vector<ServerConfig> &serverConfigs);
-  //void manageRequestLocation(size_t serverIndex, const std::vector<ServerConfig> &serverConfigs);
+
   void closeConnection(size_t index);
 
-  void parseClientRequest(ClientRequest &req, std::string &clientStr);
   void handleLocations(ClientRequest &req, const ServerConfig &serverConfig);
+  void parseClientRequest(ClientRequest &req);
+  void resolveLocations(ClientRequest &req, const ServerConfig &serverConfig);
 
   //SIGNAL
   static void sigInt(int code);

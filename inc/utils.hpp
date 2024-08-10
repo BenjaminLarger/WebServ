@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 17:58:42 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/10 15:46:01 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,3 +53,6 @@ void trimQuotes(std::string &str);
 int countJumpLine(std::string str);
 
 std::string getCurrentTimeHttpFormat();
+
+// Ensures there is a leading "/" and no trailing "/"
+std::string formatPath(const std::string &path);

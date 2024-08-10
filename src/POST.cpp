@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/10 19:40:44 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/10 20:41:55 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,22 +15,6 @@
 #include "POST.hpp"
 #include "Webserv.hpp"
 #include "core.hpp"
-
-
-std::string POST::makeCopy(const std::string &original)
-{
-  if (original.length() < 4)
-  {
-    return "";
-  }
-  std::string copy;
-  for (size_t i = 4; i < original.length(); ++i)
-  {
-    copy += original[i];
-  }
-  std::cout << RED << copy << RESET << std::endl;
-  return copy;
-}
 
 std::string POST::extractBody()
 {
@@ -108,16 +92,6 @@ void POST::extractFirstLine()
   requestStream.seekg(0);
 }
 
-std::string	createPostUploadOkResponse()
-{
-	std::ostringstream response;
-  response << "HTTP/1.1 204 No Content\r\n";
-  response << "Content-Length: 0\r\n";
-  response << "Connection: close\r\n\r\n";
-
-  return (response.str());
-}
-
 //We extract all the content of a POST request
 POST::POST(ClientInfo &client, int serverFD, int clientFD,
            std::vector<char> &clientInput, const ServerConfig &serverConfig)
@@ -141,6 +115,7 @@ POST::POST(ClientInfo &client, int serverFD, int clientFD,
     formValues = formValuestoMap(body);
     saveInLogFile(formValues);
     response = createPostOkResponse(formValues);
+    clientInput.clear();
   }
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
   {

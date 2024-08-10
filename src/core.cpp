@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 13:48:59 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/10 13:56:14 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,28 +78,29 @@ std::vector<std::string> listFilesInDirectory(const std::string &dirPath)
 }
 
 bool pathOrParentFolderExistsInLocations(
-    const std::string &pathToResource,
+    const std::string &URI,
     const std::map<std::string, LocationConfig> &locations,
     std::map<std::string, LocationConfig>::const_iterator &it)
 {
-  // Initialize the path to check
-  std::string currentPath = pathToResource;
+  // Initialise the URI to check
+  std::string currentURI = URI;
 
-  // Check if the current path exists in the map
-  it = locations.find(currentPath);
+  // Check if the current URI exists in the map container
+  it = locations.find(currentURI);
   if (it != locations.end())
     return (true);
 
-  // Trim the path by removing the last segment
-  size_t lastSlashPos = currentPath.find_last_of('/');
+  // Trim the end of the URI by removing the last segment
+  size_t lastSlashPos = currentURI.find_last_of('/');
   if (lastSlashPos == std::string::npos) // nothing left to trim
     return (false);
 
-  // Update the currentPath to remove the last segment
-  currentPath.erase(lastSlashPos);
+  // Update the URI to remove the last segment
+  currentURI.erase(lastSlashPos);
 
-  if (!currentPath.empty())
-    it = locations.find(currentPath);
+  // Check if the updated URI exists in the map container
+  if (!currentURI.empty())
+    it = locations.find(currentURI);
   if (it != locations.end())
     return (true);
 

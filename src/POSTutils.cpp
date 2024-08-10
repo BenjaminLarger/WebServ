@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/10 20:33:50 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/10 20:42:26 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@ std::string POST::createPostOkResponse(std::map<std::string, std::string> formVa
 {
     std::stringstream httpResponse;
 	std::string responseBody;
-	std::ostringstream oss;
-	oss << serverConfig.getPort();
 	
 	responseBody = extractHtmlContentFromFile("./var/www/form/form_response.html");
 	responseBody += "            <tbody>\n";
@@ -32,9 +30,6 @@ std::string POST::createPostOkResponse(std::map<std::string, std::string> formVa
 	responseBody += "                </tr>\n";
 	responseBody += "            </tbody>\n";
 	responseBody += "        </table>\n";
-	responseBody += "        <a href=\"http://localhost:";
-	responseBody += oss.str();
-	responseBody += "/\" class=\"button\">Back to Home</a>\n";
 	responseBody += "    </div>\n";
 	responseBody += "</body>\n";
 	responseBody += "</html>\n";
@@ -47,7 +42,6 @@ std::string POST::createPostOkResponse(std::map<std::string, std::string> formVa
     httpResponse << "\r\n";
 	httpResponse << responseBody;
 
-	std::cout << "Response: " << httpResponse.str() << std::endl;
 	return (httpResponse.str());
 }
 
@@ -113,6 +107,21 @@ std::map<std::string, std::string>	POST::formValuestoMap(std::string body)
   }
   formValues["ID"] = generateClientID();
   return (formValues);
+}
+
+std::string POST::makeCopy(const std::string &original)
+{
+  if (original.length() < 4)
+  {
+    return "";
+  }
+  std::string copy;
+  for (size_t i = 4; i < original.length(); ++i)
+  {
+    copy += original[i];
+  }
+  std::cout << RED << copy << RESET << std::endl;
+  return copy;
 }
 
 bool	POST::isClosingBoundary(std::string line)

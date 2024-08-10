@@ -6,14 +6,14 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 19:48:56 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/10 20:47:59 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Webserv.hpp"
 #include "DELETE.hpp"
 #include "GET.hpp"
 #include "POST.hpp"
+#include "Webserv.hpp"
 
 /* ssize_t read_all(int fd, char *buffer, size_t buffer_size)
 {
@@ -161,9 +161,8 @@ void Webserv::handleClientRequest(
       {
         // Display parsed header request
         std::cout << "Parsed request header: \n"
-                  << MAGENTA << client.req.method << " "
-                  << client.req.pathToRessource << " " << client.req.HTTPversion
-                  << std::endl;
+                  << MAGENTA << client.req.method << " " << client.req.URI
+                  << " " << client.req.HTTPversion << std::endl;
         for (std::map<std::string, std::string>::iterator it
              = client.req.fields.begin();
              it != client.req.fields.end(); it++)
@@ -173,8 +172,7 @@ void Webserv::handleClientRequest(
         std::cout << RESET << std::endl;
       }
 
-      handleLocations(client.req, serverConfig);
-			std::cout << RED << client.req.method << RESET << std::endl;
+      resolveLocations(client.req, serverConfig);
 
       if (client.req.method == "GET"
           /* && isMethodAllowedAtLoc("GET", client.req, serverConfig) */)
@@ -188,10 +186,7 @@ void Webserv::handleClientRequest(
         clientInput.clear();
         throw HttpException(405, "Method is not allowed on that path");
       }
-      // closeConnection(i); // commented while testing
-      // --i; // commented while testing
     }
-    // cleanupClientRequest()
   }
   catch (const HttpException &e)
   {

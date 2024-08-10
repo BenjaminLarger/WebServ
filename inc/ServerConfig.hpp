@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 13:28:50 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/10 15:07:05 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,9 @@ struct LocationConfig
       redirection; // return 301 http://example.org$new_uri;
 
   // Define a directory or a file from where the file should be searched
-  std::string root;  // root /var/www;
-  std::string alias; // alias /temp/www;
+  std::string root;       // root /var/www;
+  std::string alias;      // alias /temp/www;
+  std::string serverPath; // resolve path on server: ./temp/www/URI
 
   // Turn on or off directory listing
   bool autoIndexOn; // autoindex on/off;
@@ -45,14 +46,14 @@ public:
   ServerConfig(void);
   ~ServerConfig();
 
-  std::string host;                      // 127.0.0.1
-  int port;                              // listen 8080;
-  long long maxBodySize;                 // client_max_body_size 1000;
-  std::vector<std::string> serverNames;  // server_names ex.com www.ex.com;
-  std::string serverRoot;                // root /var/www
-  std::string serverAlias;               // alias /var/www
-  std::string serverIndex;               // index index.html
-  std::map<int, std::string> errorPages; // error_page 404 /404.html;
+  std::string host;                     // 127.0.0.1
+  int port;                             // listen 8080;
+  long long maxBodySize;                // client_max_body_size 1000;
+  std::vector<std::string> serverNames; // server_names ex.com www.ex.com;
+  std::string serverRoot;               // root /var/www
+  std::string serverIndex;              // index index.html
+  std::string serverPath;               // resolve path on server: ./var/www/URI
+  std::map<int, std::string> errorPages;           // error_page 404 /404.html;
   std::map<std::string, LocationConfig> locations; // urlPattern, location block
 
   // Returns a list of all the server names as one string (to display in terminal)
@@ -95,7 +96,6 @@ public:
   // Checks that the ServerConfig has valid and complete data
   bool checkConfig(std::vector<int> &tempPorts);
 
-  void parseLocation(std::ifstream &file, std::string urlPattern);
-
-  // std::map<int, std::string> findErrorPage(std::istringstream &iss);
+  void parseLocationBlock(std::ifstream &file, std::string urlPattern);
+  void resolveServerPathForLocations(void);
 };

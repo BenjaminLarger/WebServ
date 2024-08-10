@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:52:13 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 13:27:51 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/10 13:45:02 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ std::string getMediaType(const std::string &filename);
 
 // Checks if given path or any of its parent paths exist in a map of locations.
 bool pathOrParentFolderExistsInLocations(
-    const std::string &pathToResource,
+    const std::string &URI,
     const std::map<std::string, LocationConfig> &locations,
     std::map<std::string, LocationConfig>::const_iterator &it);
 
@@ -67,4 +67,3 @@ std::vector<std::string> listFilesInDirectory(const std::string &dirPath);
 
 //Returns a html that list the files inside the directory sent as parameter
 std::string createFileListHtml(const std::string &dirPath);
-
