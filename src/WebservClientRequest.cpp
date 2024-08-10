@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 14:25:41 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/10 16:08:44 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Webserv.hpp"
 #include "DELETE.hpp"
 #include "GET.hpp"
 #include "POST.hpp"
+#include "Webserv.hpp"
 
 /* ssize_t read_all(int fd, char *buffer, size_t buffer_size)
 {
@@ -152,9 +152,8 @@ void Webserv::handleClientRequest(
       {
         // Display parsed header request
         std::cout << "Parsed request header: \n"
-                  << MAGENTA << client.req.method << " "
-                  << client.req.pathToRessource << " " << client.req.HTTPversion
-                  << std::endl;
+                  << MAGENTA << client.req.method << " " << client.req.URI
+                  << " " << client.req.HTTPversion << std::endl;
         for (std::map<std::string, std::string>::iterator it
              = client.req.fields.begin();
              it != client.req.fields.end(); it++)
@@ -164,7 +163,7 @@ void Webserv::handleClientRequest(
         std::cout << RESET << std::endl;
       }
 
-      handleLocations(client.req, serverConfig);
+      resolveLocations(client.req, serverConfig);
 
       if (client.req.method == "GET"
           /* && isMethodAllowedAtLoc("GET", client.req, serverConfig) */)

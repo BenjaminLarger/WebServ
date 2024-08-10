@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestHeader.cpp                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 13:43:11 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/10 12:24:41 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void Webserv::parseClientRequest(ClientRequest &req)
   {
     std::istringstream lineStream(line);
     lineStream >> req.method;
-    lineStream >> req.pathToRessource;
+    lineStream >> req.URI;
     lineStream >> req.HTTPversion;
 
     if ((req.method != "GET" && req.method != "POST" && req.method != "DELETE")

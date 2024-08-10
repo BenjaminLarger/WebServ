@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 13:28:24 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/10 13:45:30 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ public:
       const ServerConfig &serverConfig);
   ~GET(void);
 
-  std::string handleLocations(std::string pathToResource);
+  std::string handleLocations(std::string URI);
 
   // Return vector of all file names in folder
   std::vector<std::string> listDirectoryContent(const std::string &path);
@@ -37,9 +37,9 @@ public:
       const std::string &path, const std::vector<std::string> &contents);
 
   // Generate html page with delete endpoint
-  std::string createHtmlDeleteRequest(std::vector<std::string> files, std::string uploadspth);
+  std::string createHtmlDeleteRequest(std::vector<std::string> files,
+                                      std::string uploadspth);
 
   // Manage delete endpoint
   std::string manageDeleteEndPoint();
 };
-

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/09 19:04:30 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/10 17:11:46 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,8 +133,8 @@ void displayServerConfigs(std::vector<ServerConfig> &serverConfigs)
               << ", port: " << serverConfigs[i].getPort()
               << ", maxBodySize: " << serverConfigs[i].maxBodySize
               << ", root: " << serverConfigs[i].serverRoot
-              << ", index: " << serverConfigs[i].serverIndex
-              << ", alias: " << serverConfigs[i].serverAlias << ", server_names"
+              << ", serverPath: " << serverConfigs[i].serverPath
+              << ", index: " << serverConfigs[i].serverIndex << ", server_names"
               << serverConfigs[i].getServerNames() << std::endl;
 
     std::cout << "  errorPages.size(" << serverConfigs[i].errorPages.size()
@@ -159,6 +159,7 @@ void displayServerConfigs(std::vector<ServerConfig> &serverConfigs)
                 << ", root: " << it->second.root
                 << ", index:  " << it->second.index
                 << ", alias:  " << it->second.alias
+                << ", serverPath:  " << it->second.serverPath
                 << ", autoIndexOn:  " << it->second.autoIndexOn
                 << ", allowedMethods: ";
       for (unsigned long itAM = 0; itAM < it->second.allowedMethods.size();
@@ -222,15 +223,30 @@ int countJumpLine(std::string str)
   return (count);
 }
 
-std::string getCurrentTimeHttpFormat() {
-    std::time_t now = std::time(NULL);
+std::string getCurrentTimeHttpFormat()
+{
+  std::time_t now = std::time(NULL);
 
-    // Convert it to UTC
-    std::tm* gmt = std::gmtime(&now);
+  // Convert it to UTC
+  std::tm *gmt = std::gmtime(&now);
 
-    char buffer[100];
-    std::strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", gmt);
+  char buffer[100];
+  std::strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", gmt);
 
-    // Devolver el string resultante
-    return std::string(buffer);
+  // Devolver el string resultante
+  return std::string(buffer);
+}
+
+std::string formatPath(const std::string &str)
+{
+  std::string path = str;
+  // Check if path starts with "/" and add one if not
+  if (!path.empty() && path[0] != '/')
+    path.insert(path.begin(), '/');
+
+  // Check if path ends with "/" and remove it if yes
+  if (!path.empty() && path[path.size() - 1] == '/')
+    path.erase(path.size() - 1);
+
+  return (path);
 }

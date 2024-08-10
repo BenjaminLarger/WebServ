@@ -6,14 +6,15 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 18:23:26 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 16:46:51 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/10 13:30:43 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerConfig.hpp"
 #include "core.hpp"
 
-void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
+void ServerConfig::parseLocationBlock(std::ifstream &file,
+                                      std::string urlPattern)
 {
   std::string line;
   this->locations[urlPattern].autoIndexOn = false; // set default
@@ -71,6 +72,11 @@ void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
       if (!valueStr.size() || streamHasRemainingContent(ss))
         file.close(), throw(std::runtime_error(
                           "Unexpected characters in location block: " + line));
+      if (!this->locations[urlPattern].alias.empty())
+        file.close(), throw(std::runtime_error(
+                          "\"root\" directive is duplicate, \"alias\" "
+                          "directive was specified earlier: "
+                          + line));
 
       this->locations[urlPattern].root = valueStr;
     }
@@ -80,6 +86,11 @@ void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
       if (!valueStr.size() || streamHasRemainingContent(ss))
         file.close(), throw(std::runtime_error(
                           "Unexpected characters in location block: " + line));
+      if (!this->locations[urlPattern].root.empty())
+        file.close(), throw(std::runtime_error(
+                          "\"alias\" directive is duplicate, \"root\" "
+                          "directive was specified earlier: "
+                          + line));
 
       this->locations[urlPattern].alias = valueStr;
     }
@@ -108,15 +119,15 @@ void ServerConfig::parseLocation(std::ifstream &file, std::string urlPattern)
 
       this->locations[urlPattern].index = valueStr;
     }
-    else if (key.size() && key[0] == '}')
+    else if (key.size() && key[0] == '}') // Closing location block
     {
-      // Closing location block
+      // Set GET as default method
       if (this->locations[urlPattern].allowedMethods.empty())
         this->locations[urlPattern].allowedMethods.push_back("GET");
 
       // Set default root
-      if (this->locations[urlPattern].root.empty())
-        this->locations[urlPattern].root = "/var/www";
+      // if (this->locations[urlPattern].root.empty())
+      //   this->locations[urlPattern].root = "/var/www";
 
       break;
     }

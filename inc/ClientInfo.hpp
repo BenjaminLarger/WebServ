@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientInfo.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 20:29:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 13:27:38 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/10 12:27:13 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ struct ClientRequest
 {
   std::string buffer; // Appended whole request sent by client
 
-  // HTTP request line: GET / HTTP/1.1
-  std::string method;
-  std::string pathToRessource; // /new/new.png           /new/test
-  std::string HTTPversion;
+  // HTTP request line
+  std::string method;      // GET
+  std::string URI;         // /new/new.png           /new/test
+  std::string HTTPversion; // HTTP/1.1
 
   // Every other header field
   std::map< std::string, std::string > fields;
@@ -44,4 +44,3 @@ public:
 
   ClientRequest req;
 };
-

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 14:24:37 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/10 13:39:44 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ private:
   int contentLength;
 
   Webserv(void);
-  const Webserv &operator=(const Webserv &other);
 
 public:
   Webserv(std::vector<ServerConfig> &serverConfigs);
@@ -49,11 +48,11 @@ public:
                             const ServerConfig &serverConfig);
   void handleClientRequest(size_t index,
                            const std::vector<ServerConfig> &serverConfigs);
-  //void manageRequestLocation(size_t serverIndex, const std::vector<ServerConfig> &serverConfigs);
+
   void closeConnection(size_t index);
 
   void parseClientRequest(ClientRequest &req);
-  void handleLocations(ClientRequest &req, const ServerConfig &serverConfig);
+  void resolveLocations(ClientRequest &req, const ServerConfig &serverConfig);
 
   //SIGNAL
   static void sigInt(int code);

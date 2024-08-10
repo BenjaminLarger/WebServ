@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 14:33:15 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 16:58:03 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/10 17:13:37 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void ServerConfig::reset()
   serverNames.clear();
   locations.clear();
   serverRoot.clear();
-  serverAlias.clear();
   serverIndex.clear();
   errorPages.clear();
 }
@@ -32,8 +31,8 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
   if (!file.is_open())
     throw(std::runtime_error("Could not open the configuration file."));
 
-  std::vector<ServerConfig> serverConfigs;
   std::string line;
+  std::vector<ServerConfig> serverConfigs;
   ServerConfig config;
   std::vector<int> tempPorts;
   bool insideServerBlock = false;
@@ -74,7 +73,7 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
       else if (key == "host")
       {
         ss >> valueStr;
-        if (config.host.size() || !valueStr.size()
+        if (config.host.size() || valueStr.empty()
             || streamHasRemainingContent(ss))
           file.close(), throw(std::runtime_error(
                             "Unexpected characters in config file: " + line));
@@ -125,7 +124,7 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
           file.close(), throw(std::runtime_error(
                             "Invalid location block in config file: " + line));
 
-        config.parseLocation(file, urlPattern);
+        config.parseLocationBlock(file, urlPattern);
       }
       else if (key == "error_page")
       {
@@ -133,7 +132,7 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
         if ((!(valueLong >= 400 && valueLong <= 429) && valueLong != 431
              && valueLong != 451 && !(valueLong >= 500 && valueLong <= 508)
              && valueLong != 510 && valueLong != 511)
-            || !valueStr.size() || streamHasRemainingContent(ss))
+            || valueStr.empty() || streamHasRemainingContent(ss))
           file.close(), throw(std::runtime_error(
                             "Incorrect error_page in config file: " + line));
 
@@ -146,27 +145,18 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
       else if (key == "root")
       {
         ss >> valueStr;
-        if (config.serverRoot.size() || !valueStr.size()
+        if (config.serverRoot.size() || valueStr.empty()
             || streamHasRemainingContent(ss))
           file.close(),
               throw(std::runtime_error(
                   "Unexpected characters in location block: " + line));
+
         config.serverRoot = valueStr;
-      }
-      else if (key == "alias")
-      {
-        ss >> valueStr;
-        if (config.serverAlias.size() || !valueStr.size()
-            || streamHasRemainingContent(ss))
-          file.close(),
-              throw(std::runtime_error(
-                  "Unexpected characters in location block: " + line));
-        config.serverAlias = valueStr;
       }
       else if (key == "index")
       {
         ss >> valueStr;
-        if (config.serverIndex.size() || !valueStr.size()
+        if (config.serverIndex.size() || valueStr.empty()
             || streamHasRemainingContent(ss))
           file.close(),
               throw(std::runtime_error(
@@ -214,33 +204,21 @@ void ServerConfig::validateAndSanitizeServerLine(std::string &line,
 
 bool ServerConfig::checkConfig(std::vector<int> &tempPorts)
 {
-  // Add default values
-
-  // Set default maxBodySize
-  if (this->maxBodySize == -1)
-    this->maxBodySize = 1000000;
-
-  // Set default root
-  if (this->serverRoot.empty())
-    this->serverRoot = "/var/www";
-
-  // Set default index file
-  // if (this->serverIndex.empty())
-  //   this->serverIndex = "index.html";
-
   // Add default host if needed
   if (this->getHost().empty())
   {
     std::string value = "127.0.0.1";
     this->host = value.c_str();
   }
-
-  // Check host is valid
-  for (std::string::const_iterator it = this->host.begin();
-       it != this->host.end(); ++it)
+  // else check host is valid
+  else
   {
-    if (!isdigit(*it) && *it != '.')
-      return (false);
+    for (std::string::const_iterator it = this->host.begin();
+         it != this->host.end(); ++it)
+    {
+      if (!isdigit(*it) && *it != '.')
+        return (false);
+    }
   }
 
   // Check port present
@@ -258,8 +236,21 @@ void ServerConfig::endServerBlock(bool &insideServerBlock,
   // std::cout << "tempPorts.size(): " << tempPorts.size() << std::endl;
   if (checkConfig(tempPorts) && insideServerBlock)
   {
+    // Add default values
+
+    // Set default maxBodySize
+    if (this->maxBodySize == -1)
+      this->maxBodySize = 1000000;
+
+    // Set default index file
+    // if (this->serverIndex.empty())
+    //   this->serverIndex = "index.html";
+
+    resolveServerPathForLocations();
+
+    // Create a new serverConfig for each port of each server
     for (size_t i = 0; i < tempPorts.size(); i++)
-    { // Create a new serverConfig for each port of each server
+    {
       this->addPort(tempPorts[i]);
       serverConfigs.push_back(*this);
     }
@@ -270,4 +261,52 @@ void ServerConfig::endServerBlock(bool &insideServerBlock,
     throw(std::runtime_error("Invalid server block in config file."));
   }
   insideServerBlock = false;
+}
+
+void ServerConfig::resolveServerPathForLocations()
+{
+  // Set serverPath for top level
+  if (serverRoot.size())
+    serverPath = "." + formatPath(serverRoot);
+  else if (serverRoot.empty())
+  {
+    for (std::map<std::string, LocationConfig>::iterator it = locations.begin();
+         it != locations.end(); it++)
+    {
+      if (it->first == "/")
+      {
+        // Append URI to root
+        if (it->second.root.size())
+        {
+          serverRoot = it->second.root;
+          serverPath
+              = "." + formatPath(it->second.root) + formatPath(it->first);
+        }
+        // Replace URI with alias
+        else if (it->second.alias.size())
+          serverPath = "." + formatPath(it->second.alias);
+      }
+    }
+  }
+
+  // Set serverPath for each location block
+  for (std::map<std::string, LocationConfig>::iterator it = locations.begin();
+       it != locations.end(); it++)
+  {
+    // Append URI to root
+    if (it->second.root.size())
+      it->second.serverPath
+          = "." + formatPath(it->second.root) + formatPath(it->first);
+    // Replace URI with alias
+    else if (it->second.alias.size())
+      it->second.serverPath = "." + formatPath(it->second.alias);
+    // Add parent root to location blocks if they don't have a root or alias
+    else if (it->second.root.empty() && it->second.alias.empty()
+             && serverRoot.size())
+    {
+      it->second.root = serverRoot;
+      it->second.serverPath
+          = "." + formatPath(it->second.root) + formatPath(it->first);
+    }
+  }
 }

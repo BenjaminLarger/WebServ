@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/08 18:04:02 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/10 13:45:26 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,32 +14,31 @@
 #include "CGI.hpp"
 #include "core.hpp"
 
-std::string GET::handleLocations(std::string pathToResource)
+std::string GET::handleLocations(std::string URI)
 {
   std::string response;
   std::map<std::string, LocationConfig> locations = serverConfig.locations;
   std::map<std::string, LocationConfig>::const_iterator it;
 
-  pathOrParentFolderExistsInLocations(pathToResource, locations, it);
+  pathOrParentFolderExistsInLocations(URI, locations, it);
 
   if (it != locations.end()) // it->first
   {
-    std::cout << "pathToResource: " << pathToResource
-              << ", found location: " << it->first << std::endl;
+    std::cout << "URI: " << URI << ", found location: " << it->first
+              << std::endl;
     std::string path;
     std::string root = it->second.root;
     if (it->first == "/delete")
       return (composeOkHtmlResponse(manageDeleteEndPoint()));
     // is already a folder
-    if (!pathToResource.empty()
-        && pathToResource[pathToResource.size() - 1] == '/')
-      path = "." + root + pathToResource;
+    if (!URI.empty() && URI[URI.size() - 1] == '/')
+      path = "." + root + URI;
     // is a file inside a folder located at it->first
-    else if (pathToResource != it->first)
-      path = "." + root + pathToResource;
+    else if (URI != it->first)
+      path = "." + root + URI;
     // is a folder without a "/"
     else
-      path = "." + root + pathToResource + "/";
+      path = "." + root + URI + "/";
 
     std::cout << "path: '" << path
               << "' isDirectory(path): " << isDirectory(path) << std::endl;
@@ -70,11 +69,11 @@ std::string GET::handleLocations(std::string pathToResource)
       response = composeOkHtmlResponse(createFileListHtml(path));
       return (response);
     }
-    // pathToResource doesn't match a location, but is contained in one which is a folder
-    else if (pathToResource != it->first && !isDirectory(path)
+    // URI doesn't match a location, but is contained in one which is a folder
+    else if (URI != it->first && !isDirectory(path)
              && isDirectory("." + root + it->first))
     {
-      // std::cout << "pathToResource != it->first && !isDirectory(path). "
+      // std::cout << "URI != it->first && !isDirectory(path). "
       //              "Checking isDirectory(\".\" + root + it->first): "
       //           << isDirectory("." + root + it->first) << std::endl;
 
@@ -83,7 +82,7 @@ std::string GET::handleLocations(std::string pathToResource)
       if (fileContent.empty())
         throw HttpException(404, "Not Found.");
 
-      response = composeFileResponse(fileContent, pathToResource);
+      response = composeFileResponse(fileContent, URI);
       return (response);
     }
     // Else: no file, is a folder, but autoindex off
@@ -116,10 +115,10 @@ GET::GET(ClientInfo &client, int clientFD, std::string &clientInput,
     // getresponse()
     // Body: The actual content (e.g., HTML, JSON).
     std::string response;
-    if (client.req.pathToRessource.find(".php") != std::string::npos)
-      response = composeOkHtmlResponse(executePhp(client.req.pathToRessource));
+    if (client.req.URI.find(".php") != std::string::npos)
+      response = composeOkHtmlResponse(executePhp(client.req.URI));
     else
-      response = handleLocations(client.req.pathToRessource);
+      response = handleLocations(client.req.URI);
     sendRGeneric(clientFD, response);
     // std::cout << "response sent." << std::endl;
   }
