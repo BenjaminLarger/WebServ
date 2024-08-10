@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/10 13:45:58 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/10 17:22:12 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,13 @@ bool isMethodAllowedAtLoc(std::string method, ClientRequest &req,
   (void)method;
   (void)req;
   (void)serverConfig;
-  // std::string locToCheck;
-  // if (client.req.URI != client.req.pathFolder
-  //     && !isDirectory(client.req.pathOnServer))
-  //   locToCheck;
-  // std::vector<std::string> allowedMethods;
+  // if (serverConfig.locations.find(req.pathFolder) != serverConfig.locations.end())
+  // {
+  //   LocationConfig loc = serverConfig.locations[req.pathFolder];
+  //   if (loc.allowedMethods.find(method) != loc.methods.end())
+  //     return (true);
+  // }
+  // return (false);
 
   return (true);
 }
