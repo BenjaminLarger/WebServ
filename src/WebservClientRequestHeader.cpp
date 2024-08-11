@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestHeader.cpp                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 20:50:22 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/11 20:24:52 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ void Webserv::parseClientRequest(ClientRequest &req)
       std::string fieldName = line.substr(0, separator);
       std::string fieldValue = line.substr(separator + 1);
 
+      trimTrailingWS(fieldName);
+      trimTrailingWS(fieldValue);
       // Trim any leading whitespace from the field value
       fieldValue.erase(0, fieldValue.find_first_not_of(" \t"));
 

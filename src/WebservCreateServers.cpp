@@ -3,14 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   WebservCreateServers.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 11:06:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/02 13:42:27 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 19:45:08 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
+
+bool checkIfSameHostAndPort(std::vector<ServerConfig> &serverConfigs,
+                            int i, int &fd_pos)
+{
+  for (int j = 0; j < i; ++j)
+  {
+    if (serverConfigs[i].getHost() == serverConfigs[j].getHost()
+        && serverConfigs[i].getPort() == serverConfigs[j].getPort())
+      {
+        fd_pos = j;
+        return (true);
+      }
+      
+  }
+  return (false);
+}
 
 // Create and set up listening sockets (serverFD) for all servers on all ports and add them to std::vector<pollfd> fds
 void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
@@ -18,10 +34,24 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
   for (std::vector<ServerConfig>::size_type i = 0; i < serverConfigs.size();
        ++i)
   {
+    int fd_pos;
+
+    if (checkIfSameHostAndPort(serverConfigs, i, fd_pos))
+    {
+      // If the host and port are the same as a previous server, 
+      pollfd pfd;
+      printf("Same host and port as server %d\n", fd_pos);
+      pfd.fd = fds[fd_pos].fd;
+      pfd.events = POLLIN | POLLOUT; // Monitor both read and write events
+      pfd.revents = 0;
+      fds.push_back(pfd);
+      continue;
+    }
+
     // Create socket and check if successful
     int serverFD = socket(AF_INET, SOCK_STREAM, 0);
     if (serverFD < 0)
-      throw(std::range_error("Failed to create socket."));
+      throw HttpException(500, "Failed to create socket.");
 
     // serverFds.push_back(serverFD); // don't know if needed
 
@@ -29,7 +59,7 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
     if (setNonBlocking(serverFD) < 0)
     {
       close(serverFD);
-      throw(std::range_error("Failed to set non-blocking."));
+      throw HttpException(500, "Failed to set non-blocking.");
     }
 
     struct sockaddr_in serverAddress;
@@ -43,7 +73,7 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
     if (serverAddress.sin_addr.s_addr == INADDR_NONE)
     {
       close(serverFD);
-      throw(std::range_error("Invalid address/ Address not supported."));
+      throw HttpException(500, "Invalid address/ Address not supported.");
     }
 
     serverAddress.sin_port = htons(serverConfigs[i].getPort());
@@ -54,7 +84,7 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
         < 0)
     {
       close(serverFD);
-      throw(std::range_error("setsockopt(SO_REUSEADDR) failed"));
+      throw HttpException(500, "setsockopt(SO_REUSEADDR) failed");
     }
 
     // Link the socket to the specified address and port
@@ -62,14 +92,14 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
         < 0)
     {
       close(serverFD);
-      throw(std::range_error("Failed to bind to port."));
+      throw HttpException(500, "Failed to bind to port.");
     }
 
     // Start listening for incoming connections on the socket
     if (listen(serverFD, 10) < 0)
     {
       close(serverFD);
-      throw(std::range_error("Failed to listen on socket."));
+      throw HttpException(500, "Failed to listen on socket.");
     }
 
     // Add the listening socket to the pollfd vector
