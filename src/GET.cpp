@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/11 16:41:54 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 17:52:51 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,9 +104,13 @@ std::string GET::getResponseAtLocation(ClientRequest &req)
     else if (it->second.index.empty() && isDirectory(path)
              && it->second.autoIndexOn)
     {
+      std::cout << RED << "listDirectoryContent: " << path << RESET
+                << std::endl;
       std::vector<std::string> contents = listDirectoryContent(path);
 
-      response = composeOkHtmlResponse(createFileListHtml(path));
+      // response = composeOkHtmlResponse(createFileListHtml(path));
+      response
+          = composeOkHtmlResponse(generateDirectoryListing(path, contents));
       return (response);
     }
     // URI doesn't match a location, but is contained in one which is a folder

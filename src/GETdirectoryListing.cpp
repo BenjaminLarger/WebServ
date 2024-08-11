@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:25:42 by demre             #+#    #+#             */
-/*   Updated: 2024/08/06 17:16:43 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 17:55:54 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,15 @@ std::vector<std::string> GET::listDirectoryContent(const std::string &path)
     // Reads the next directory entry until returns NULL
     while ((ent = readdir(dir)) != NULL)
     {
-      // Add name of the directory entry (ent->d_name) to vector
-      contents.push_back(ent->d_name);
+      // Add name of the directory entry (ent->d_name) to vector if it is a regular file
+      if (ent->d_type == DT_REG)
+        contents.push_back(ent->d_name);
     }
     closedir(dir);
   }
   else
   {
-    // throw error?
-    std::cerr << "Failed to open directory: " << path << std::endl;
+    throw HttpException(500, "Failed to open directory " + path);
   }
   return (contents);
 }
