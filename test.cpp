@@ -1,35 +1,35 @@
 #include <iostream>
 #include <fstream>
-#include <vector>
+#include <string>
 
-bool comparePNGFiles(const std::string& file1, const std::string& file2) {
-    std::ifstream f1(file1, std::ios::binary);
-    std::ifstream f2(file2, std::ios::binary);
-
-    if (!f1.is_open() || !f2.is_open()) {
-        std::cerr << "Error opening one of the files: " << file1 << " or " << file2 << std::endl;
-        return false;
+void copyPngFile(const std::string& inputFilePath, const std::string& outputFilePath) {
+    // Open the input file in binary mode
+    std::ifstream inputFile(inputFilePath, std::ios::binary);
+    if (!inputFile) {
+        std::cerr << "Error opening input file: " << inputFilePath << std::endl;
+        return;
     }
 
-    std::vector<char> buffer1((std::istreambuf_iterator<char>(f1)), std::istreambuf_iterator<char>());
-    std::vector<char> buffer2((std::istreambuf_iterator<char>(f2)), std::istreambuf_iterator<char>());
+    // Read the contents of the file into a string
+    std::string fileContents((std::istreambuf_iterator<char>(inputFile)), std::istreambuf_iterator<char>());
+		std::cout << fileContents << std::endl;
+    inputFile.close();
 
-    if (buffer1.size() != buffer2.size()) {
-        return false;
+    // Open the output file in binary mode
+    std::ofstream outputFile(outputFilePath, std::ios::binary);
+    if (!outputFile) {
+        std::cerr << "Error opening output file: " << outputFilePath << std::endl;
+        return;
     }
 
-    return std::equal(buffer1.begin(), buffer1.end(), buffer2.begin());
+    // Write the contents of the string to the output file
+    outputFile.write(fileContents.data(), fileContents.size());
+    outputFile.close();
 }
 
 int main() {
-    std::string file1 = "file1.png";
-    std::string file2 = "file2.png";
-
-    if (comparePNGFiles(file1, file2)) {
-        std::cout << "The files are identical." << std::endl;
-    } else {
-        std::cout << "The files are different." << std::endl;
-    }
-
+    std::string inputFilePath = "upload/ufc.png";
+    std::string outputFilePath = "upload/ufc_copy.png";
+    copyPngFile(inputFilePath, outputFilePath);
     return 0;
 }

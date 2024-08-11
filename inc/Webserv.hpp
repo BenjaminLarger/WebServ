@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 14:23:01 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 16:50:32 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ public:
   // void processClientInput(std::string clientInput, int serverFD, int clientFD,
   //                         std::string &staticBuffer);
 
-  ssize_t recvAll(int sockfd, std::string &buffer);
+  ssize_t recvAll(int sockfd, std::vector<char> &buffer);
 
   void createServers(std::vector<ServerConfig> &serverConfigs);
 
@@ -51,6 +51,7 @@ public:
 
   void closeConnection(size_t index);
 
+  void handleLocations(ClientRequest &req, const ServerConfig &serverConfig);
   void parseClientRequest(ClientRequest &req);
   void resolveRequestedPathFromLocations(ClientRequest &req,
                                          const ServerConfig &serverConfig);

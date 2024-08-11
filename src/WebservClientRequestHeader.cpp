@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestHeader.cpp                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 12:24:41 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/10 20:50:22 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,13 @@ void Webserv::parseClientRequest(ClientRequest &req)
         /* || req.HTTPversion != "HTTP/1.1" */)
     {
       req.buffer.erase();
-      throw HttpException(400, "Bad request");
+      throw HttpException(400, "Bad request: Method not implemented.");
     }
   }
   else
   {
     req.buffer.erase();
-    throw HttpException(400, "Bad request");
+    throw HttpException(400, "Bad request: There is no first line in header.");
   }
 
   // Parse the remaining header fields

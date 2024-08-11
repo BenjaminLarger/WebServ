@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 14:25:10 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 16:53:25 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@
     return total_bytesRead;
 } */
 
-ssize_t Webserv::recvAll(int sockfd, std::string &buffer)
+ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
 {
   char tempBuffer[BUFFER_SIZE];
   ssize_t totalBytesReceived = 0;
@@ -56,8 +56,15 @@ ssize_t Webserv::recvAll(int sockfd, std::string &buffer)
     bytesReceived = recv(sockfd, tempBuffer, BUFFER_SIZE - 1, 0);
     if (bytesReceived == -1)
     {
+      if (errno == EAGAIN || errno == EWOULDBLOCK)
+      {
+        std::cout << "HERE!\n";
+        // Resource temporarily unavailable, retry the recv call
+        break;
+      }
       // Handle error
-      throw HttpException(400, "Bad request");
+      perror(strerror(errno));
+      throw HttpException(400, "Bad request: Reading socket failure.");
       break;
     }
     else if (bytesReceived == 0)
@@ -68,10 +75,12 @@ ssize_t Webserv::recvAll(int sockfd, std::string &buffer)
     else
     {
       tempBuffer[bytesReceived] = '\0';
-      buffer.append(tempBuffer, bytesReceived);
+      buffer.insert(buffer.end(), tempBuffer, tempBuffer + bytesReceived);
       totalBytesReceived += bytesReceived;
+      std::cout << "bytes received = " << bytesReceived
+                << "\n temp buffer = " << tempBuffer << std::endl;
       // Check if the HTTP request is complete
-      if (buffer.find("Content-Length:") != std::string::npos)
+      /* if (buffer.find("Content-Length:") != std::string::npos)
       {
         size_t startPos = buffer.find("Content-Length:")
                           + std::string("Content-Length:").length();
@@ -86,23 +95,24 @@ ssize_t Webserv::recvAll(int sockfd, std::string &buffer)
         std::cout << GREEN << "Content length found : " << contentLength
                   << RESET << std::endl;
         hasContentLength = true;
-      }
+      } */
       if (hasContentLength == false
-          && buffer.find("\r\n\r\n") != std::string::npos)
+          && std::string(buffer.begin(), buffer.end()).find("\r\n\r\n")
+                 != std::string::npos)
       {
         // We have received the end of the headers
         break;
       }
-      else if (hasContentLength == true && totalBytesReceived >= contentLength)
+      /* else if (hasContentLength == true && totalBytesReceived >= contentLength)
       {
         //We have read all the content specified by content length
         std::cout << GREEN << "All the request content has been read\n"
                   << RESET;
         break;
-      }
+      } */
     }
   }
-  std::cout << buffer << std::endl;
+  // std::cout << buffer << std::endl;
   return totalBytesReceived;
 }
 
@@ -110,7 +120,7 @@ void Webserv::handleClientRequest(
     size_t i, const std::vector<ServerConfig> &serverConfigs)
 {
   //char buffer[100000];
-  std::string buffer;
+  std::vector<char> buffer;
 
   try
   {
@@ -137,7 +147,9 @@ void Webserv::handleClientRequest(
       //buffer[bytesRead] = '\0';
       ClientInfo &client = clients[i];
       size_t &serverIndex = client.serverIndex;
-      std::string &clientInput = client.req.buffer;
+      //std::vector<char> &clientInput += client.req.buffer;
+      std::vector<char> clientInput(client.req.buffer.begin(),
+                                    client.req.buffer.end());
       const ServerConfig &serverConfig = serverConfigs[serverIndex];
 
       std::cout << "Request received on serverIndex " << serverIndex
@@ -145,8 +157,16 @@ void Webserv::handleClientRequest(
                 << client.socketFD << ", root: " << serverConfig.serverRoot
                 << std::endl;
 
-      clientInput += buffer;
-
+      //clientInput += buffer;
+      clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
+      std::cout << "clientInput[0]" << std::endl;
+      for (size_t j = 0; j < 100; j++)
+      {
+        std::cout << clientInput[j];
+      }
+      std::cout << std::endl;
+      std::string clientStr(clientInput.begin(), clientInput.end());
+      client.req.buffer = clientStr;
       parseClientRequest(client.req);
 
       {
@@ -178,19 +198,16 @@ void Webserv::handleClientRequest(
                   << std::endl;
       }
 
-      if (isMethodAllowedAtLoc(client.req, serverConfig))
-      {
-        if (client.req.method == "GET")
-          GET method(client, fds[i].fd, clientInput, serverConfig);
-        else if (client.req.method == "POST")
-          POST method(client, serverIndex, fds[i].fd, clientInput,
-                      serverConfig);
-        else if (client.req.method == "DELETE")
-          DELETE method(client, fds[i].fd, clientInput, serverConfig);
-      }
+      if (client.req.method == "GET"
+          /* && isMethodAllowedAtLoc("GET", client.req, serverConfig) */)
+        GET method(client, fds[i].fd, clientStr, serverConfig);
+      else if (client.req.method == "POST")
+        POST method(client, serverIndex, fds[i].fd, clientInput, serverConfig);
+      else if (client.req.method == "DELETE")
+        DELETE method(client, fds[i].fd, clientStr, serverConfig);
       else
       {
-        clientInput.erase();
+        clientInput.clear();
         throw HttpException(405, "Method is not allowed on that path");
       }
     }
