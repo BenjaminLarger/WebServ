@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 17:42:16 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/11 19:07:34 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,9 @@ private:
   // ServerConfig
   int ClientFD;
   std::map<int, Content> contentMap;
+	std::map<std::string, std::string> _formValues;
   const ServerConfig &serverConfig;
+	std::vector<char>	fileContentBinary;
 
   //BodyUplaod
   //Header
@@ -69,6 +71,7 @@ private:
   std::map<std::string, std::string>	formValuestoMap(std::string body);
   int extractMultipartFormData();
   std::string createPostOkResponse(std::map<std::string, std::string> formValues);
+	std::string	incompletePostResponse();
 
   //Util uplaod file
   void readAllRequest(void); //can delete before submit project
@@ -87,11 +90,17 @@ private:
   int handleFileUpload(int index);
 	void	trimImageBody(std::string &binaryFileContent);
 	void	handleBody(const std::string &line, int index);
-	void	handleNewPart(int index);
+	void	handleNewPart(int &index);
+	std::vector<char>	getBoundaryEnd();
+	std::vector<char> extractBinaryContent(const std::vector<char>& content);
+
+
+
 
 
 	
 	std::vector<char> extractPng(const std::vector<char>& content);
+	std::vector<char> extractFile(const std::vector<char>& content, std::vector<char> finalBoundary);
 	void savePngFile(const std::vector<char>& content, const std::string& filename);
 	bool isValidPNG(const std::string& filename);//can delete before submit
 

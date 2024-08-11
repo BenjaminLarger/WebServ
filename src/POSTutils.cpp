@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/11 17:40:32 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/11 21:22:05 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,29 @@ std::string POST::createPostOkResponse(std::map<std::string, std::string> formVa
 	httpResponse << responseBody;
 
 	return (httpResponse.str());
+}
+std::string POST::incompletePostResponse()
+{
+    std::string response;
+    response += "HTTP/1.1 400 Bad Request\r\n";
+    response += "Content-Type: text/html\r\n";
+    response += "Content-Length: ";
+
+    std::string body = "<html>"
+                       "<head><title>400 Bad Request</title></head>"
+                       "<body>"
+                       "<h1>400 Bad Request</h1>"
+                       "<p>Your POST request is incomplete. Please check your data and try again.</p>"
+                       "</body>"
+                       "</html>";
+
+    std::stringstream ss;
+    ss << body.length();
+    response += ss.str() + "\r\n";
+    response += "\r\n";
+    response += body;
+
+    return response;
 }
 
 bool POST::saveInLogFile(std::map<std::string, std::string> formValues)
@@ -117,7 +140,7 @@ std::string POST::makeCopy(const std::string &original)
   {
     copy += original[i];
   }
-  std::cout << RED << copy << RESET << std::endl;
+ // std::cout << RED << copy << RESET << std::endl;
   return copy;
 }
 
@@ -150,10 +173,10 @@ int	POST::extractValues(std::string line, std::map<int, Content> &myMap, int ind
 {
 	std::string values;
 
-	if (contentMap[index].HasBody == true)
+	/* if (contentMap[index].HasBody == true)
 	{
 		throw HttpException(400, "Bad request: body appears before content disposition.");
-	}
+	} */
 	values = line.substr(key.size() + 1);
 	if (content == "Content disposition")
 		myMap[index].contentDisposition = values;
@@ -186,7 +209,7 @@ void	POST::readAllRequest()//delete
 	std::cout << "\n--------------READING ALL CONTENT--------------";
 	while (std::getline(requestStream, line))
 	 {
-		std::cout << "\n" << MAGENTA << line << RESET;
+		std::cout << "\n" << /* RESET << */ line /* << RESET */;
 	 }
 	 std::cout << std::endl;
 }
@@ -194,7 +217,7 @@ std::string	POST::skipBoundaryPart(void)
 {
 	std::string line;
 
-	readAllRequest();
+	//readAllRequest();
 	requestStream.clear();
 	requestStream.seekg(0);
 	 while (std::getline(requestStream, line))
@@ -209,12 +232,16 @@ std::string	POST::skipBoundaryPart(void)
 void	POST::handleBody(const std::string &line, int index)
 {
 	if (contentMap[index].HasBody == true)
-				contentMap[index].body += '\n';
-			contentMap[index].body += line;
-			contentMap[index].HasBody = true;
+	contentMap[index].body += '\n';
+	contentMap[index].body += line;
+	if (index == 0)
+		_formValues["name"] = line;
+	else if (index == 1)
+		_formValues["age"] = line;
+	contentMap[index].HasBody = true;
 }
 
-void	POST::handleNewPart(int index)
+void	POST::handleNewPart(int &index)
 {
 	index++;
 		contentMap[index].HasContentType = false;

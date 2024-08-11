@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/11 17:43:53 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/11 19:47:18 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,13 +123,11 @@ POST::POST(ClientInfo &client, int serverFD, int clientFD,
     if (extractMultipartFormData() == SUCCESS)
 		{
 			client.req.buffer.clear();
-			
+			response = createPostOkResponse(_formValues);
 			/* std::string response = createPostUploadOkResponse();
 			std::cout << GREEN << "Sending post OK response" << RESET << std::endl;
 			sendRGeneric(clientFD, response); */
 		}
-		else
-			std::cout << RED << "Extract Multiform data failure!" << RESET << std::endl;
   }
   else
     throw HttpException(415, "Unsupported Media Type.");

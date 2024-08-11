@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/11 15:38:00 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 20:58:45 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,16 +191,16 @@ bool lineIsEmpty(std::string line)
 {
   for (int i = 0; line[i]; i++)
   {
-    std::cout << (int)line[i] << ", ";
+    //std::cout << (int)line[i] << ", ";
     if ((line[i] < 9 || line[i] > 13) && line[i] != 32)
       return (false);
   }
-  std::cout << std::endl;
-  std::cout << ORANGE << "Line is empty!\n" << RESET;
+  //std::cout << std::endl;
+  //std::cout << ORANGE << "Line is empty!\n" << RESET;
   return (true);
 }
 
-void trimQuotes(std::string &str)
+std::string trimQuotes(std::string &str)
 {
   trimBothEnds(str);
   std::cout << RED << "len = " << str.length() << ", [0] = " << str[0]
@@ -209,6 +209,7 @@ void trimQuotes(std::string &str)
   {
     str = str.substr(1, str.length() - 2);
   }
+	return (str);
 }
 
 int countJumpLine(std::string str)
