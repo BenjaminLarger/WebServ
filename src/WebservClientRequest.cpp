@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 17:23:11 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/11 17:25:06 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,11 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
     bytesReceived = recv(sockfd, tempBuffer, BUFFER_SIZE - 1, 0);
     if (bytesReceived == -1)
     {
-			if (errno == EAGAIN || errno == EWOULDBLOCK)
+      if (errno == EAGAIN || errno == EWOULDBLOCK)
       {
-				std::cout << "HERE!\n";
+        std::cout << "HERE!\n";
         // Resource temporarily unavailable, retry the recv call
-        break ;
+        break;
       }
       // Handle error
       throw HttpException(400, strerror(errno));
@@ -75,7 +75,8 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
       tempBuffer[bytesReceived] = '\0';
       buffer.insert(buffer.end(), tempBuffer, tempBuffer + bytesReceived);
       totalBytesReceived += bytesReceived;
-			std::cout << "bytes received = " << bytesReceived << "\n temp buffer = " << tempBuffer << std::endl;
+      std::cout << "bytes received = " << bytesReceived
+                << "\n temp buffer = " << tempBuffer << std::endl;
       // Check if the HTTP request is complete
       /* if (buffer.find("Content-Length:") != std::string::npos)
       {
@@ -94,7 +95,8 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
         hasContentLength = true;
       } */
       if (hasContentLength == false
-    && std::string(buffer.begin(), buffer.end()).find("\r\n\r\n") != std::string::npos)
+          && std::string(buffer.begin(), buffer.end()).find("\r\n\r\n")
+                 != std::string::npos)
       {
         // We have received the end of the headers
         break;
@@ -108,7 +110,7 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
       } */
     }
   }
- // std::cout << buffer << std::endl;
+  // std::cout << buffer << std::endl;
   return totalBytesReceived;
 }
 
@@ -144,8 +146,8 @@ void Webserv::handleClientRequest(
       ClientInfo &client = clients[i];
       size_t &serverIndex = client.serverIndex;
       //std::vector<char> &clientInput += client.req.buffer;
-			//std::cout << RED << clientInput;
-			std::vector<char> clientInput(client.req.buffer.begin(), client.req.buffer.end());
+      std::vector<char> clientInput(client.req.buffer.begin(),
+                                    client.req.buffer.end());
       const ServerConfig &serverConfig = serverConfigs[serverIndex];
 
       std::cout << "Request received on serverIndex " << serverIndex
@@ -154,16 +156,15 @@ void Webserv::handleClientRequest(
                 << std::endl;
 
       //clientInput += buffer;
-			clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
-			std::cout << "clientInput[0]" << std::endl;
-			for (size_t j = 0; j < 100; j++)
-			{
-				std::cout << clientInput[j];
-			}
-			std::cout << std::endl;
-			std::string clientStr(clientInput.begin(), clientInput.end());
-			client.req.buffer = clientStr;
-			
+      clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
+      std::cout << "clientInput[0]" << std::endl;
+      for (size_t j = 0; j < 100; j++)
+      {
+        std::cout << clientInput[j];
+      }
+      std::cout << std::endl;
+      std::string clientStr(clientInput.begin(), clientInput.end());
+      client.req.buffer = clientStr;
       parseClientRequest(client.req);
 
       {
@@ -180,7 +181,20 @@ void Webserv::handleClientRequest(
         std::cout << RESET << std::endl;
       }
 
-      resolveLocations(client.req, serverConfig);
+      resolveRequestedPathFromLocations(client.req, serverConfig);
+
+      {
+        // Display client request location data
+        std::cout << "URI: " << client.req.URI
+                  << ", pathFolder: " << client.req.pathFolder
+                  << ", pathOnServer: " << client.req.pathOnServer << ", isDir "
+                  << isDirectory(client.req.pathOnServer) << ", isFile "
+                  << isFile(client.req.pathOnServer)
+                  << ", pathFolderOnServer: " << client.req.pathFolderOnServer
+                  << ", isDir " << isDirectory(client.req.pathFolderOnServer)
+                  << ", isFile " << isFile(client.req.pathFolderOnServer)
+                  << std::endl;
+      }
 
       if (client.req.method == "GET"
           /* && isMethodAllowedAtLoc("GET", client.req, serverConfig) */)

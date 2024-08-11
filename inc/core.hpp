@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:52:13 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 13:45:02 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/10 18:09:12 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,14 @@ std::string createDeleteOkResponse();
 // Returns the media type (Content-Type) based on the file extension
 std::string getMediaType(const std::string &filename);
 
-// Checks if given path or any of its parent paths exist in a map of locations.
-bool pathOrParentFolderExistsInLocations(
+// Checks if given path or its parent path exist in a map of locations.
+bool findURIorParentFolderInLocations(
+    const std::string &URI,
+    const std::map<std::string, LocationConfig> &locations,
+    std::map<std::string, LocationConfig>::const_iterator &it);
+
+// Checks if the beginning of a path exists in a map of locations.
+bool findURIstartInLocations(
     const std::string &URI,
     const std::map<std::string, LocationConfig> &locations,
     std::map<std::string, LocationConfig>::const_iterator &it);

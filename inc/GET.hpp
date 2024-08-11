@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 17:22:41 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/11 17:23:54 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ public:
       const ServerConfig &serverConfig);
   ~GET(void);
 
-  std::string handleLocations(std::string URI);
+  std::string getResponseAtLocation(ClientRequest &req);
 
   // Return vector of all file names in folder
   std::vector<std::string> listDirectoryContent(const std::string &path);

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 15:07:05 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 13:50:09 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,9 @@ public:
   // Checks that the ServerConfig has valid and complete data
   bool checkConfig(std::vector<int> &tempPorts);
 
+  // Parse data from location block in config file
   void parseLocationBlock(std::ifstream &file, std::string urlPattern);
+
+  // Determine serverPath (path on the server) of a location by resolving root or alias
   void resolveServerPathForLocations(void);
 };

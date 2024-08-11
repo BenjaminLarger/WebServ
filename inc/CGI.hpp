@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:46:37 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 12:23:48 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 16:21:28 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,4 +22,4 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-std::string executePhp(std::string URI);
+std::string executeScript(std::string &fileName, const std::string &script);
