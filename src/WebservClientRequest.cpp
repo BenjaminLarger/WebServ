@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 20:24:43 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/11 20:44:17 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@
     return total_bytesRead;
 } */
 
-ssize_t Webserv::recvAll(int sockfd, std::string &buffer)
+ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
 {
   char tempBuffer[BUFFER_SIZE];
   ssize_t totalBytesReceived = 0;
