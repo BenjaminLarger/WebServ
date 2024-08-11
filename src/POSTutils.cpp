@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/10 21:03:59 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/11 16:50:45 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ int	POST::extractValues(std::string line, std::map<int, Content> &myMap, int ind
 
 	if (contentMap[index].HasBody == true)
 	{
-		return (FAILURE); //throw error
+		throw HttpException(400, "Bad request: body appears before content disposition.");
 	}
 	values = line.substr(key.size() + 1);
 	if (content == "Content disposition")

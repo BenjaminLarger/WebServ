@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 21:15:35 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/11 17:23:11 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,7 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
         break ;
       }
       // Handle error
-			perror(strerror(errno));
-      throw HttpException(400, "Bad request: Reading socket failure.");
-      break;
+      throw HttpException(400, strerror(errno));
     }
     else if (bytesReceived == 0)
     {
@@ -146,6 +144,7 @@ void Webserv::handleClientRequest(
       ClientInfo &client = clients[i];
       size_t &serverIndex = client.serverIndex;
       //std::vector<char> &clientInput += client.req.buffer;
+			//std::cout << RED << clientInput;
 			std::vector<char> clientInput(client.req.buffer.begin(), client.req.buffer.end());
       const ServerConfig &serverConfig = serverConfigs[serverIndex];
 
@@ -164,6 +163,7 @@ void Webserv::handleClientRequest(
 			std::cout << std::endl;
 			std::string clientStr(clientInput.begin(), clientInput.end());
 			client.req.buffer = clientStr;
+			
       parseClientRequest(client.req);
 
       {

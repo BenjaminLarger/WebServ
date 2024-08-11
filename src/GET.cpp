@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/10 13:45:26 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 17:22:58 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ GET::GET(ClientInfo &client, int clientFD, std::string &clientInput,
   std::istringstream iss(clientInput);
   std::string key;
 
-  clientInput.erase();
+	client.req.buffer.clear();
 
   try
   {

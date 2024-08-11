@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/10 21:09:10 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/11 16:55:29 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,10 @@ void	POST::parseContentType(int index, std::string &content)
 	//	contentType[index].contentType = content;
 		trimBothEnds(contentMap[index].name);
 		if (contentMap[index].name != "text/plain" && contentMap[index].name != "image/png")
-			std::cout << RED << "ERROR: Content type " << contentMap[index].name << " not supported!\n" << RESET << std::endl;//=> throw exception
+		{
+			clientInputString.clear();
+			throw HttpException(400, "Bad request: Content type not supported.");
+		}
 	}
 	else
 	{
@@ -75,7 +78,9 @@ int	POST::parseContent(int index)
 		}
 		key = extractFirstWord(contentMap[i].contentDisposition);
 		if (key != "form-data;" && key != "form-data;")
-			std::cout << RED << "Webserver can only handle form-data key of content disposition!\n" << RESET << std::endl; //throw error
+		{
+			throw HttpException(400, "Bad request: can only handle form-data key of content disposition");
+		}
 		else
 		{
 			parseContentDisposition(i, contentMap[i].contentDisposition);
@@ -109,15 +114,15 @@ int POST::handleFileUpload(int index)
 		}
 	if (contentMap[i].filename == "ufc.png" && isValidPNG("upload/ufc.png") == false)
 	{
-		std::cout << RED << "extractValues failure!" << RESET << std::endl;
-		return (FAILURE);
+		clientInputString.clear();
+		throw HttpException(400, "Bad Request: invalid PNG file.");
 	}
 	}
 	std::cout << GREEN << "File successfully uploaded !" << RESET << std::endl;
 	return (SUCCESS);
 }
 
-int	POST::extractMultipartFormData()//mah have to delete client request
+int	POST::extractMultipartFormData()//may have to delete client request
 {
 	std::string	key;
 	std::string	value;
