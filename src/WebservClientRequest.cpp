@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 17:26:41 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/11 14:25:10 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,14 +163,28 @@ void Webserv::handleClientRequest(
         std::cout << RESET << std::endl;
       }
 
-      resolveLocations(client.req, serverConfig);
+      resolveRequestedPathFromLocations(client.req, serverConfig);
+
+      {
+        // Display client request location data
+        std::cout << "URI: " << client.req.URI
+                  << ", pathFolder: " << client.req.pathFolder
+                  << ", pathOnServer: " << client.req.pathOnServer << ", isDir "
+                  << isDirectory(client.req.pathOnServer) << ", isFile "
+                  << isFile(client.req.pathOnServer)
+                  << ", pathFolderOnServer: " << client.req.pathFolderOnServer
+                  << ", isDir " << isDirectory(client.req.pathFolderOnServer)
+                  << ", isFile " << isFile(client.req.pathFolderOnServer)
+                  << std::endl;
+      }
 
       if (isMethodAllowedAtLoc(client.req, serverConfig))
       {
         if (client.req.method == "GET")
           GET method(client, fds[i].fd, clientInput, serverConfig);
         else if (client.req.method == "POST")
-          POST method(client, serverIndex, fds[i].fd, clientInput, serverConfig);
+          POST method(client, serverIndex, fds[i].fd, clientInput,
+                      serverConfig);
         else if (client.req.method == "DELETE")
           DELETE method(client, fds[i].fd, clientInput, serverConfig);
       }

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 13:56:14 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/10 18:54:17 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ std::vector<std::string> listFilesInDirectory(const std::string &dirPath)
   return (files);
 }
 
-bool pathOrParentFolderExistsInLocations(
+bool findURIorParentFolderInLocations(
     const std::string &URI,
     const std::map<std::string, LocationConfig> &locations,
     std::map<std::string, LocationConfig>::const_iterator &it)
@@ -104,5 +104,30 @@ bool pathOrParentFolderExistsInLocations(
   if (it != locations.end())
     return (true);
 
+  return (false);
+}
+
+bool findURIstartInLocations(
+    const std::string &URI,
+    const std::map<std::string, LocationConfig> &locations,
+    std::map<std::string, LocationConfig>::const_iterator &it)
+{
+  std::string currentURI = URI;
+  while (!currentURI.empty())
+  {
+    // Check if the current URI segment matches any location
+    if (!currentURI.empty())
+      it = locations.find(currentURI);
+    if (it != locations.end())
+      return (true);
+
+    // Find the last '/' in the current URI
+    size_t lastSlashPos = currentURI.find_last_of('/');
+    if (lastSlashPos == std::string::npos) // nothing left to trim
+      return (false);
+
+    // Truncate the URI at the last '/' found
+    currentURI.erase(lastSlashPos);
+  }
   return (false);
 }

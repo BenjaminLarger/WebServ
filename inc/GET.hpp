@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 13:45:30 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 13:55:05 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ public:
       const ServerConfig &serverConfig);
   ~GET(void);
 
-  std::string handleLocations(std::string URI);
+  std::string getResponseAtLocation(ClientRequest &req);
 
   // Return vector of all file names in folder
   std::vector<std::string> listDirectoryContent(const std::string &path);

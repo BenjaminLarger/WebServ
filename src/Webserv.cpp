@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/07 16:05:28 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 16:05:05 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,8 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
           }
           catch (const HttpException &e)
           {
-            std::cerr << RED << "Error: " << e.what() << RESET << '\n';
+            std::cerr << RED << "Error: " << e.getStatusCode() << " "
+                      << e.what() << RESET << '\n';
           }
           //break ;
         }

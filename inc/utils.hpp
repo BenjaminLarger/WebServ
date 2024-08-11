@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 15:46:01 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 15:37:09 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,3 +56,7 @@ std::string getCurrentTimeHttpFormat();
 
 // Ensures there is a leading "/" and no trailing "/"
 std::string formatPath(const std::string &path);
+
+// From last "/" of string: Extension is after last ".". FileName is between last "/" and last "."
+void getFileNameAndExtension(const std::string &path, std::string &fileName,
+                             std::string &extension);

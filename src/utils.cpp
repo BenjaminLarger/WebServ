@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/10 17:11:46 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 15:38:00 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,4 +249,29 @@ std::string formatPath(const std::string &str)
     path.erase(path.size() - 1);
 
   return (path);
+}
+
+void getFileNameAndExtension(const std::string &path, std::string &fileName,
+                             std::string &extension)
+{
+  std::string::size_type lastSlash = path.find_last_of('/');
+  if (lastSlash == std::string::npos) // No '/' found
+  {
+    fileName = "", extension = "";
+    return;
+  }
+
+  // Extract the substring after the last '/'
+  fileName = path.substr(lastSlash + 1);
+
+  std::string::size_type lastDot = fileName.find_last_of('.');
+  if (lastDot == std::string::npos) // No '.' found
+  {
+    extension = "";
+    return;
+  }
+
+  // Extract the extension after the last '.'
+  extension = fileName.substr(lastDot + 1);
+  fileName = fileName.substr(0, lastDot);
 }
