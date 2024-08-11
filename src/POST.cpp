@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/10 21:07:44 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/11 17:43:53 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ POST::POST(ClientInfo &client, int serverFD, int clientFD,
   (void)client;
   (void)serverFD;
   (void)clientFD;
-
+	//TODO => inmplement try catch => in try, send an error page + clear client.req.buffer
   this->requestStream.str(clientInputString);
   std::cout << std::endl << "--------POST request---------" << std::endl;
   extractFirstLine();
@@ -115,16 +115,14 @@ POST::POST(ClientInfo &client, int serverFD, int clientFD,
     formValues = formValuestoMap(body);
     saveInLogFile(formValues);
     response = createPostOkResponse(formValues);
-    clientInput.clear();
+    client.req.buffer.clear();
   }
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
   {
 
     if (extractMultipartFormData() == SUCCESS)
 		{
-      clientInput.clear();
-			//clientInputVector.clear();
-			//clientInputString.delete();
+			client.req.buffer.clear();
 			
 			/* std::string response = createPostUploadOkResponse();
 			std::cout << GREEN << "Sending post OK response" << RESET << std::endl;

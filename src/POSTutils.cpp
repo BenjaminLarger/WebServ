@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/10 21:03:59 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/11 17:40:32 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,7 @@ bool POST::saveInLogFile(std::map<std::string, std::string> formValues)
 	std::ofstream logFileStream(logFilePth.c_str(), std::ios_base::app);
 
 	if (!logFileStream.is_open())
-	{
 		throw HttpException(500, "Internal Server Error: Uneable to open logfile.");
-		return (false);
-	}
 	else
 	{
 		for (std::map<std::string, std::string>::iterator it = formValues.begin(); it != formValues.end(); ++it)
@@ -155,7 +152,7 @@ int	POST::extractValues(std::string line, std::map<int, Content> &myMap, int ind
 
 	if (contentMap[index].HasBody == true)
 	{
-		return (FAILURE); //throw error
+		throw HttpException(400, "Bad request: body appears before content disposition.");
 	}
 	values = line.substr(key.size() + 1);
 	if (content == "Content disposition")
@@ -207,4 +204,20 @@ std::string	POST::skipBoundaryPart(void)
 	 }
 	 std::cout << "------------------------------------__\n";
 	return (extractBoundary(contentType));
+}
+
+void	POST::handleBody(const std::string &line, int index)
+{
+	if (contentMap[index].HasBody == true)
+				contentMap[index].body += '\n';
+			contentMap[index].body += line;
+			contentMap[index].HasBody = true;
+}
+
+void	POST::handleNewPart(int index)
+{
+	index++;
+		contentMap[index].HasContentType = false;
+		contentMap[index].HasContentDisposition = false;
+		contentMap[index].HasBody = false;
 }

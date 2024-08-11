@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 20:26:31 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/11 17:42:16 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,10 @@ private:
   std::string skipBoundaryPart(void);
   int handleFileUpload(int index);
 	void	trimImageBody(std::string &binaryFileContent);
+	void	handleBody(const std::string &line, int index);
+	void	handleNewPart(int index);
+
+
 	
 	std::vector<char> extractPng(const std::vector<char>& content);
 	void savePngFile(const std::vector<char>& content, const std::string& filename);

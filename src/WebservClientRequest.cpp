@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 16:53:25 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 17:25:06 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,7 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
         break;
       }
       // Handle error
-      perror(strerror(errno));
-      throw HttpException(400, "Bad request: Reading socket failure.");
-      break;
+      throw HttpException(400, strerror(errno));
     }
     else if (bytesReceived == 0)
     {
