@@ -3,35 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   CGI.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/07/11 10:24:08 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/11 16:28:00 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CGI.hpp"
+#include "core.hpp"
 
-std::string executePhp(std::string phpFile)
+extern char **environ;
+
+std::string executeScript(std::string &fileName, const std::string &script)
 {
-  // Check if PHP executable exists
-  if (access("/usr/bin/php", F_OK) == -1)
-  {
-    std::cerr << "Error: PHP executable not found at /usr/bin/php" << std::endl;
-    return ("");
-  }
+  std::cout << "Executing: " << fileName << std::endl;
 
-  // Check if PHP file exists
-  std::string phpFilePath = "cgi-bin/php";
-  if (phpFile[0] != '/')
-    phpFilePath += '/';
-  phpFilePath += phpFile;
-  if (access((char *)phpFilePath.c_str(), F_OK) == -1)
+  // Check for PHP and python executables
+  if (script == "php")
   {
-    std::cerr << "Error: target php file not found at: " << phpFilePath
-              << std::endl;
-    return ("");
+    if (access("/usr/bin/php", F_OK) == -1)
+      throw HttpException(500, "PHP executable not found at /usr/bin/php");
   }
+  else if (script == "py")
+  {
+    if (access("/usr/bin/python3", F_OK) == -1)
+      throw HttpException(500,
+                          "Python executable not found at /usr/bin/python3");
+  }
+  else
+    throw HttpException(500, "Unsupported script type to execute: " + script);
+
+  // Check if script file to execute exists
+  if (access((char *)fileName.c_str(), F_OK) == -1)
+    throw HttpException(404,
+                        "script file to execute not found at: " + fileName);
 
   int pipefd[2];
   if (pipe(pipefd) == -1)
@@ -47,7 +53,7 @@ std::string executePhp(std::string phpFile)
     return ("");
   }
 
-  if (pid == 0) // Execute php script in child process
+  if (pid == 0) // Execute script in child process
   {
     close(pipefd[0]);
 
@@ -57,11 +63,20 @@ std::string executePhp(std::string phpFile)
       return ("");
     }
     close(pipefd[1]);
-    char *argv[] = {(char *)"php", (char *)phpFilePath.c_str(), NULL};
-    execve("/usr/bin/php", argv, NULL);
 
-    perror("execve");//cannot use perror
-    return ("");
+    if (script == "php")
+    {
+      char *argv[] = {(char *)"php", (char *)fileName.c_str(), NULL};
+      execve("/usr/bin/php", argv, environ);
+    }
+    else if (script == "py")
+    {
+      char *argv[] = {(char *)"python3", (char *)fileName.c_str(), NULL};
+      execve("/usr/bin/python3", argv, environ);
+    }
+
+    perror("execve"); //cannot use perror
+    return ("");      // catch error 500 if execution failed
   }
   else // Read the output from the read end of the pipe in parent process
   {
