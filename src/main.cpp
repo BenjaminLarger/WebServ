@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 09:46:47 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/05 19:56:19 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/10 20:21:27 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,11 @@ int main(int argc, const char **argv)
     // Launch servers passing serverConfigs vector
     if (serverConfigs.size() > 0)
       Webserv servers(serverConfigs);
+  }
+  catch (const HttpException &e)
+  {
+    std::cerr << RED << "HttpException: " << RESET << e.what() << std::endl;
+    exit(EXIT_FAILURE);
   }
   catch (const std::exception &e)
   {

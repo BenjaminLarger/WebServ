@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 16:28:00 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 17:41:05 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,10 @@
 
 extern char **environ;
 
-std::string executeScript(std::string &fileName, const std::string &script)
+std::string executeScript(std::string const &filePath,
+                          std::string const &script)
 {
-  std::cout << "Executing: " << fileName << std::endl;
+  std::cout << "Executing: " << filePath << std::endl;
 
   // Check for PHP and python executables
   if (script == "php")
@@ -35,23 +36,17 @@ std::string executeScript(std::string &fileName, const std::string &script)
     throw HttpException(500, "Unsupported script type to execute: " + script);
 
   // Check if script file to execute exists
-  if (access((char *)fileName.c_str(), F_OK) == -1)
+  if (access((char *)filePath.c_str(), F_OK) == -1)
     throw HttpException(404,
-                        "script file to execute not found at: " + fileName);
+                        "Script file to execute not found at: " + filePath);
 
   int pipefd[2];
   if (pipe(pipefd) == -1)
-  {
-    perror("pipe");
-    return ("");
-  }
+    throw HttpException(500, "Pipe error when executing " + filePath);
 
   pid_t pid = fork();
   if (pid == -1)
-  {
-    perror("fork");
-    return ("");
-  }
+    throw HttpException(500, "Fork error when executing " + filePath);
 
   if (pid == 0) // Execute script in child process
   {
@@ -66,12 +61,12 @@ std::string executeScript(std::string &fileName, const std::string &script)
 
     if (script == "php")
     {
-      char *argv[] = {(char *)"php", (char *)fileName.c_str(), NULL};
+      char *argv[] = {(char *)"php", (char *)filePath.c_str(), NULL};
       execve("/usr/bin/php", argv, environ);
     }
     else if (script == "py")
     {
-      char *argv[] = {(char *)"python3", (char *)fileName.c_str(), NULL};
+      char *argv[] = {(char *)"python3", (char *)filePath.c_str(), NULL};
       execve("/usr/bin/python3", argv, environ);
     }
 

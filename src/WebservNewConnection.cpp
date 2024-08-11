@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservNewConnection.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:01 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 16:04:24 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/11 20:25:18 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,41 +29,32 @@ void Webserv::handleNewConnection(
       }
       else
       {
-        std::cerr << "accept failed: " << strerror(errno)
-                  << " (errno: " << errno << ")" << std::endl;
+        // Error accepting new connection
+        throw HttpException(500, "Internal Server Error: Failed to accept new connection");
         break;
       }
     }
-    try
+    if (setNonBlocking(newSocket) < 0)
     {
-      if (setNonBlocking(newSocket) < 0)
-      {
-        close(newSocket);
-        throw HttpException(
-            500, "Internal Server Error: Data failed to be sent to the client");
-      }
-      std::cout << "New connection accepted: " << newSocket
-                << ", on port: " << clients[i].port << std::endl;
-
-      // Add the new socket to the pollfd vector
-      pollfd pfd;
-      pfd.fd = newSocket;
-      pfd.events = POLLIN;
-      pfd.revents = 0;
-      fds.push_back(pfd);
-
-      // Add the new client info to the clients vector
-      ClientInfo ci;
-      ci.socketFD = newSocket;
-      ci.serverIndex = clients[i].serverIndex;
-      ci.port = clients[i].port;
-      clients.push_back(ci);
+      close(newSocket);
+      throw HttpException(
+          500, "Internal Server Error: Data failed to be sent to the client");
     }
-    catch (const HttpException &e)
-    {
-      std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
-                << RESET << '\n';
-      continue;
-    }
+    std::cout << "New connection accepted: " << newSocket
+              << ", on port: " << clients[i].port << std::endl;
+
+    // Add the new socket to the pollfd vector
+    pollfd pfd;
+    pfd.fd = newSocket;
+    pfd.events = POLLIN;
+    pfd.revents = 0;
+    fds.push_back(pfd);
+
+    // Add the new client info to the clients vector
+    ClientInfo ci;
+    ci.socketFD = newSocket;
+    ci.serverIndex = clients[i].serverIndex;
+    ci.port = clients[i].port;
+    clients.push_back(ci);
   }
 }

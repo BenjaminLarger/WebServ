@@ -1,3 +1,5 @@
 Some questions about the code:
 
-	- Think that we should change the way we build the path to the resource by the one specified in the subject. Replacing the endpoint by the root path
+	- Problems to implement the virtual servers config when same host:port
+		1. Need to change file etc/hosts but we have no permission (find alternatives)
+		2. In the actual findClientServerConfig we try to match the host of the request with the server_name, but as we can't change the etc/hosts file we only can acces de 127.0.0.1 host writing localhost in the navigater, so we have always the same server_name for that IP.
