@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/11 17:21:35 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/11 17:43:53 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ POST::POST(ClientInfo &client, int serverFD, int clientFD,
     formValues = formValuestoMap(body);
     saveInLogFile(formValues);
     response = createPostOkResponse(formValues);
-    clientInput.clear();
+    client.req.buffer.clear();
   }
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
   {
@@ -123,8 +123,6 @@ POST::POST(ClientInfo &client, int serverFD, int clientFD,
     if (extractMultipartFormData() == SUCCESS)
 		{
 			client.req.buffer.clear();
-			//clientInputVector.clear();
-			//clientInputString.delete();
 			
 			/* std::string response = createPostUploadOkResponse();
 			std::cout << GREEN << "Sending post OK response" << RESET << std::endl;

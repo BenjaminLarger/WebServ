@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/11 16:55:29 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/11 17:42:58 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void	POST::parseContentType(int index, std::string &content)
 	{
 		std::istringstream stream(content);
 		std::getline(stream, contentMap[index].name, ';');
-	//	contentType[index].contentType = content;
 		trimBothEnds(contentMap[index].name);
 		if (contentMap[index].name != "text/plain" && contentMap[index].name != "image/png")
 		{
@@ -100,12 +99,7 @@ int POST::handleFileUpload(int index)
 			std::string	filePath = directory + contentMap[i].filename;
 			std::ofstream outFile(filePath.c_str(), std::ios::binary);
 			if (!outFile)
-			{
-				std::cerr << RED << "ERROR: Failed to create outfile " << contentMap[i].filename << "!\n" << RESET << std::endl;
-				std::cerr << "Error code: " << errno << " (" << std::strerror(errno) << ")" << std::endl;
-				return (FAILURE);
-				//throw error
-			}
+				throw HttpException(400, strerror(errno));
 		std::vector<char> content = extractPng(clientInputVector);
 		outFile.write(content.data(), content.size());
 		
@@ -113,10 +107,7 @@ int POST::handleFileUpload(int index)
 		
 		}
 	if (contentMap[i].filename == "ufc.png" && isValidPNG("upload/ufc.png") == false)
-	{
-		clientInputString.clear();
 		throw HttpException(400, "Bad Request: invalid PNG file.");
-	}
 	}
 	std::cout << GREEN << "File successfully uploaded !" << RESET << std::endl;
 	return (SUCCESS);
@@ -136,9 +127,7 @@ int	POST::extractMultipartFormData()//may have to delete client request
 
 	boundary = skipBoundaryPart();
 	if (boundary.empty())
-	{
-		return (FAILURE); //throw error
-	}
+		throw HttpException(400, "Bad Request: missing boundary in post request.");
 	while (contentRead < contentLength)
 	 {
 		std::getline(requestStream, line);
@@ -150,28 +139,19 @@ int	POST::extractMultipartFormData()//may have to delete client request
 		if (isBoundary(line) == true)
 		{
 			//New part has been iddentified
-			index++;
-			contentMap[index].HasContentType = false;
-			contentMap[index].HasContentDisposition = false;
-			contentMap[index].HasBody = false;
+			handleNewPart(index);
 		}
 		else if (key == "Content-Disposition:")
 		{
 			//Content-Disposition is madatory and specifies how the content is to be handled, often indicating form field names and filenames
 			if (extractValues(line, contentMap, index, key, "Content disposition") == FAILURE)
-			{
-				std::cout << RED << "extractValues failure!" << RESET << std::endl;
-				return (FAILURE);
-			}
+				throw HttpException(400, "Bad Request: invalid content disposition request.");
 		}
 		else if (key == "Content-Type:")
 		{
 			//This header is optional and specifies the media type of the content.
 			if (extractValues(line, contentMap, index, key, "Content type") == FAILURE)
-			{
-				std::cout << RED << "extractValues failure!" << RESET << std::endl;
-				return (FAILURE);
-			}
+				throw HttpException(400, "Bad Request: invalid post request.");
 		}
 		else if (isClosingBoundary(line) == true)
 		{
@@ -181,12 +161,10 @@ int	POST::extractMultipartFormData()//may have to delete client request
 		else if (contentMap[index].HasContentDisposition == true && lineIsEmpty(line) == false)
 		{
 			//Body apppears at the right place
-			if (contentMap[index].HasBody == true)
-				contentMap[index].body += '\n';
-			contentMap[index].body += line;
-			contentMap[index].HasBody = true;
+			handleBody(line, index);
 		}
 	 }
 	 std::cout << RED << "has not closing boundary!" << RESET << std::endl;
 	return (FAILURE);
 }
+
