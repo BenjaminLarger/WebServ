@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 21:50:28 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 10:25:14 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,14 +70,17 @@
 
 const ServerConfig &findClientServerConfig(std::string reqLoc, const std::vector<ServerConfig> &serverConfigs)
 {
+  size_t pos = reqLoc.find('/');
+  std::string baseLoc = (pos != std::string::npos) ? reqLoc.substr(0, pos) : reqLoc;
+  
   for (size_t i = 0; i < serverConfigs.size(); i++)
   {
     std::map<std::string, LocationConfig>::const_iterator it = serverConfigs[i].locations.find(reqLoc);
       if (it != serverConfigs[i].locations.end()) {
-        std::cout << "La clave '" << reqLoc << "' existe en el mapa con el valor: " << std::endl;
+        std::cout << "The key '" << reqLoc << "' exist in the map with value: " << std::endl;
         return (serverConfigs[i]);
     } else
-        std::cout << "La clave '" << reqLoc << "' no existe en el mapa." << std::endl;
+        std::cout << "The key '" << reqLoc << "' don't exist in the map." << std::endl;
   }
   // If no server name matches the request host, return the first server config by default
   throw HttpException(404, "No server found for the request host");
