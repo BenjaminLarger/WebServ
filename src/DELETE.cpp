@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:35 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/12 15:34:40 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 16:14:00 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,6 @@ DELETE::DELETE(ClientInfo &client, int clientFD, std::string &clientInput,
   (void)client;
   std::string response;
 
-	if (hasBlankLineInput(clientInput) == false)
-		return ;
   try
   {
     parseRequest(clientInput);

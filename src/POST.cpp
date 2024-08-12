@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/12 15:32:50 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 16:14:10 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,8 +101,6 @@ POST::POST(ClientInfo &client, int clientFD,
   std::string body;
   std::map<std::string, std::string> formValues;
 
-	if (hasBlankLineInput(clientInputString) == false)
-		return ;
 	//TODO => inmplement try catch => in try, send an error page + clear client.req.buffer
   this->requestStream.str(clientInputString);
   std::cout << std::endl << "--------POST request---------" << std::endl;

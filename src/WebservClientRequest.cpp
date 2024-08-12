@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 15:36:29 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 16:10:56 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,80 +135,78 @@ void Webserv::handleClientRequest(
       closeConnection(i);
       --i;
     }
-    else
-    {
-      // Handle incoming data (e.g., parse HTTP request)
-      ClientInfo &client = clients[i];
-      size_t &serverIndex = client.serverIndex;
-      std::vector<char> clientInput(client.req.buffer.begin(),
-                                    client.req.buffer.end());
+		else
+		{
+				ClientInfo &client = clients[i];
+				size_t &serverIndex = client.serverIndex;
+				std::vector<char> clientInput(client.req.buffer.begin(),
+																			client.req.buffer.end());
 
-      clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
-      // std::cout << "clientInput[0]" << std::endl;
-      // for (size_t j = 0; j < 100; j++)
-      // {
-      //   std::cout << clientInput[j];
-      // }
-      // std::cout << std::endl;
-      std::string clientStr(clientInput.begin(), clientInput.end());
-      client.req.buffer = clientStr;
-      parseClientRequest(client.req);
-      //Looks for the serverConfig that matches the Host value of the request
-      const ServerConfig &serverConfig = findClientServerConfig(client.req.fields["Host"], serverConfigs);
-      //Looks for the serverConfig that matches the location value of the request
-      //const ServerConfig &serverConfig = findClientServerConfig(client.req.URI, serverConfigs);
-      std::cout << "Request received on serverIndex " << serverIndex
-                << ", port " << client.port << ", client.socketFD "
-                << client.socketFD << ", root: " << serverConfig.serverRoot
-                << std::endl;
-
-      {
-        // Display parsed header request
-        std::cout << "Parsed request header: \n"
-                  << MAGENTA << client.req.method << " " << client.req.URI
-                  << " " << client.req.HTTPversion << std::endl;
-        for (std::map<std::string, std::string>::iterator it
-             = client.req.fields.begin();
-             it != client.req.fields.end(); it++)
-        {
-          std::cout << it->first << ": " << it->second << std::endl;
-        }
-        std::cout << RESET << std::endl;
-      }
-
-      resolveRequestedPathFromLocations(client.req, serverConfig);
-
-      {
-        // Display client request location data
-        std::cout << "URI: " << client.req.URI
-                  << ", pathFolder: " << client.req.pathFolder
-                  << ", pathOnServer: " << client.req.pathOnServer << ", isDir "
-                  << isDirectory(client.req.pathOnServer) << ", isFile "
-                  << isFile(client.req.pathOnServer)
-                  << ", pathFolderOnServer: " << client.req.pathFolderOnServer
-                  << ", isDir " << isDirectory(client.req.pathFolderOnServer)
-                  << ", isFile " << isFile(client.req.pathFolderOnServer)
-                  << std::endl;
-      }
-			/* if (client.req.fields.find("Cookie") != client.req.fields.end())
+				clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
+				std::string clientStr(clientInput.begin(), clientInput.end());
+				client.req.buffer = clientStr;
+			if (hasBlankLineInput(client.req.buffer) == true)
 			{
-				//GET request has cookies field
-				parseCookies(client.req);
-			} */
-	
-      if (client.req.method == "GET"
-          /* && isMethodAllowedAtLoc("GET", client.req, serverConfig) */)
-        GET method(client, fds[i].fd, clientStr, serverConfig);
-      else if (client.req.method == "POST")
-        POST method(client, serverIndex, clientInput, serverConfig);
-      else if (client.req.method == "DELETE")
-        DELETE method(client, fds[i].fd, clientStr, serverConfig);
-      else
-      {
-        clientInput.clear();
-        throw HttpException(405, "Method is not allowed on that path");
-      }
-    }
+				// Handle incoming data (e.g., parse HTTP request
+				parseClientRequest(client.req);
+				//Looks for the serverConfig that matches the Host value of the request
+				const ServerConfig &serverConfig = findClientServerConfig(client.req.fields["Host"], serverConfigs);
+				//Looks for the serverConfig that matches the location value of the request
+				//const ServerConfig &serverConfig = findClientServerConfig(client.req.URI, serverConfigs);
+				std::cout << "Request received on serverIndex " << serverIndex
+									<< ", port " << client.port << ", client.socketFD "
+									<< client.socketFD << ", root: " << serverConfig.serverRoot
+									<< std::endl;
+
+				{
+					// Display parsed header request
+					std::cout << "Parsed request header: \n"
+										<< MAGENTA << client.req.method << " " << client.req.URI
+										<< " " << client.req.HTTPversion << std::endl;
+					for (std::map<std::string, std::string>::iterator it
+							= client.req.fields.begin();
+							it != client.req.fields.end(); it++)
+					{
+						std::cout << it->first << ": " << it->second << std::endl;
+					}
+					std::cout << RESET << std::endl;
+				}
+
+				resolveRequestedPathFromLocations(client.req, serverConfig);
+
+				{
+					// Display client request location data
+					std::cout << "URI: " << client.req.URI
+										<< ", pathFolder: " << client.req.pathFolder
+										<< ", pathOnServer: " << client.req.pathOnServer << ", isDir "
+										<< isDirectory(client.req.pathOnServer) << ", isFile "
+										<< isFile(client.req.pathOnServer)
+										<< ", pathFolderOnServer: " << client.req.pathFolderOnServer
+										<< ", isDir " << isDirectory(client.req.pathFolderOnServer)
+										<< ", isFile " << isFile(client.req.pathFolderOnServer)
+										<< std::endl;
+				}
+				/* if (client.req.fields.find("Cookie") != client.req.fields.end())
+				{
+					//GET request has cookies field
+					parseCookies(client.req);
+				} */
+		
+				std::cout << client.req.method << std::endl;
+				if (client.req.method == "GET"
+						/* && isMethodAllowedAtLoc("GET", client.req, serverConfig) */)
+					GET method(client, fds[i].fd, clientStr, serverConfig);
+				else if (client.req.method == "POST")
+					POST method(client, serverIndex, clientInput, serverConfig);
+				else if (client.req.method == "DELETE")
+					DELETE method(client, fds[i].fd, clientStr, serverConfig);
+				else
+				{
+					clientInput.clear();
+					throw HttpException(405, "Method is not allowed on that path");
+				}
+			}
+		}
   }
   catch (const HttpException &e)
   {
