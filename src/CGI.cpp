@@ -6,11 +6,11 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 17:06:31 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/12 20:19:03 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "CGI.hpp"
+#include "Webserv.hpp"
 #include "core.hpp"
 
 extern char **environ;
@@ -39,8 +39,8 @@ static void checkFileAndScriptExecPaths(std::string const &filePath,
                         "Script file to execute not found at: " + filePath);
 }
 
-std::string executeScript(std::string const &filePath,
-                          std::string const &script)
+void Webserv::executeScript(std::string const &filePath,
+                            std::string const &script, int &clientFD)
 {
   std::cout << "Executing: " << filePath << std::endl;
 
@@ -56,51 +56,36 @@ std::string executeScript(std::string const &filePath,
 
   if (pid == 0) // Execute script in child process
   {
-    try
-    {
-      close(pipefd[0]);
-      if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-        throw HttpException(500, "Dup2 for script execution failed");
-      close(pipefd[1]);
-
-      if (script == "php")
-      {
-        char *argv[] = {(char *)"php", (char *)filePath.c_str(), NULL};
-        execve("/usr/bin/php", argv, environ);
-      }
-      else if (script == "py")
-      {
-        char *argv[] = {(char *)"python3", (char *)filePath.c_str(), NULL};
-        execve("/usr/bin/python3", argv, environ);
-      }
-
-      throw HttpException(500, "Script execution failed");
-    }
-    catch (const HttpException &e)
-    {
-      std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
-                << RESET << '\n';
+    if (close(pipefd[0]) == -1 || dup2(pipefd[1], STDOUT_FILENO) == -1
+        || close(pipefd[1]) == -1)
       exit(1);
-    }
-  }
-  else // Read the output from the read end of the pipe in parent process
-  {
-    int status;
 
+    if (script == "php")
+    {
+      char *argv[] = {(char *)"php", (char *)filePath.c_str(), NULL};
+      execve("/usr/bin/php", argv, environ);
+    }
+    else if (script == "py")
+    {
+      char *argv[] = {(char *)"python3", (char *)filePath.c_str(), NULL};
+      execve("/usr/bin/python3", argv, environ);
+    }
+    exit(1);
+  }
+  else // Add read end of the pipe to the pollfd vector in parent process
+  {
     close(pipefd[1]);
 
-    char buffer[4096];
-    ssize_t bytesRead;
-    std::ostringstream output;
-    while ((bytesRead = read(pipefd[0], buffer, sizeof(buffer) - 1)) > 0)
-    {
-      buffer[bytesRead] = '\0';
-      output << buffer;
-    }
+    pollfd pfd;
+    pfd.fd = pipefd[0];
+    pfd.events = POLLIN;
+    pfd.revents = 0;
 
-    close(pipefd[0]);
-    waitpid(pid, &status, 0);
+    // Associate the pipe FD with the client connection
+    clientScriptMap[pipefd[0]] = clientFD;
 
-    return (output.str());
+    fds.push_back(pfd);
+
+    // waitpid ??
   }
 }

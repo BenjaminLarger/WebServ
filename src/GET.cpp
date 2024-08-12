@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/12 16:13:52 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 20:33:09 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GET.hpp"
-#include "CGI.hpp"
 #include "core.hpp"
 
-std::string GET::getResponseAtLocation(ClientRequest &req)
+std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
+                                       int &clientFD)
 {
   std::string URI = req.URI;
   std::string response;
@@ -68,7 +68,10 @@ std::string GET::getResponseAtLocation(ClientRequest &req)
       {
         std::cout << RED << "file is a script in " << extension << RESET
                   << std::endl;
-        response = composeOkHtmlResponse(executeScript(path, extension));
+
+        webserv.executeScript(path, extension, clientFD);
+
+        response = "wait for cgi script execution";
       }
       // other files
       else if (extension.size())
@@ -113,21 +116,6 @@ std::string GET::getResponseAtLocation(ClientRequest &req)
           = composeOkHtmlResponse(generateDirectoryListing(path, contents));
       return (response);
     }
-    // URI doesn't match a location, but is contained in one which is a folder
-    // else if (URI != it->first && !isDirectory(path)
-    //          && isDirectory(req.pathFolderOnServer))
-    // {
-    //   std::cout << RED << "readFile path: " << path << RESET << std::endl;
-
-    //   // Save binary file to char vector
-    //   std::vector<char> fileContent = readFile(path);
-    //   if (fileContent.empty())
-    //     throw HttpException(404, "Not Found.");
-
-    //   response = composeFileResponse(fileContent, URI);
-    //   return (response);
-    // }
-    // Else: no file, is a folder, but autoindex off
     else
     {
       throw HttpException(
@@ -140,30 +128,39 @@ std::string GET::getResponseAtLocation(ClientRequest &req)
   }
 }
 
-void	printASCIIstr(std::string &line)
+void printASCIIstr(std::string &line)
 {
-	for (int i = 0; line[i]; i++)
-	{
-		std::cout << (int)line[i] << ", ";
-	}
-	std::cout << std::endl;
+  for (int i = 0; line[i]; i++)
+  {
+    std::cout << (int)line[i] << ", ";
+  }
+  std::cout << std::endl;
 }
 
-GET::GET(ClientInfo &client, int clientFD, std::string &clientInput,
-         const ServerConfig &serverConfig)
+GET::GET(Webserv &webserv, ClientInfo &client, int clientFD,
+         std::string &clientInput, const ServerConfig &serverConfig)
     : serverConfig(serverConfig)
 {
 
   std::istringstream iss(clientInput);
   std::string key;
 
+  std::cerr << RED << "GET 1" << RESET << '\n';
   client.req.buffer.clear();
+  std::cerr << RED << "GET 2" << RESET << '\n';
+  clientInput.clear();
+  std::cerr << RED << "GET 3" << RESET << '\n';
 
   try
   {
     // Body: The actual content (e.g., HTML, JSON).
-    std::string response = getResponseAtLocation(client.req);
-    sendRGeneric(clientFD, response);
+    std::string response
+        = getResponseAtLocation(webserv, client.req, client.socketFD);
+
+    std::cerr << RED << "GET 4" << RESET << '\n';
+    if (response != "wait for cgi script execution")
+      sendRGeneric(clientFD, response);
+    std::cerr << RED << "GET 5" << RESET << '\n';
     // std::cout << "response sent." << std::endl;
   }
   catch (const HttpException &e)
