@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/11 20:58:45 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 15:59:38 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,4 +275,35 @@ void getFileNameAndExtension(const std::string &path, std::string &fileName,
   // Extract the extension after the last '.'
   extension = fileName.substr(lastDot + 1);
   fileName = fileName.substr(0, lastDot);
+}
+
+bool hasBlankLineInput(std::string &clientInput)
+{
+	// Find the position of the last newline character
+	size_t lastNewlinePos = clientInput.rfind('\n');
+
+	// If there is no newline character, return false
+	if (lastNewlinePos == std::string::npos)
+	{
+			std::cout << YELLOW << "No newline character found." << RESET << std::endl;
+			return (false);
+	}
+
+	// If the last newline character is at the beginning, return false
+	if (lastNewlinePos == 0)
+	{
+			std::cout << YELLOW << "The last newline character is at the beginning." << RESET << std::endl;
+			return (false);
+	}
+
+	if (clientInput[lastNewlinePos - 2] == '\r' && clientInput[lastNewlinePos - 1] == '\n')
+	{
+					std::cout << YELLOW << "The last newline character is preceded by another newline character." << RESET << std::endl;
+					return true;
+	}
+	std::cout << clientInput[clientInput.size() - 1] << "; " << clientInput[clientInput.size() - 2] << "; " << clientInput[clientInput.size() - 3] << std::endl;
+	if (clientInput[clientInput.size() - 1] == '\n' && clientInput[clientInput.size() - 2] == '\r' && clientInput[clientInput.size() - 3] == '\n')
+		return (true);
+
+return (false);
 }

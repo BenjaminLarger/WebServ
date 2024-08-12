@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/11 17:56:59 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/12 16:13:52 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,13 +140,20 @@ std::string GET::getResponseAtLocation(ClientRequest &req)
   }
 }
 
+void	printASCIIstr(std::string &line)
+{
+	for (int i = 0; line[i]; i++)
+	{
+		std::cout << (int)line[i] << ", ";
+	}
+	std::cout << std::endl;
+}
+
 GET::GET(ClientInfo &client, int clientFD, std::string &clientInput,
          const ServerConfig &serverConfig)
     : serverConfig(serverConfig)
 {
-  if (countJumpLine(clientInput)
-      < 3) //Change with if receive a blank line => erase buffer
-    return;
+
   std::istringstream iss(clientInput);
   std::string key;
 

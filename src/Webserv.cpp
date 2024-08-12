@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 16:05:05 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/12 16:07:47 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
           // Data from a connected client ~= processConnectionData()
           try
           {
-            handleClientRequest(i, serverConfigs);
+						handleClientRequest(i, serverConfigs);
           }
           catch (const HttpException &e)
           {

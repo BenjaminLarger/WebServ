@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/12 09:34:48 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 16:14:10 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,16 +93,14 @@ void POST::extractFirstLine()
 }
 
 //We extract all the content of a POST request
-POST::POST(ClientInfo &client, int serverFD, int clientFD,
+POST::POST(ClientInfo &client, int clientFD,
            std::vector<char> &clientInput, const ServerConfig &serverConfig)
     : clientInputVector(clientInput), clientInputString(clientInput.begin(), clientInput.end()), contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
 {
   std::string response;
   std::string body;
   std::map<std::string, std::string> formValues;
-  (void)client;
-  (void)serverFD;
-  (void)clientFD;
+
 	//TODO => inmplement try catch => in try, send an error page + clear client.req.buffer
   this->requestStream.str(clientInputString);
   std::cout << std::endl << "--------POST request---------" << std::endl;
