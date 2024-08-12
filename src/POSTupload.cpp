@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/12 10:38:58 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 10:40:54 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,7 @@ int POST::handleFileUpload(int index)
 			{
 			//std::string	filePath = directory + contentMap[i].filename;
 			std::string	filePath = UPLOAD_FILE_DIR + contentMap[i].filename;
+			std::cout << RED << "filepath = " << filePath << RESET << std::endl;
 			std::ofstream outFile(filePath.c_str(), std::ios::binary);
 			if (!outFile)
 				throw HttpException(400, strerror(errno));
