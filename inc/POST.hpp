@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 19:07:34 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 09:22:23 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,8 @@ private:
   std::map<std::string, std::string>	formValuestoMap(std::string body);
   int extractMultipartFormData();
   std::string createPostOkResponse(std::map<std::string, std::string> formValues);
-	std::string	incompletePostResponse();
+	std::string createPostOkResponseWithFile(std::map<std::string, std::string> formValues);
+	std::string createPostOkResponseWithFilename(std::map<std::string, std::string> formValues);
 
   //Util uplaod file
   void readAllRequest(void); //can delete before submit project
@@ -93,11 +94,6 @@ private:
 	void	handleNewPart(int &index);
 	std::vector<char>	getBoundaryEnd();
 	std::vector<char> extractBinaryContent(const std::vector<char>& content);
-
-
-
-
-
 	
 	std::vector<char> extractPng(const std::vector<char>& content);
 	std::vector<char> extractFile(const std::vector<char>& content, std::vector<char> finalBoundary);

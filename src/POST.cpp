@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/11 19:47:18 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 09:34:48 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,11 @@ POST::POST(ClientInfo &client, int serverFD, int clientFD,
     if (extractMultipartFormData() == SUCCESS)
 		{
 			client.req.buffer.clear();
-			response = createPostOkResponse(_formValues);
+			if (lineIsEmpty(contentMap[2].filename) == true) //no file has been uploaded
+				response = createPostOkResponse(_formValues);
+			else
+				response = createPostOkResponseWithFile(_formValues);
+				
 			/* std::string response = createPostUploadOkResponse();
 			std::cout << GREEN << "Sending post OK response" << RESET << std::endl;
 			sendRGeneric(clientFD, response); */

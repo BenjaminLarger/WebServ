@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/11 21:22:05 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 09:35:38 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,57 +15,103 @@
 
 std::string POST::createPostOkResponse(std::map<std::string, std::string> formValues)
 {
-    std::stringstream httpResponse;
-	std::string responseBody;
-	
-	responseBody = extractHtmlContentFromFile("./var/www/form/form_response.html");
-	responseBody += "            <tbody>\n";
-	responseBody += "                <tr>\n";
-	responseBody += "                    <td>Name</td>\n";
-	responseBody += "                    <td>" + formValues["name"] + "</td>\n";
-	responseBody += "                </tr>\n";
-	responseBody += "                <tr>\n";
-	responseBody += "                    <td>Age</td>\n";
-	responseBody += "                    <td>" + formValues["age"] + "</td>\n";
-	responseBody += "                </tr>\n";
-	responseBody += "            </tbody>\n";
-	responseBody += "        </table>\n";
-	responseBody += "    </div>\n";
-	responseBody += "</body>\n";
-	responseBody += "</html>\n";
+  std::stringstream httpResponse;
+  std::string responseBody;
 
-    // Headers
-	httpResponse << "HTTP/1.1 201 Created\r\n";
-    httpResponse << "Content-Type: text/html\r\n";
-    httpResponse << "Content-Length: " << responseBody.size() << "\r\n";
-    httpResponse << "Date: " << getCurrentTimeHttpFormat() << "\r\n";
-    httpResponse << "\r\n";
-	httpResponse << responseBody;
+  responseBody = extractHtmlContentFromFile("./var/www/form/form_response.html");
+  responseBody += "            <tbody>\n";
+  responseBody += "                <tr>\n";
+  responseBody += "                    <td>Name</td>\n";
+  responseBody += "                    <td>" + formValues["name"] + "</td>\n";
+  responseBody += "                </tr>\n";
+  responseBody += "                <tr>\n";
+  responseBody += "                    <td>Age</td>\n";
+  responseBody += "                    <td>" + formValues["age"] + "</td>\n";
+  responseBody += "                </tr>\n";
+  responseBody += "                <tr>\n";
+  responseBody += "                    <td>Filename</td>\n";
+  responseBody += "                    <td>" + contentMap[2].filename + "</td>\n";
+  responseBody += "                </tr>\n";
+  responseBody += "            </tbody>\n";
+  responseBody += "        </table>\n";
+  responseBody += "    </div>\n";
+  responseBody += "    <div>\n";
+  responseBody += "    </div>\n";
+  responseBody += "</body>\n";
+  responseBody += "</html>\n";
 
-	return (httpResponse.str());
+  // Headers
+  httpResponse << "HTTP/1.1 201 Created\r\n";
+  httpResponse << "Content-Type: text/html\r\n";
+  httpResponse << "Content-Length: " << responseBody.size() << "\r\n";
+  httpResponse << "Date: " << getCurrentTimeHttpFormat() << "\r\n";
+  httpResponse << "\r\n";
+  httpResponse << responseBody;
+
+  return (httpResponse.str());
 }
-std::string POST::incompletePostResponse()
+
+/*
+	When you include an image in the HTML body, the browser will
+	automatically send a GET request to fetch the image from the
+	specified URL. This is standard behavior for web browsers:
+	they parse the HTML, identify resources like images,
+	stylesheets, and scripts, and then send additional GET
+	requests to retrieve those resources.
+*/
+std::string POST::createPostOkResponseWithFile(std::map<std::string, std::string> formValues)//might delete
 {
-    std::string response;
-    response += "HTTP/1.1 400 Bad Request\r\n";
-    response += "Content-Type: text/html\r\n";
-    response += "Content-Length: ";
+  std::stringstream httpResponse;
+  std::string responseBody;
+  std::string directory = "./upload/";
+  std::string filePath = directory + contentMap[2].filename;
 
-    std::string body = "<html>"
-                       "<head><title>400 Bad Request</title></head>"
-                       "<body>"
-                       "<h1>400 Bad Request</h1>"
-                       "<p>Your POST request is incomplete. Please check your data and try again.</p>"
-                       "</body>"
-                       "</html>";
+  // Check if the file exists
+  std::ifstream file(filePath.c_str());
+  if (!file.good()) {
+    filePath = ""; // Set filePath to empty if file does not exist
+  }
+  file.close();
+  
+  responseBody = extractHtmlContentFromFile("./var/www/form/form_response.html");
+  responseBody += "            <tbody>\n";
+  responseBody += "                <tr>\n";
+  responseBody += "                    <td>Name</td>\n";
+  responseBody += "                    <td>" + formValues["name"] + "</td>\n";
+  responseBody += "                </tr>\n";
+  responseBody += "                <tr>\n";
+  responseBody += "                    <td>Age</td>\n";
+  responseBody += "                    <td>" + formValues["age"] + "</td>\n";
+  responseBody += "                </tr>\n";
+  responseBody += "                <tr>\n";
+  responseBody += "                    <td>Filename</td>\n";
+  responseBody += "                    <td>" + contentMap[2].filename + "</td>\n";
+  responseBody += "                </tr>\n";
+  responseBody += "            </tbody>\n";
+  responseBody += "        </table>\n";
+  responseBody += "    </div>\n";
+  responseBody += "    <div>\n";
+  responseBody += "    </div>\n";
+  responseBody += "</body>\n";
+  responseBody += "</html>\n";
+  if (!filePath.empty()) {
+    responseBody += "        <img src=\"" + filePath + "\" alt=\"Uploaded Image\" />\n";
+  } else {
+    responseBody += "        <p>File not found.</p>\n";
+  }
+  responseBody += "    </div>\n";
+  responseBody += "</body>\n";
+  responseBody += "</html>\n";
 
-    std::stringstream ss;
-    ss << body.length();
-    response += ss.str() + "\r\n";
-    response += "\r\n";
-    response += body;
+  // Headers
+  httpResponse << "HTTP/1.1 201 Created\r\n";
+  httpResponse << "Content-Type: text/html\r\n";
+  httpResponse << "Content-Length: " << responseBody.size() << "\r\n";
+  httpResponse << "Date: " << getCurrentTimeHttpFormat() << "\r\n";
+  httpResponse << "\r\n";
+  httpResponse << responseBody;
 
-    return response;
+  return (httpResponse.str());
 }
 
 bool POST::saveInLogFile(std::map<std::string, std::string> formValues)
@@ -85,6 +131,45 @@ bool POST::saveInLogFile(std::map<std::string, std::string> formValues)
 	
 	return (true);
 }
+
+std::string POST::createPostOkResponseWithFilename(std::map<std::string, std::string> formValues)//might delete
+{
+  std::stringstream httpResponse;
+  std::string responseBody;
+
+  responseBody = extractHtmlContentFromFile("./var/www/form/form_response.html");
+  responseBody += "            <tbody>\n";
+  responseBody += "                <tr>\n";
+  responseBody += "                    <td>Name</td>\n";
+  responseBody += "                    <td>" + formValues["name"] + "</td>\n";
+  responseBody += "                </tr>\n";
+  responseBody += "                <tr>\n";
+  responseBody += "                    <td>Age</td>\n";
+  responseBody += "                    <td>" + formValues["age"] + "</td>\n";
+  responseBody += "                </tr>\n";
+  responseBody += "                <tr>\n";
+  responseBody += "                    <td>Filename</td>\n";
+  responseBody += "                    <td>" + contentMap[2].filename + "</td>\n";
+  responseBody += "                </tr>\n";
+  responseBody += "            </tbody>\n";
+  responseBody += "        </table>\n";
+  responseBody += "    </div>\n";
+  responseBody += "    <div>\n";
+  responseBody += "    </div>\n";
+  responseBody += "</body>\n";
+  responseBody += "</html>\n";
+
+  // Headers
+  httpResponse << "HTTP/1.1 201 Created\r\n";
+  httpResponse << "Content-Type: text/html\r\n";
+  httpResponse << "Content-Length: " << responseBody.size() << "\r\n";
+  httpResponse << "Date: " << getCurrentTimeHttpFormat() << "\r\n";
+  httpResponse << "\r\n";
+  httpResponse << responseBody;
+
+  return (httpResponse.str());
+}
+
 
 std::string generateClientID() {
     // Obtener la fecha y hora actual
