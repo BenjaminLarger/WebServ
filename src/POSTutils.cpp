@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POSTutils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/12 11:00:00 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 17:27:29 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,10 @@ std::string POST::createPostOkResponseWithFile(std::map<std::string, std::string
   responseBody += "</body>\n";
   responseBody += "</html>\n";
   if (!filePath.empty()) {
-    responseBody += "        <img src=\"" + reqPath + "\" alt=\"Uploaded Image\" />\n";
+    responseBody += "        <div style=\"text-align: center;\">\n";
+    responseBody += "            <h2 style=\"color: white;\">File uploaded:</h2>\n";
+    responseBody += "            <img src=\"" + reqPath + "\" alt=\"Uploaded Image\" style=\"display: block; margin-left: auto; margin-right: auto;\" />\n";
+    responseBody += "        </div>\n";
   } else {
     responseBody += "        <p>File not found.</p>\n";
   }
