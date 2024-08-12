@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 16:07:47 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 17:02:30 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,13 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
 {
   createServers(serverConfigs);
 
-  // Enter the server's main listening loop to handle incoming connections
-  // serverListeningLoop(serverFD);
-
-  // Main server loop
   instance = this;
   signal(SIGINT, Webserv::sigInt);
   std::cout << "fds size = " << fds.size() << std::endl;
+
+  // Server's main listening loop to handle incoming connections
   while (true)
   {
-    // int pollCount = poll(&fds[0], fds.size(), -1);
     int pollCount = poll(fds.data(), fds.size(), -1);
     if (pollCount < 0)
       throw(std::runtime_error("Failed to poll."));
@@ -38,7 +35,7 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
     for (size_t i = 0; i < fds.size(); ++i)
     {
       //withdrawWriteCapability(i, clients[i].buffer);
-      // evaluates to true if the i-th file descriptor has incoming data available for reading and writting.
+
       if (fds[i].revents & (POLLIN | POLLOUT))
       {
         std::cout << CYAN << "New event detected\n" << RESET;
@@ -50,17 +47,16 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
         }
         else
         {
-          // Data from a connected client ~= processConnectionData()
           try
           {
-						handleClientRequest(i, serverConfigs);
+            std::cout << GREEN << "New client request detected\n" << RESET;
+            handleClientRequest(i, serverConfigs);
           }
           catch (const HttpException &e)
           {
             std::cerr << RED << "Error: " << e.getStatusCode() << " "
                       << e.what() << RESET << '\n';
           }
-          //break ;
         }
       }
     }
