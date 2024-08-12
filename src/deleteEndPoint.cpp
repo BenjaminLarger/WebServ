@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 17:35:47 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/08 19:11:18 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 11:20:27 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ std::string GET::createHtmlDeleteRequest(std::vector<std::string> files, std::st
 
 std::string GET::manageDeleteEndPoint()
 {
-  std::string uploadspth = "var/www/uploads";
+  std::string uploadspth = "var/www/uploads/files";
   std::vector<std::string> files = listFilesInDirectory(uploadspth);
   std::string htmlDeleteBody;
   

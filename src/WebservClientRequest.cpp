@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 10:49:33 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 12:55:04 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,34 +44,38 @@
 } */
 
 
-// const ServerConfig &findClientServerConfig(std::string reqHost, const std::vector<ServerConfig> &serverConfigs)
-// {
-//   std::string serverName;
-
-//   for (size_t i = 0; i < serverConfigs.size(); i++)
-//   {
-//     std::ostringstream oss;
-//     oss << ":";
-//     oss << serverConfigs[i].getPort();
-//     for (size_t j = 0; j < serverConfigs[i].serverNames.size(); j++)
-//     {
-//       serverName = serverConfigs[i].serverNames[j] + oss.str();
-//       std::cout << "reqHost = '" << reqHost << "'" << std::endl;
-//       std::cout << "serverName = '" << serverName << "'" << std::endl;
-//       if (serverName == reqHost)
-//         return serverConfigs[i];
-//       //Reset oss
-//       oss.str("");
-//     }
-//   }
-//   // If no server name matches the request host, return the first server config by default
-//   throw HttpException(404, "No server found for the request host");
-// }
-
-const ServerConfig &findClientServerConfig(std::string reqLoc, const std::vector<ServerConfig> &serverConfigs)
+const ServerConfig &findClientServerConfig(std::string reqHost, const std::vector<ServerConfig> &serverConfigs)
 {
-  size_t pos = reqLoc.find('/');
-  std::string baseLoc = (pos != std::string::npos) ? reqLoc.substr(0, pos) : reqLoc;
+  std::string serverName;
+
+  for (size_t i = 0; i < serverConfigs.size(); i++)
+  {
+    std::ostringstream oss;
+    oss << ":";
+    oss << serverConfigs[i].getPort();
+    for (size_t j = 0; j < serverConfigs[i].serverNames.size(); j++)
+    {
+      serverName = serverConfigs[i].serverNames[j] + oss.str();
+      std::cout << "reqHost = '" << reqHost << "'" << std::endl;
+      std::cout << "serverName = '" << serverName << "'" << std::endl;
+      if (serverName == reqHost)
+        return serverConfigs[i];
+      //Reset oss
+      oss.str("");
+    }
+  }
+  // If no server name matches the request host, return the first server config by default
+  throw HttpException(404, "No server found for the request host");
+}
+
+// Decide which serverConfig to look in depending on the location
+/*const ServerConfig &findClientServerConfig(std::string reqLoc, const std::vector<ServerConfig> &serverConfigs)
+{
+  size_t firstPos = reqLoc.find('/');
+  size_t secondPos = std::string::npos;
+  if (firstPos != std::string::npos)
+    secondPos = reqLoc.find('/', firstPos + 1);
+  std::string baseLoc = (secondPos != std::string::npos) ? reqLoc.substr(0, secondPos) : reqLoc;
   if (baseLoc.empty())
     baseLoc = reqLoc;
   std::cout << "reqLoc = " << reqLoc << std::endl;
@@ -87,7 +91,7 @@ const ServerConfig &findClientServerConfig(std::string reqLoc, const std::vector
   }
   // If no server name matches the request host, return the first server config by default
   throw HttpException(404, "No server found for the request host");
-}
+}*/
 
 ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
 {
