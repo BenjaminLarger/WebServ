@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POSTutils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/12 10:38:15 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 10:57:59 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ std::string POST::createPostOkResponseWithFile(std::map<std::string, std::string
   std::stringstream httpResponse;
   std::string responseBody;
   std::string filePath = UPLOAD_FILE_DIR + contentMap[2].filename;
+  std::string reqPath = "/upload" + contentMap[2].filename;
 
   // Check if the file exists
   std::ifstream file(filePath.c_str());
@@ -94,7 +95,7 @@ std::string POST::createPostOkResponseWithFile(std::map<std::string, std::string
   responseBody += "</body>\n";
   responseBody += "</html>\n";
   if (!filePath.empty()) {
-    responseBody += "        <img src=\"" + filePath + "\" alt=\"Uploaded Image\" />\n";
+    responseBody += "        <img src=\"" + reqPath + "\" alt=\"Uploaded Image\" />\n";
   } else {
     responseBody += "        <p>File not found.</p>\n";
   }
