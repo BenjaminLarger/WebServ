@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   coreResponse.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:49:50 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 14:56:47 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 13:18:46 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,14 @@ std::string composeOkHtmlResponse(std::string responseBody)
 {
   std::ostringstream response;
   response << "HTTP/1.1 200 OK\r\n"
-           << "Content-Type: text/html\r\n"
-           << "Content-Length: " << responseBody.size() << "\r\n"
-           << "Cache-Control: no-cache\r\n"
-           << "\r\n"
-           << responseBody;
+         << "Content-Type: text/html\r\n"
+         << "Content-Length: " << responseBody.size() << "\r\n"
+         << "Cache-Control: no-cache\r\n"
+         << "Set-Cookie: sessionId=abc123; HttpOnly\r\n"//Testing cookies
+         << "Set-Cookie: theme=light\r\n"//Testing cookies
+         << "Set-Cookie: rememberMe=yes\r\n"//Testing cookies
+         << "\r\n"
+         << responseBody;
 
   return (response.str());
 }

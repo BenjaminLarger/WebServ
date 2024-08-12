@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 17:48:15 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 15:23:48 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,3 +60,6 @@ std::string formatPath(const std::string &path);
 // From last "/" of string: Extension is after last ".". FileName is between last "/" and last "."
 void getFileNameAndExtension(const std::string &path, std::string &fileName,
                              std::string &extension);
+
+//Check if request is complete
+bool	hasBlankLineInput(std::string &clientInput);														 

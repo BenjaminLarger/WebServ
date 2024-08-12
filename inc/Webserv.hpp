@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 20:20:06 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 13:59:50 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,7 @@ public:
   void withdrawWriteCapability(size_t clientIndex, std::string &buffer);
   void restoreReadCapability(size_t clientIndex, std::string &buffer);
   void restoreWriteCapability(size_t clientIndex, std::string &buffer);
+
+	//COOKIES
+	void	parseCookies(ClientRequest req);
 };

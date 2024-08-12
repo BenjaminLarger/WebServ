@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/11 17:56:59 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/12 15:29:49 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,13 +140,56 @@ std::string GET::getResponseAtLocation(ClientRequest &req)
   }
 }
 
+void	printASCIIstr(std::string &line)
+{
+	for (int i = 0; line[i]; i++)
+	{
+		std::cout << (int)line[i] << ", ";
+	}
+	std::cout << std::endl;
+}
+
+bool hasBlankLineInput(std::string &clientInput)
+{
+    // Find the position of the last newline character
+    size_t lastNewlinePos = clientInput.rfind('\n');
+		printASCIIstr(clientInput);
+
+    // If there is no newline character, return false
+    if (lastNewlinePos == std::string::npos) {
+        std::cout << YELLOW << "No newline character found." << RESET << std::endl;
+        return false;
+    }
+
+    // If the last newline character is at the beginning, return false
+    if (lastNewlinePos == 0) {
+        std::cout << YELLOW << "The last newline character is at the beginning." << RESET << std::endl;
+        return false;
+    }
+
+    // Check if the character before the last newline character is also a newline character
+    if (clientInput[lastNewlinePos - 2] == '\r' && clientInput[lastNewlinePos - 1] == '\n') {
+        std::cout << YELLOW << "The last newline character is preceded by another newline character." << RESET << std::endl;
+        return true;
+    }
+		std::cout << clientInput[clientInput.size() - 1] << "; " << clientInput[clientInput.size() - 2] << "; " << clientInput[clientInput.size() - 3] << std::endl;
+		if (clientInput[clientInput.size() - 1] == '\n' && clientInput[clientInput.size() - 2] == '\r' && clientInput[clientInput.size() - 3] == '\n')
+			return (true);
+    std::cout << YELLOW << "The last newline character is not preceded by another newline character." << RESET << std::endl;
+    return false;
+}
+
 GET::GET(ClientInfo &client, int clientFD, std::string &clientInput,
          const ServerConfig &serverConfig)
     : serverConfig(serverConfig)
 {
-  if (countJumpLine(clientInput)
-      < 3) //Change with if receive a blank line => erase buffer
-    return;
+	if (hasBlankLineInput(clientInput) == false)
+	{
+		return ;
+	}
+/*   if (countJumpLine(clientInput)
+      < 3) //Change with if receive a blank line => erase buffer 
+    return;*/
   std::istringstream iss(clientInput);
   std::string key;
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 10:55:38 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 15:33:15 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ private:
   POST &operator=(const POST &);
 
 public:
-  POST(ClientInfo &client, int serverFD, int clientFD, std::vector<char> &clientInput,
+  POST(ClientInfo &client, int clientFD, std::vector<char> &clientInput,
        const ServerConfig &serverConfig);
   POST();
   ~POST(void);
