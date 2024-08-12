@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 12:55:04 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 12:56:51 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,9 +210,9 @@ void Webserv::handleClientRequest(
       client.req.buffer = clientStr;
       parseClientRequest(client.req);
       //Looks for the serverConfig that matches the Host value of the request
-      //const ServerConfig &serverConfig = findClientServerConfig(client.req.fields["Host"], serverConfigs);
+      const ServerConfig &serverConfig = findClientServerConfig(client.req.fields["Host"], serverConfigs);
       //Looks for the serverConfig that matches the location value of the request
-      const ServerConfig &serverConfig = findClientServerConfig(client.req.URI, serverConfigs);
+      //const ServerConfig &serverConfig = findClientServerConfig(client.req.URI, serverConfigs);
       std::cout << "Request received on serverIndex " << serverIndex
                 << ", port " << client.port << ", client.socketFD "
                 << client.socketFD << ", root: " << serverConfig.serverRoot
