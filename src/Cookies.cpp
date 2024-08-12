@@ -6,16 +6,56 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:51:42 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/12 13:48:55 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 16:41:41 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
+std::string Webserv::getCookieLine(const std::string &clientInput) const
+{
+    std::istringstream stream(clientInput);
+    std::string line;
+
+    while (std::getline(stream, line))
+		{
+        if (line.find("Cookie:") == 0)
+            return line;
+    }
+
+    return "";
+}
+
+#include <string>
+
+std::string trimLastChar(std::string &str, char c)
+{
+    if (!str.empty() && str[str.size() - 1] == c) {
+        return (str.substr(0, str.size() - 1));
+    }
+    return (str);
+}
+
 void	Webserv::parseCookies(ClientRequest req)
 {
-	if (req.fields.find("Cookie") != req.fields.end())
+	std::cout << YELLOW;
+	std::string	line;
+	std::string	key1;
+	std::string	key2;
+	std::map<std::string, std::string> cookieMap;
+
+	std::istringstream stream(getCookieLine(req.buffer));
+	std::getline(stream, line, ' '); //skip cookie
+	std::cout << line;
+	while (std::getline(stream, line, ';'))
 	{
-		//GET request has cookies field
+		std::istringstream lineStream(line);
+		std::getline(lineStream, key1, '=');
+		lineStream >> key2;
+		key2 = trimLastChar(key2, ';');
+		cookieMap[key1] = key2;
+		std::cout << key1 << " => " << key2 << std::endl;
 	}
+	
+	std::cout << std::endl << RESET;
 }

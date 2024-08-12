@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/12 16:14:10 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 17:19:56 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ POST::POST(ClientInfo &client, int clientFD,
   std::string body;
   std::map<std::string, std::string> formValues;
 
+		std::cout << BLUE << "FD = " << clientFD << RESET << std::endl;
 	//TODO => inmplement try catch => in try, send an error page + clear client.req.buffer
   this->requestStream.str(clientInputString);
   std::cout << std::endl << "--------POST request---------" << std::endl;
@@ -134,7 +135,10 @@ POST::POST(ClientInfo &client, int clientFD,
   else
     throw HttpException(415, "Unsupported Media Type.");
   //I think we should send the generic response from here and use just the divided part to build the response depending on the type
+	std::cout << "sending generic response...\n";
+	std::cout << BLUE << "FD = " << clientFD << RESET << std::endl;
   sendRGeneric(clientFD, response);
+	std::cout << "generic response sent\n";
 }
 
 POST::~POST(void) {}

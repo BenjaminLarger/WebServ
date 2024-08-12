@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/12 15:59:38 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 17:07:27 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -279,6 +279,14 @@ void getFileNameAndExtension(const std::string &path, std::string &fileName,
 
 bool hasBlankLineInput(std::string &clientInput)
 {
+	//Find if it is a POST request
+	size_t isPost = clientInput.rfind("POST /submit-form HTTP/1.1");
+	if (isPost != std::string::npos)
+	{
+			std::cout << YELLOW << "Is a post request\n" << RESET << std::endl;
+			return (true);
+	}
+
 	// Find the position of the last newline character
 	size_t lastNewlinePos = clientInput.rfind('\n');
 

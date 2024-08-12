@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservNewConnection.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:01 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 20:25:18 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 17:09:41 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void Webserv::handleNewConnection(
     {
       close(newSocket);
       throw HttpException(
-          500, "Internal Server Error: Data failed to be sent to the client");
+          500, "Internal Server Error: Data failed to be sent to the client (socket)");
     }
     std::cout << "New connection accepted: " << newSocket
               << ", on port: " << clients[i].port << std::endl;

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 13:59:50 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 16:19:15 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,4 +70,6 @@ public:
 
 	//COOKIES
 	void	parseCookies(ClientRequest req);
+	std::string getCookieLine(const std::string &clientInput) const;
+
 };

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 16:10:56 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 17:20:54 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ void Webserv::handleClientRequest(
         closeConnection(i);
         --i;
         throw HttpException(
-            500, "Internal Server Error: Data failed to be sent to the client");
+            500, strerror(errno));
       }
     }
     else if (bytesRead == 0)
@@ -145,8 +145,11 @@ void Webserv::handleClientRequest(
 				clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
 				std::string clientStr(clientInput.begin(), clientInput.end());
 				client.req.buffer = clientStr;
-			if (hasBlankLineInput(client.req.buffer) == true)
+				std::cout << YELLOW << "Concat" << RESET << std::endl;
+				std::cout << ORANGE << clientStr << RESET << std::endl;
+			if (hasBlankLineInput(clientStr) == true)
 			{
+				std::cout << YELLOW << "Has blank line input" << RESET << std::endl;
 				// Handle incoming data (e.g., parse HTTP request
 				parseClientRequest(client.req);
 				//Looks for the serverConfig that matches the Host value of the request
@@ -186,18 +189,18 @@ void Webserv::handleClientRequest(
 										<< ", isFile " << isFile(client.req.pathFolderOnServer)
 										<< std::endl;
 				}
-				/* if (client.req.fields.find("Cookie") != client.req.fields.end())
+				if (client.req.fields.find("Cookie") != client.req.fields.end())
 				{
 					//GET request has cookies field
 					parseCookies(client.req);
-				} */
+				}
 		
 				std::cout << client.req.method << std::endl;
 				if (client.req.method == "GET"
 						/* && isMethodAllowedAtLoc("GET", client.req, serverConfig) */)
 					GET method(client, fds[i].fd, clientStr, serverConfig);
 				else if (client.req.method == "POST")
-					POST method(client, serverIndex, clientInput, serverConfig);
+					POST method(client, fds[i].fd, clientInput, serverConfig);
 				else if (client.req.method == "DELETE")
 					DELETE method(client, fds[i].fd, clientStr, serverConfig);
 				else

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ErrorUtils.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:54:52 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 13:53:23 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 17:14:10 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void sendErrorResponse(int clientSocket, int statusCode,
   if (sendall(clientSocket, responseStr.c_str(), responseStr.size()) == -1)
   {
     throw HttpException(
-        500, "Internal Server Error: Data failed to be sent to the client");
+        500, "Internal Server Error: Data failed to be sent to the client (sendall)");
   }
 }
 

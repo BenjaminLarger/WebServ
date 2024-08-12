@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 11:25:31 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 17:17:18 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void sendRGeneric(int clientFD, std::string responseStr)
 {
   if (sendall(clientFD, responseStr.c_str(), responseStr.size()) == -1)
     throw HttpException(
-        500, "Internal Server Error: Data failed to be sent to the client");
+        500, strerror(errno));
 }
 
 bool isDirectory(const std::string &path)
