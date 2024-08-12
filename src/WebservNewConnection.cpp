@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservNewConnection.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:01 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 17:09:41 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 18:50:27 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void Webserv::handleNewConnection(
     // Add the new client info to the clients vector
     ClientInfo ci;
     ci.socketFD = newSocket;
-    ci.serverIndex = clients[i].serverIndex;
     ci.port = clients[i].port;
     clients.push_back(ci);
   }

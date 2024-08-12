@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 20:24:52 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 15:38:28 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void Webserv::parseClientRequest(ClientRequest &req)
   std::istringstream iss(req.buffer);
   std::string line;
 
+  std::cout << GREEN << "Client request buffer: " << std::endl << req.buffer << RESET << std::endl;
   // Parse the first line (request line)
   if (std::getline(iss, line))
   {

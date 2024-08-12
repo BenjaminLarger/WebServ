@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 20:19:58 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 14:27:59 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,4 +101,7 @@ std::vector<int> incomingConnections;
 
   // Determine serverPath (path on the server) of a location by resolving root or alias
   void resolveServerPathForLocations(void);
+
+  // Check if a server config with the same host and port already exists
+  bool findSameHostPort(std::vector<ServerConfig> serverConfigs);
 };

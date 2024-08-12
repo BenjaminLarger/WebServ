@@ -23,3 +23,8 @@ Authentication:
 
 ### curl supports various authentication mechanisms like Basic, Digest, OAuth, etc.
 Syntax for Basic Auth: curl -u username:password <URL>
+
+### CURL Bypass hostname.
+			hostname:PORT:IP
+--resolve "localhost:8080:127.0.0.1"
+With this command we can set another hostname to try to connect to an IP:PORT
