@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 20:44:17 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/11 21:50:28 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,46 @@
 
     return total_bytesRead;
 } */
+
+
+// const ServerConfig &findClientServerConfig(std::string reqHost, const std::vector<ServerConfig> &serverConfigs)
+// {
+//   std::string serverName;
+
+//   for (size_t i = 0; i < serverConfigs.size(); i++)
+//   {
+//     std::ostringstream oss;
+//     oss << ":";
+//     oss << serverConfigs[i].getPort();
+//     for (size_t j = 0; j < serverConfigs[i].serverNames.size(); j++)
+//     {
+//       serverName = serverConfigs[i].serverNames[j] + oss.str();
+//       std::cout << "reqHost = '" << reqHost << "'" << std::endl;
+//       std::cout << "serverName = '" << serverName << "'" << std::endl;
+//       if (serverName == reqHost)
+//         return serverConfigs[i];
+//       //Reset oss
+//       oss.str("");
+//     }
+//   }
+//   // If no server name matches the request host, return the first server config by default
+//   throw HttpException(404, "No server found for the request host");
+// }
+
+const ServerConfig &findClientServerConfig(std::string reqLoc, const std::vector<ServerConfig> &serverConfigs)
+{
+  for (size_t i = 0; i < serverConfigs.size(); i++)
+  {
+    std::map<std::string, LocationConfig>::const_iterator it = serverConfigs[i].locations.find(reqLoc);
+      if (it != serverConfigs[i].locations.end()) {
+        std::cout << "La clave '" << reqLoc << "' existe en el mapa con el valor: " << std::endl;
+        return (serverConfigs[i]);
+    } else
+        std::cout << "La clave '" << reqLoc << "' no existe en el mapa." << std::endl;
+  }
+  // If no server name matches the request host, return the first server config by default
+  throw HttpException(404, "No server found for the request host");
+}
 
 ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
 {
@@ -147,12 +187,6 @@ void Webserv::handleClientRequest(
       //std::vector<char> &clientInput += client.req.buffer;
       std::vector<char> clientInput(client.req.buffer.begin(),
                                     client.req.buffer.end());
-      const ServerConfig &serverConfig = serverConfigs[serverIndex];
-
-      std::cout << "Request received on serverIndex " << serverIndex
-                << ", port " << client.port << ", client.socketFD "
-                << client.socketFD << ", root: " << serverConfig.serverRoot
-                << std::endl;
 
       //clientInput += buffer;
       clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
@@ -165,6 +199,14 @@ void Webserv::handleClientRequest(
       std::string clientStr(clientInput.begin(), clientInput.end());
       client.req.buffer = clientStr;
       parseClientRequest(client.req);
+      //Looks for the serverConfig that matches the Host value of the request
+      //const ServerConfig &serverConfig = findClientServerConfig(client.req.fields["Host"], serverConfigs);
+      //Looks for the serverConfig that matches the location value of the request
+      const ServerConfig &serverConfig = findClientServerConfig(client.req.URI, serverConfigs);
+      std::cout << "Request received on serverIndex " << serverIndex
+                << ", port " << client.port << ", client.socketFD "
+                << client.socketFD << ", root: " << serverConfig.serverRoot
+                << std::endl;
 
       {
         // Display parsed header request
