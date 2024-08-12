@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 10:25:14 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 10:40:43 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ const ServerConfig &findClientServerConfig(std::string reqLoc, const std::vector
   
   for (size_t i = 0; i < serverConfigs.size(); i++)
   {
-    std::map<std::string, LocationConfig>::const_iterator it = serverConfigs[i].locations.find(reqLoc);
+    std::map<std::string, LocationConfig>::const_iterator it = serverConfigs[i].locations.find(baseLoc);
       if (it != serverConfigs[i].locations.end()) {
         std::cout << "The key '" << reqLoc << "' exist in the map with value: " << std::endl;
         return (serverConfigs[i]);
