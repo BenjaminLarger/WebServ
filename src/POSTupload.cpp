@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/12 10:08:27 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 10:35:24 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int	POST::extractMultipartFormData()
 	std::string	value;
 	std::string line;
 	int					index = 0;
-	int					contentRead = 0;
+	//int					contentRead = 0;
 	hasClosingBoundary = false;
 	contentMap[0].HasContentType = false;
 	contentMap[0].HasContentDisposition = false;
@@ -137,13 +137,14 @@ int	POST::extractMultipartFormData()
 
 int POST::handleFileUpload(int index)
 {
-	std::string directory = "./upload/";
+	//std::string directory = "./upload/";
 	for (int i = 0; i <= index; i++)
 	{
 		//check the file exist
 		if (lineIsEmpty(contentMap[i].filename) == false)
 			{
-			std::string	filePath = directory + contentMap[i].filename;
+			//std::string	filePath = directory + contentMap[i].filename;
+			std::string	filePath = UPLOAD_FILE_DIR + contentMap[i].filename;
 			std::ofstream outFile(filePath.c_str(), std::ios::binary);
 			if (!outFile)
 				throw HttpException(400, strerror(errno));

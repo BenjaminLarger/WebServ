@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 09:22:23 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 10:35:01 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
   "ERROR: Multipart/Form-Data must include closing boundary!"
 #define HAS_NOT_BOUNDARY_ERROR                                                 \
   "ERROR: Multipart/Form-Data must include boundary separation!"
-
+#define UPLOAD_FILE_DIR "./var/www/uploads/files"
 struct Content
 {
   bool HasContentType;
