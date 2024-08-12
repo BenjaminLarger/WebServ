@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 18:54:17 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/12 11:25:31 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ std::vector<std::string> listFilesInDirectory(const std::string &dirPath)
     struct dirent *entry;
     while ((entry = readdir(dirp)) != NULL)
     {
-      if (entry->d_type == DT_REG) //Verifies if it is a regular file
+      if (entry->d_type == DT_REG && entry->d_name[0] != '.') //Verifies if it is a regular file
         files.push_back(entry->d_name);
     }
     closedir(dirp);

@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/12 10:57:59 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 11:00:00 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ std::string POST::createPostOkResponseWithFile(std::map<std::string, std::string
   std::stringstream httpResponse;
   std::string responseBody;
   std::string filePath = UPLOAD_FILE_DIR + contentMap[2].filename;
-  std::string reqPath = "/upload" + contentMap[2].filename;
+  std::string reqPath = "/upload/" + contentMap[2].filename;
 
   // Check if the file exists
   std::ifstream file(filePath.c_str());
