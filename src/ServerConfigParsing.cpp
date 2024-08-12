@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfigParsing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 14:33:15 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 17:13:37 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/12 16:57:02 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,17 @@ void ServerConfig::reset()
   serverRoot.clear();
   serverIndex.clear();
   errorPages.clear();
+}
+
+bool ServerConfig::findSameHostPort(std::vector<ServerConfig> serverConfigs)
+{
+  for (std::vector<ServerConfig>::iterator it = serverConfigs.begin();
+       it != serverConfigs.end(); it++)
+  {
+    if (it->getHost() == this->getHost() && it->getPort() == this->getPort())
+      return (true);
+  }
+  return (false);
 }
 
 std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
@@ -77,7 +88,6 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
             || streamHasRemainingContent(ss))
           file.close(), throw(std::runtime_error(
                             "Unexpected characters in config file: " + line));
-
         config.host = valueStr;
       }
       else if (key == "listen")
@@ -237,7 +247,13 @@ void ServerConfig::endServerBlock(bool &insideServerBlock,
   if (checkConfig(tempPorts) && insideServerBlock)
   {
     // Add default values
-
+    //if (!this->findSameHostPort(serverConfigs))
+    //{
+      //if (this->getHost().empty())
+      //  this->addServerName("127.0.0.1");
+      //else
+        this->addServerName(this->getHost());
+    //}
     // Set default maxBodySize
     if (this->maxBodySize == -1)
       this->maxBodySize = 1000000;
@@ -254,12 +270,11 @@ void ServerConfig::endServerBlock(bool &insideServerBlock,
       this->addPort(tempPorts[i]);
       serverConfigs.push_back(*this);
     }
-  }
-  else
-  {
+  } else
+    {
     file.close();
     throw(std::runtime_error("Invalid server block in config file."));
-  }
+    }
   insideServerBlock = false;
 }
 
