@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestLocation.cpp                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/11 14:23:15 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/12 10:35:32 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,12 @@ void Webserv::resolveRequestedPathFromLocations(
   // Looks for a direct match in locations or a match of any parent folder
   // if (!findURIorParentFolderInLocations(req.URI, locations, it))
   findURIstartInLocations(req.URI, locations, it);
-
   // if URI or parent folder found
   if (it != locations.end())
   {
     if (it->second.alias.size())
     {
-      // std::cout << "replacing with alias" << std::endl;
+       std::cout << "replacing with alias" << std::endl;
       req.pathFolder = it->first == "/" ? "/" : formatPath(it->first);
       req.pathOnServer
           = replaceUriPrefix(req.URI, it->first, it->second.serverPath);
@@ -50,7 +49,8 @@ void Webserv::resolveRequestedPathFromLocations(
     }
     else if (it->second.root.size())
     {
-      // std::cout << "replacing with root" << std::endl;
+       std::cout << "replacing with root" << std::endl;
+
       req.pathFolder = it->first == "/" ? "/" : formatPath(it->first);
       req.pathOnServer
           = "." + formatPath(it->second.root) + formatPath(req.URI);

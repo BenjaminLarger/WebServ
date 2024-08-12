@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POSTupload.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/12 10:08:27 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 10:24:42 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int	POST::extractMultipartFormData()
 	std::string	value;
 	std::string line;
 	int					index = 0;
-	int					contentRead = 0;
+	//int					contentRead = 0;
 	hasClosingBoundary = false;
 	contentMap[0].HasContentType = false;
 	contentMap[0].HasContentDisposition = false;

@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 10:23:45 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 10:25:14 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,7 +225,7 @@ void Webserv::handleClientRequest(
         std::cout << RESET << std::endl;
       }
 
-      resolveRequestedPathFrasomLocations(client.req, serverConfig);
+      resolveRequestedPathFromLocations(client.req, serverConfig);
 
       {
         // Display client request location data
