@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 13:25:35 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 15:10:36 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,7 +228,6 @@ void Webserv::handleClientRequest(
 
         displayParsedHeaderRequest(client);
 
-				std::cout << ORANGE << "HERE" << RESET << std::endl;
         resolveRequestedPathFromLocations(client.req,
                                           client.client_serverConfig);
 
