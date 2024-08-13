@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:59 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 13:28:15 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 15:38:55 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void sendErrorResponse(int clientSocket, int statusCode,
                        const std::string &statusMessage, std::string errorBody);
 
 // Finds and sends a default error page to the client
-void sendDefaultErrorPage(int clientSocket, int statusCode,
+std::string sendDefaultErrorPage(int clientSocket, int statusCode,
                           std::string errorMessage,
                           std::map<int, std::string> errorPages);
 

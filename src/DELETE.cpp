@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:35 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/12 16:14:00 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 15:35:06 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ DELETE::DELETE(ClientInfo &client, int clientFD, std::string &clientInput,
     : serverConfig(_serverConfig)
 {
   (void)client;
-  std::string response;
+  //std::string response;
 
   try
   {
@@ -106,10 +106,10 @@ DELETE::DELETE(ClientInfo &client, int clientFD, std::string &clientInput,
     if (remove(pathToRessource.c_str()) != 0)
       throw HttpException(500, "Internal Server Error");
     else
-      response = createDeleteOkResponse();
+      client.response = createDeleteOkResponse();
     std::cout << GREEN << "Sending delete OK response" << RESET << std::endl;
 		client.req.buffer.clear();
-    sendRGeneric(clientFD, response);
+    //sendRGeneric(clientFD, response);
   }
   catch (const HttpException &e)
   {

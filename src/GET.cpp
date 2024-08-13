@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/13 15:01:38 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 15:37:16 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,12 +156,12 @@ GET::GET(Webserv &webserv, ClientInfo &client, int clientFD,
   try
   {
     // Body: The actual content (e.g., HTML, JSON).
-    std::string response
+   client.response
         = getResponseAtLocation(webserv, client.req, client.socketFD);
 
     std::cerr << RED << "GET 4" << RESET << '\n';
-    if (response != "wait for cgi script execution")
-      sendRGeneric(clientFD, response); //
+    /* if (response != "wait for cgi script execution")
+      sendRGeneric(clientFD, response);  *///
     std::cerr << RED << "GET 5" << RESET << '\n';
     // std::cout << "response sent." << std::endl;
   }
