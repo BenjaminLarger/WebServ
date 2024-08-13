@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 12:39:01 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 13:25:35 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +14,6 @@
 #include "GET.hpp"
 #include "POST.hpp"
 #include "Webserv.hpp"
-
-/* ssize_t read_all(int fd, char *buffer, size_t buffer_size)
-{
-    ssize_t total_bytesRead = 0;
-    ssize_t bytesRead;
-
-    while (total_bytesRead < buffer_size) {
-        bytesRead = read(fd, buffer + total_bytesRead, buffer_size - total_bytesRead);
-        if (bytesRead == 0) {
-            // End of file
-            break;
-        }
-        if (bytesRead == -1) {
-            if (errno == EINTR) {
-                // Interrupted by signal, continue reading
-                continue;
-            } else if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                // Non-blocking mode and no data available, handle accordingly
-                break;
-                           // Other errors
-                std::cerr << "Read error: " << strerror(errno) << std::endl;
-                return -1;
-            }
-        total_bytesRead += bytesRead;
-    }
-
-    return total_bytesRead;
-} */
 
 //Check if reqHost is inside the serverNames vector of the serverConfig
 bool checkReqHostInServerNames(std::string reqHost,
@@ -256,11 +228,11 @@ void Webserv::handleClientRequest(
 
         displayParsedHeaderRequest(client);
 
+				std::cout << ORANGE << "HERE" << RESET << std::endl;
         resolveRequestedPathFromLocations(client.req,
                                           client.client_serverConfig);
 
         displayClientRequestLocationData(client);
-
         if (isMethodAllowedAtLoc(client.req, client.client_serverConfig))
         {
           if (client.req.method == "GET")
