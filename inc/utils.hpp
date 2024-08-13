@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 15:23:48 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 12:45:32 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+#include "ClientInfo.hpp"
 #include "ServerConfig.hpp"
 #include "core.hpp"
 #include "dependencies.hpp"
@@ -38,8 +39,12 @@ bool hasDuplicates(const std::vector<int> &container);
 bool hasDuplicates(const std::vector<std::string> &container);
 bool hasDuplicates(const std::map<int, std::string> &container, int value);
 
-// Display server configs in terminal to check
-void displayServerConfigs(std::vector<ServerConfig> &serverConfigs);
+// Display server configs in the terminal
+void displayServerConfigs(std::vector<ServerConfig> const &serverConfigs);
+// Display client request location data in the terminal
+void displayClientRequestLocationData(ClientInfo const &client);
+// Display parsed header request in the terminal
+void displayParsedHeaderRequest(ClientInfo const &client);
 
 // Extract the first world of a line
 std::string extractFirstWord(const std::string &str);
@@ -62,4 +67,4 @@ void getFileNameAndExtension(const std::string &path, std::string &fileName,
                              std::string &extension);
 
 //Check if request is complete
-bool	hasBlankLineInput(std::string &clientInput);														 
+bool hasBlankLineInput(std::string &clientInput);

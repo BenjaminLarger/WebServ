@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 20:56:15 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 12:39:01 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,6 +245,7 @@ void Webserv::handleClientRequest(
       if (hasBlankLineInput(client.req.buffer) == true)
       {
         parseClientRequest(client.req);
+
         //Looks for the serverConfig that matches the Host value of the request
         client.client_serverConfig
             = findClientServerConfig(client, serverConfigs);
@@ -253,35 +254,12 @@ void Webserv::handleClientRequest(
                   << ", root: " << client.client_serverConfig.serverRoot
                   << std::endl;
 
-        {
-          // Display parsed header request
-          std::cout << "Parsed request header: \n"
-                    << MAGENTA << client.req.method << " " << client.req.URI
-                    << " " << client.req.HTTPversion << std::endl;
-          for (std::map<std::string, std::string>::iterator it
-               = client.req.fields.begin();
-               it != client.req.fields.end(); it++)
-          {
-            std::cout << it->first << ": " << it->second << std::endl;
-          }
-          std::cout << RESET << std::endl;
-        }
+        displayParsedHeaderRequest(client);
 
         resolveRequestedPathFromLocations(client.req,
                                           client.client_serverConfig);
 
-        {
-          // Display client request location data
-          std::cout << "URI: " << client.req.URI
-                    << ", pathFolder: " << client.req.pathFolder
-                    << ", pathOnServer: " << client.req.pathOnServer
-                    << ", isDir " << isDirectory(client.req.pathOnServer)
-                    << ", isFile " << isFile(client.req.pathOnServer)
-                    << ", pathFolderOnServer: " << client.req.pathFolderOnServer
-                    << ", isDir " << isDirectory(client.req.pathFolderOnServer)
-                    << ", isFile " << isFile(client.req.pathFolderOnServer)
-                    << std::endl;
-        }
+        displayClientRequestLocationData(client);
 
         if (isMethodAllowedAtLoc(client.req, client.client_serverConfig))
         {

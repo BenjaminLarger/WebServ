@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 20:47:52 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 12:44:24 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,11 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
 
       if (fds[i].revents & POLLIN)
       {
-        std::cout << CYAN << "New POLLIN event detected\n" << RESET;
+        std::cout << CYAN << "New POLLIN event detected" << RESET << std::endl;
         if (i < serverConfigs.size())
         {
           // New connection request on listening socket
-          std::cout << GREEN << "New connection detected\n" << RESET;
+          std::cout << GREEN << "New connection detected" << RESET << std::endl;
           handleNewConnection(i, serverConfigs);
         }
         else
@@ -52,13 +52,15 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
             // Check if client socket (is not a pipefd)
             if (clientScriptMap.find(fds[i].fd) == clientScriptMap.end())
             {
-              std::cout << GREEN << "New client request detected\n" << RESET;
+              std::cout << GREEN << "New client request detected" << RESET
+                        << std::endl;
               handleClientRequest(i, serverConfigs);
             }
             // Check if script output pipe
             else if (clientScriptMap.find(fds[i].fd) != clientScriptMap.end())
             {
-              std::cout << GREEN << "New script output pipe ready\n" << RESET;
+              std::cout << GREEN << "New script output pipe ready" << RESET
+                        << std::endl;
               char buffer[1024];
               ssize_t bytesRead = read(fds[i].fd, buffer, sizeof(buffer) - 1);
               if (bytesRead > 0)
@@ -66,7 +68,8 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
                 buffer[bytesRead] = '\0';
 
                 int clientFD = clientScriptMap[fds[i].fd];
-                std::string response = composeOkHtmlResponse(buffer);
+                std::string response
+                    = composeOkHtmlResponse(buffer, clients[i].req.buffer);
                 sendRGeneric(clientFD, response);
 
                 close(fds[i].fd);
@@ -87,13 +90,14 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
           catch (const HttpException &e)
           {
             std::cerr << RED << "Error: " << e.getStatusCode() << " "
-                      << e.what() << RESET << '\n';
+                      << e.what() << RESET << std::endl;
           }
         }
       }
       else if (fds[i].revents & POLLOUT) // when ?
       {
-        std::cout << CYAN << "New POLLOUT event detected\n" << RESET;
+        std::cout << CYAN << "New " << RED << POLLOUT << CYAN
+                  << " event detected" << RESET << std::endl;
         try
         {
           // handleClientResponse(i);
@@ -101,7 +105,7 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
         catch (const HttpException &e)
         {
           std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
-                    << RESET << '\n';
+                    << RESET << std::endl;
         }
       }
     }

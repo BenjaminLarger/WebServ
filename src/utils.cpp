@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/12 17:07:27 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 12:33:58 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,63 +121,6 @@ bool hasDuplicates(const std::map<int, std::string> &container, int value)
   return (false);
 }
 
-void displayServerConfigs(std::vector<ServerConfig> &serverConfigs)
-{
-  std::cout << "serverConfigs.size(): " << serverConfigs.size() << std::endl;
-  std::cout << std::endl;
-
-  for (size_t i = 0; i < serverConfigs.size(); i++)
-  {
-    std::cout << "ServerConfig " << i
-              << ", host: " << serverConfigs[i].getHost()
-              << ", port: " << serverConfigs[i].getPort()
-              << ", maxBodySize: " << serverConfigs[i].maxBodySize
-              << ", root: " << serverConfigs[i].serverRoot
-              << ", serverPath: " << serverConfigs[i].serverPath
-              << ", index: " << serverConfigs[i].serverIndex << ", server_names"
-              << serverConfigs[i].getServerNames() << std::endl;
-
-    std::cout << "  errorPages.size(" << serverConfigs[i].errorPages.size()
-              << "): ";
-    for (std::map<int, std::string>::iterator it
-         = serverConfigs[i].errorPages.begin();
-         it != serverConfigs[i].errorPages.end(); ++it)
-    {
-      std::cout << it->first << " " << it->second;
-      if (it != --serverConfigs[i].errorPages.end())
-        std::cout << ", ";
-    }
-    std::cout << std::endl;
-
-    std::cout << "  locations.size(" << serverConfigs[i].locations.size()
-              << "): " << std::endl;
-    for (std::map<std::string, LocationConfig>::iterator it
-         = serverConfigs[i].locations.begin();
-         it != serverConfigs[i].locations.end(); ++it)
-    {
-      std::cout << "    location  " << it->first
-                << ", root: " << it->second.root
-                << ", index:  " << it->second.index
-                << ", alias:  " << it->second.alias
-                << ", serverPath:  " << it->second.serverPath
-                << ", autoIndexOn:  " << it->second.autoIndexOn
-                << ", allowedMethods: ";
-      for (unsigned long itAM = 0; itAM < it->second.allowedMethods.size();
-           ++itAM)
-      {
-        std::cout << it->second.allowedMethods[itAM] << " ";
-      }
-      std::cout << std::endl;
-
-      std::cout << "      redirection:  ";
-      if (it->second.redirection.first)
-        std::cout << it->second.redirection.first << " "
-                  << it->second.redirection.second;
-      std::cout << std::endl;
-    }
-  }
-}
-
 std::string extractFirstWord(const std::string &str)
 {
   std::istringstream stream(str);
@@ -209,7 +152,7 @@ std::string trimQuotes(std::string &str)
   {
     str = str.substr(1, str.length() - 2);
   }
-	return (str);
+  return (str);
 }
 
 int countJumpLine(std::string str)
@@ -279,39 +222,48 @@ void getFileNameAndExtension(const std::string &path, std::string &fileName,
 
 bool hasBlankLineInput(std::string &clientInput)
 {
-	//Find if it is a POST request
-	size_t isPost = clientInput.rfind("POST /submit-form HTTP/1.1");
-	if (isPost != std::string::npos)
-	{
-			std::cout << YELLOW << "Is a post request\n" << RESET << std::endl;
-			return (true);
-	}
+  //Find if it is a POST request
+  size_t isPost = clientInput.rfind("POST /submit-form HTTP/1.1");
+  if (isPost != std::string::npos)
+  {
+    std::cout << YELLOW << "Is a post request\n" << RESET << std::endl;
+    return (true);
+  }
 
-	// Find the position of the last newline character
-	size_t lastNewlinePos = clientInput.rfind('\n');
+  // Find the position of the last newline character
+  size_t lastNewlinePos = clientInput.rfind('\n');
 
-	// If there is no newline character, return false
-	if (lastNewlinePos == std::string::npos)
-	{
-			std::cout << YELLOW << "No newline character found." << RESET << std::endl;
-			return (false);
-	}
+  // If there is no newline character, return false
+  if (lastNewlinePos == std::string::npos)
+  {
+    std::cout << YELLOW << "No newline character found." << RESET << std::endl;
+    return (false);
+  }
 
-	// If the last newline character is at the beginning, return false
-	if (lastNewlinePos == 0)
-	{
-			std::cout << YELLOW << "The last newline character is at the beginning." << RESET << std::endl;
-			return (false);
-	}
+  // If the last newline character is at the beginning, return false
+  if (lastNewlinePos == 0)
+  {
+    std::cout << YELLOW << "The last newline character is at the beginning."
+              << RESET << std::endl;
+    return (false);
+  }
 
-	if (clientInput[lastNewlinePos - 2] == '\r' && clientInput[lastNewlinePos - 1] == '\n')
-	{
-					std::cout << YELLOW << "The last newline character is preceded by another newline character." << RESET << std::endl;
-					return true;
-	}
-	std::cout << clientInput[clientInput.size() - 1] << "; " << clientInput[clientInput.size() - 2] << "; " << clientInput[clientInput.size() - 3] << std::endl;
-	if (clientInput[clientInput.size() - 1] == '\n' && clientInput[clientInput.size() - 2] == '\r' && clientInput[clientInput.size() - 3] == '\n')
-		return (true);
+  if (clientInput[lastNewlinePos - 2] == '\r'
+      && clientInput[lastNewlinePos - 1] == '\n')
+  {
+    std::cout << YELLOW
+              << "The last newline character is preceded by another newline "
+                 "character."
+              << RESET << std::endl;
+    return true;
+  }
+  std::cout << clientInput[clientInput.size() - 1] << "; "
+            << clientInput[clientInput.size() - 2] << "; "
+            << clientInput[clientInput.size() - 3] << std::endl;
+  if (clientInput[clientInput.size() - 1] == '\n'
+      && clientInput[clientInput.size() - 2] == '\r'
+      && clientInput[clientInput.size() - 3] == '\n')
+    return (true);
 
-return (false);
+  return (false);
 }
