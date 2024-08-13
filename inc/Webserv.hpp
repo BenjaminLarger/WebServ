@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 14:43:53 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 19:25:29 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ public:
                             const ServerConfig &serverConfig);
   void handleClientRequest(size_t index,
                            const std::vector<ServerConfig> &serverConfigs);
+
+  void readScriptOutput(size_t &index);
 
   // Close client connection and remove from pollfd and clients array, and remove any pending script pipes for that connection
   void closeConnection(size_t index);

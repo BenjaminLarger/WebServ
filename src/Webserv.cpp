@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 19:12:47 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 19:25:07 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,34 +63,7 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
             {
               std::cout << GREEN << "New script output pipe ready " << RESET
                         << fds[i].fd << std::endl;
-              char buffer[1024];
-              ssize_t bytesRead = read(fds[i].fd, buffer, sizeof(buffer) - 1);
-              if (bytesRead > 0)
-              {
-                buffer[bytesRead] = '\0';
-
-                int clientFD = clientScriptMap[fds[i].fd];
-                // find index in clients where clientFD == clients[i].socketFD
-                size_t j = 0;
-                while (j < clients.size())
-                {
-                  if (clients[j].socketFD == clientFD)
-                    break;
-                  ++j;
-                }
-                clients[j].response
-                    = composeOkHtmlResponse(buffer, clients[j].req.buffer);
-                // sendRGeneric(clientFD, response);
-
-                closePipe(i);
-                --i;
-              }
-              else
-              {
-                // Handle script completion or pipe closure
-                closePipe(i);
-                --i;
-              }
+              readScriptOutput(i);
             }
           }
           catch (const HttpException &e)

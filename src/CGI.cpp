@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 19:11:51 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 19:25:17 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,5 +96,35 @@ void Webserv::executeScript(std::string const &filePath,
     ci.socketFD = pipefd[0];
     ci.port = -1;
     clients.push_back(ci);
+  }
+}
+
+void Webserv::readScriptOutput(size_t &i)
+{
+  char buffer[1024];
+  ssize_t bytesRead = read(fds[i].fd, buffer, sizeof(buffer) - 1);
+  if (bytesRead > 0)
+  {
+    buffer[bytesRead] = '\0';
+    int clientFD = clientScriptMap[fds[i].fd];
+
+    size_t j = 0;
+    while (j < clients.size())
+    {
+      if (clients[j].socketFD == clientFD)
+        break;
+      ++j;
+    }
+
+    clients[j].response = composeOkHtmlResponse(buffer, clients[j].req.buffer);
+
+    closePipe(i);
+    --i;
+  }
+  else
+  {
+    // Handle script completion or pipe closure
+    closePipe(i);
+    --i;
   }
 }
