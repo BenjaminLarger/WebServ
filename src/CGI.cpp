@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 20:19:03 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 13:12:30 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,12 @@ void Webserv::executeScript(std::string const &filePath,
     clientScriptMap[pipefd[0]] = clientFD;
 
     fds.push_back(pfd);
+
+    // Add a dummy client info for the listening socket
+    ClientInfo ci;
+    ci.socketFD = pipefd[0];
+    ci.port = -1;
+    clients.push_back(ci);
 
     // waitpid ??
   }

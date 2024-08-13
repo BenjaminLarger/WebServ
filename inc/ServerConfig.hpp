@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 14:27:59 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/13 13:12:10 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ public:
   std::string serverPath;               // resolve path on server: ./var/www/URI
   std::map<int, std::string> errorPages;           // error_page 404 /404.html;
   std::map<std::string, LocationConfig> locations; // urlPattern, location block
-std::vector<int> incomingConnections;
+
   // Returns a list of all the server names as one string (to display in terminal)
   std::string getServerNames(void) const;
 
