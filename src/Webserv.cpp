@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 20:47:52 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 12:07:42 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
                 buffer[bytesRead] = '\0';
 
                 int clientFD = clientScriptMap[fds[i].fd];
-                std::string response = composeOkHtmlResponse(buffer);
+                std::string response = composeOkHtmlResponse(buffer, "");//second parameter used to check if the client has already a sessionID in his request. The second argument is supposed to be the client request
                 sendRGeneric(clientFD, response);
 
                 close(fds[i].fd);

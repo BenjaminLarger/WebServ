@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/12 17:07:27 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 12:44:23 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,7 +291,7 @@ bool hasBlankLineInput(std::string &clientInput)
 	size_t lastNewlinePos = clientInput.rfind('\n');
 
 	// If there is no newline character, return false
-	if (lastNewlinePos == std::string::npos)
+	if (lastNewlinePos == std::string::npos || clientInput.size() <= 3)
 	{
 			std::cout << YELLOW << "No newline character found." << RESET << std::endl;
 			return (false);
@@ -304,12 +304,11 @@ bool hasBlankLineInput(std::string &clientInput)
 			return (false);
 	}
 
-	if (clientInput[lastNewlinePos - 2] == '\r' && clientInput[lastNewlinePos - 1] == '\n')
+	if (lastNewlinePos > 2 && clientInput[lastNewlinePos - 2] == '\r' && clientInput[lastNewlinePos - 1] == '\n')
 	{
 					std::cout << YELLOW << "The last newline character is preceded by another newline character." << RESET << std::endl;
 					return true;
 	}
-	std::cout << clientInput[clientInput.size() - 1] << "; " << clientInput[clientInput.size() - 2] << "; " << clientInput[clientInput.size() - 3] << std::endl;
 	if (clientInput[clientInput.size() - 1] == '\n' && clientInput[clientInput.size() - 2] == '\r' && clientInput[clientInput.size() - 3] == '\n')
 		return (true);
 
