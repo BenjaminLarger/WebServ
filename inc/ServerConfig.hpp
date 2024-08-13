@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:12:40 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 13:12:10 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 21:18:35 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,9 @@ public:
 
   // Determine serverPath (path on the server) of a location by resolving root or alias
   void resolveServerPathForLocations(void);
+
+  // Determine serverPath (path on the server) of error_pages
+  void resolveServerPathForErrorPages(void);
 
   // Check if a server config with the same host and port already exists
   bool findSameHostPort(std::vector<ServerConfig> serverConfigs);

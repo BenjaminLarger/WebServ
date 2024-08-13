@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ErrorUtils.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:59 by demre             #+#    #+#             */
-/*   Updated: 2024/08/09 13:28:15 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 21:56:45 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,10 @@
 #include "utils.hpp"
 
 // Sends an error response to the client
-void sendErrorResponse(int clientSocket, int statusCode,
-                       const std::string &statusMessage, std::string errorBody);
+// void sendErrorResponse(int clientSocket, int statusCode,
+//                        const std::string &statusMessage, std::string errorBody);
 
 // Finds and sends a default error page to the client
-void sendDefaultErrorPage(int clientSocket, int statusCode,
-                          std::string errorMessage,
-                          std::map<int, std::string> errorPages);
-
+std::string sendDefaultErrorPage(int const &statusCode,
+                                 std::string const &errorMessage,
+                                 std::map<int, std::string> errorPages);

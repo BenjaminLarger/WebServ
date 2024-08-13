@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/13 20:25:54 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 21:50:34 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,9 +147,9 @@ GET::GET(Webserv &webserv, ClientInfo &client, const ServerConfig &serverConfig)
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
 
-    sendDefaultErrorPage(client.socketFD, e.getStatusCode(),
-                         getReasonPhrase(e.getStatusCode()),
-                         serverConfig.errorPages);
+    client.response = sendDefaultErrorPage(e.getStatusCode(),
+                                           getReasonPhrase(e.getStatusCode()),
+                                           serverConfig.errorPages);
   }
 }
 

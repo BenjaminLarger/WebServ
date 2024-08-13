@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DELETE.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:35 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/12 16:14:00 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 21:53:02 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,14 @@
 #include "core.hpp"
 
 void DELETE::setHost(const std::string &_host) { this->host = _host; }
-void DELETE::setAuthorization(const std::string &_authorization) {this->authorization = _authorization;}
-void DELETE::setIfMatch(const std::string &_if_match) { this->if_match = _if_match; }
+void DELETE::setAuthorization(const std::string &_authorization)
+{
+  this->authorization = _authorization;
+}
+void DELETE::setIfMatch(const std::string &_if_match)
+{
+  this->if_match = _if_match;
+}
 std::string DELETE::getHost(void) const { return this->host; }
 std::string DELETE::getAuthorization(void) const { return this->authorization; }
 std::string DELETE::getIfMatch(void) const { return this->if_match; }
@@ -86,16 +92,16 @@ void DELETE::parseRequest(std::string &clientInput)
   findHeader(isLine);
 }
 
-DELETE::DELETE(ClientInfo &client, int clientFD, std::string &clientInput,
+DELETE::DELETE(ClientInfo &client, std::string &clientInput,
                const ServerConfig &_serverConfig)
     : serverConfig(_serverConfig)
 {
-  (void)client;
-  std::string response;
-
   try
   {
+    std::string response;
+
     parseRequest(clientInput);
+
     // Example of tag. Then we maybe need to create them dynamicaly
     std::string expectedEtag = "anytag";
     std::string expectedAuth = "anytoken";
@@ -103,22 +109,26 @@ DELETE::DELETE(ClientInfo &client, int clientFD, std::string &clientInput,
 
     pathToRessource = "./var/www" + pathToRessource;
     std::cout << "Path to ressource: " << pathToRessource << std::endl;
+
     if (remove(pathToRessource.c_str()) != 0)
       throw HttpException(500, "Internal Server Error");
     else
       response = createDeleteOkResponse();
+
     std::cout << GREEN << "Sending delete OK response" << RESET << std::endl;
-		client.req.buffer.clear();
-    sendRGeneric(clientFD, response);
+    client.req.buffer.clear();
+
+    client.response = response;
+    // sendRGeneric(clientFD, response);
   }
   catch (const HttpException &e)
   {
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
 
-    sendDefaultErrorPage(clientFD, e.getStatusCode(),
-                         getReasonPhrase(e.getStatusCode()),
-                         serverConfig.errorPages);
+    client.response = sendDefaultErrorPage(e.getStatusCode(),
+                                           getReasonPhrase(e.getStatusCode()),
+                                           serverConfig.errorPages);
   }
 }
 

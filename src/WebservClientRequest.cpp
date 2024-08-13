@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 20:35:28 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 21:54:09 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,8 +233,8 @@ void Webserv::handleClientRequest(
             POST method(client, fds[i].fd, clientInput,
                         client.client_serverConfig);
           else if (client.req.method == "DELETE")
-            DELETE method(client, fds[i].fd, clientStr,
-                          client.client_serverConfig);
+            DELETE method(client, clientStr, client.client_serverConfig);
+
           clientInput.clear();
           clientStr.clear();
           client.req.buffer.clear();
@@ -254,8 +254,8 @@ void Webserv::handleClientRequest(
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
     std::cout << "Sending default error page\n";
-    sendDefaultErrorPage(fds[i].fd, e.getStatusCode(),
-                         getReasonPhrase(e.getStatusCode()),
-                         clients[i].client_serverConfig.errorPages);
+    clients[i].response = sendDefaultErrorPage(
+        e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
+        clients[i].client_serverConfig.errorPages);
   }
 }

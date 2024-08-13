@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DELETE.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:51 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/11 17:22:12 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 21:53:13 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ private:
   const ServerConfig &serverConfig;
 
 public:
-  DELETE(ClientInfo &client, int clientFD, std::string &clientInput,
+  DELETE(ClientInfo &client, std::string &clientInput,
          const ServerConfig &serverConfig);
   ~DELETE(void);
 
@@ -42,7 +42,8 @@ public:
   void parseRequest(std::string &clientInput);
   void findHeader(std::istringstream &isLine);
   void checkPreconditions(std::string expectedEtag, std::string expectedAuth);
-	std::string	handleLocations(std::string pathToResource);
-	std::string replaceLocationByRoot(std::string pathToResource
-							, std::string oldPrefix, std::string newPrefix);
+  std::string handleLocations(std::string pathToResource);
+  std::string replaceLocationByRoot(std::string pathToResource,
+                                    std::string oldPrefix,
+                                    std::string newPrefix);
 };
