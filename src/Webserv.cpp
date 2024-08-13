@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 13:49:33 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 14:15:41 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,9 +172,9 @@ void Webserv::closePipe(size_t i)
             << ", clientScriptMap: " << clientScriptMap.size() << std::endl;
 
   close(fds[i].fd);
+  clientScriptMap.erase(fds[i].fd);
   fds.erase(fds.begin() + i);
   clients.erase(clients.begin() + i);
-  clientScriptMap.erase(fds[i].fd);
 
   std::cout << "size() fds: " << fds.size() << ", clients: " << clients.size()
             << ", clientScriptMap: " << clientScriptMap.size() << std::endl;
