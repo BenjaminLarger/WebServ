@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:52:13 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 18:09:12 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/12 18:17:38 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void sendRGeneric(int clientFD, std::string responseStr);
 std::string extractHtmlContentFromFile(const std::string &filePath);
 
 // Returns a 200 OK header with an HTML response in the given body
-std::string composeOkHtmlResponse(std::string responseBody);
+std::string composeOkHtmlResponse(std::string responseBody, std::string request);
 
 // Returns a redirection header response (Location + Content-Length: 0)
 std::string createRedirectResponse(const int &code,

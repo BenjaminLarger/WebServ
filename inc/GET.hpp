@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 14:00:27 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 18:14:13 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,4 @@ public:
 
   // Manage delete endpoint
   std::string manageDeleteEndPoint();
-
-
-
 };

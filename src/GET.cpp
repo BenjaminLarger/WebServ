@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/12 16:13:52 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 18:43:53 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ std::string GET::getResponseAtLocation(ClientRequest &req)
     std::string path = req.pathOnServer;
 
     if (it->first == "/delete")
-      return (composeOkHtmlResponse(manageDeleteEndPoint()));
+      return (composeOkHtmlResponse(manageDeleteEndPoint(), req.buffer));
     // Check if the location has a redirection
     else if (it->second.redirection.first)
     {
@@ -61,14 +61,14 @@ std::string GET::getResponseAtLocation(ClientRequest &req)
       if (extension == "html")
       {
         std::cout << RED << "file is html" << RESET << std::endl;
-        response = composeOkHtmlResponse(extractHtmlContentFromFile(path));
+        response = composeOkHtmlResponse(extractHtmlContentFromFile(path),  req.buffer);
       }
       // if file is php
       else if (extension == "php" || extension == "py")
       {
         std::cout << RED << "file is a script in " << extension << RESET
                   << std::endl;
-        response = composeOkHtmlResponse(executeScript(path, extension));
+        response = composeOkHtmlResponse(executeScript(path, extension), req.buffer);
       }
       // other files
       else if (extension.size())
@@ -97,7 +97,7 @@ std::string GET::getResponseAtLocation(ClientRequest &req)
       std::cout << RED << "!it->second.index.empty() path: " << path << RESET
                 << std::endl;
 
-      response = composeOkHtmlResponse(extractHtmlContentFromFile(path));
+      response = composeOkHtmlResponse(extractHtmlContentFromFile(path), req.buffer);
       return (response);
     }
     // If location doesn't have a file, is a folder, and autoindex on
@@ -110,7 +110,7 @@ std::string GET::getResponseAtLocation(ClientRequest &req)
 
       // response = composeOkHtmlResponse(createFileListHtml(path));
       response
-          = composeOkHtmlResponse(generateDirectoryListing(path, contents));
+          = composeOkHtmlResponse(generateDirectoryListing(path, contents), req.buffer);
       return (response);
     }
     // URI doesn't match a location, but is contained in one which is a folder

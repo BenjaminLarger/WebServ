@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 16:19:15 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 18:24:53 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,11 @@
 //                               Class //
 // ************************************************************************** //
 
+
+struct	Cookies
+{
+
+};
 class Webserv
 {
 private:
@@ -69,6 +74,8 @@ public:
   void restoreWriteCapability(size_t clientIndex, std::string &buffer);
 
 	//COOKIES
+	std::map<std::string, Cookies> sessionIdMap;
+	std::vector<std::string> sessionID;
 	void	parseCookies(ClientRequest req);
 	std::string getCookieLine(const std::string &clientInput) const;
 

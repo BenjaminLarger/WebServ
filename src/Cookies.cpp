@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:51:42 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/12 16:41:41 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 18:42:20 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,45 @@ void	Webserv::parseCookies(ClientRequest req)
 	}
 	
 	std::cout << std::endl << RESET;
+}
+
+std::string generateSessionID()
+{
+    static const char alphanum[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+    std::string sessionID;
+    srand(time(0)); // Seed the random generator
+
+    for (int i = 0; i < 32; ++i)
+		{ // Example: 32-character session ID
+        sessionID += alphanum[rand() % (sizeof(alphanum) - 1)];
+    }
+
+    return (sessionID);
+}
+
+std::string	findSessionID(std::string request)
+{
+	std::istringstream stream(request);
+  std::string line;
+
+    while (std::getline(stream, line))
+		{
+        if (line.find("Cookie: ") == 0)
+        {
+					while (std::getline(stream, line, '='))
+					{
+						if (line.find("sessionID") != std::string::npos)
+						{
+							stream >> line;
+							line = trimLastChar(line, ';');
+							return (line);
+						}
+						
+					}
+				}
+    }
+    return "";
 }

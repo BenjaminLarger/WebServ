@@ -6,11 +6,12 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:49:50 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 13:18:46 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 19:09:01 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "core.hpp"
+#include "Cookies.hpp"
 
 std::string extractHtmlContentFromFile(const std::string &filePath)
 {
@@ -25,14 +26,27 @@ std::string extractHtmlContentFromFile(const std::string &filePath)
   return (buffer.str());
 }
 
-std::string composeOkHtmlResponse(std::string responseBody)
+std::string composeOkHtmlResponse(std::string responseBody, std::string request)
 {
-  std::ostringstream response;
+  std::ostringstream 	response;
+	std::string					sessionId;
+	size_t	findSessionId = request.find("sessionId");
+	if (findSessionId == std::string::npos)
+	{
+		std::cout << GREEN << "session ID not found in request => generating new one !\n" << RESET << std::endl;
+		sessionId = "Set-Cookie: sessionId=" + generateSessionID() + "; HttpOnly\r\n";
+	}
+	else
+	{
+		std::cout << RED << "Session ID not found\n" << RESET << std::endl;
+		sessionId = "Set-Cookie: sessionId=" + findSessionID(request) + "; HttpOnly\r\n";
+	}
+		
   response << "HTTP/1.1 200 OK\r\n"
          << "Content-Type: text/html\r\n"
          << "Content-Length: " << responseBody.size() << "\r\n"
          << "Cache-Control: no-cache\r\n"
-         << "Set-Cookie: sessionId=abc123; HttpOnly\r\n"//Testing cookies
+         << sessionId//Testing cookies
          << "Set-Cookie: theme=light\r\n"//Testing cookies
          << "Set-Cookie: rememberMe=yes\r\n"//Testing cookies
          << "\r\n"
