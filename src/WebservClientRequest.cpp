@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 15:32:17 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 20:35:28 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,7 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
 }
 
 void Webserv::handleClientRequest(
-    size_t i, const std::vector<ServerConfig> &serverConfigs)
+    size_t &i, const std::vector<ServerConfig> &serverConfigs)
 {
   //char buffer[100000];
   std::vector<char> buffer;
@@ -178,6 +178,7 @@ void Webserv::handleClientRequest(
   try
   {
     std::cerr << RED << "fds[i].fd: " << fds[i].fd << RESET << '\n';
+
     ssize_t bytesRead = recvAll(fds[i].fd, buffer);
     if (bytesRead < 0)
     {
@@ -196,13 +197,14 @@ void Webserv::handleClientRequest(
     else
     {
       ClientInfo &client = clients[i];
-      //std::vector<char> &clientInput += client.req.buffer;
+
       std::vector<char> clientInput(client.req.buffer.begin(),
                                     client.req.buffer.end());
 
       clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
       std::string clientStr(clientInput.begin(), clientInput.end());
       client.req.buffer = clientStr;
+
       if (hasBlankLineInput(client.req.buffer) == true)
       {
         parseClientRequest(client.req);
@@ -210,6 +212,7 @@ void Webserv::handleClientRequest(
         //Looks for the serverConfig that matches the Host value of the request
         client.client_serverConfig
             = findClientServerConfig(client, serverConfigs);
+
         std::cout << "Request received on port " << client.port
                   << ", client.socketFD " << client.socketFD
                   << ", root: " << client.client_serverConfig.serverRoot
@@ -221,21 +224,26 @@ void Webserv::handleClientRequest(
                                           client.client_serverConfig);
 
         displayClientRequestLocationData(client);
+
         if (isMethodAllowedAtLoc(client.req, client.client_serverConfig))
         {
           if (client.req.method == "GET")
-            GET method(*this, client, fds[i].fd, clientStr,
-                       client.client_serverConfig);
+            GET method(*this, client, client.client_serverConfig);
           else if (client.req.method == "POST")
             POST method(client, fds[i].fd, clientInput,
                         client.client_serverConfig);
           else if (client.req.method == "DELETE")
             DELETE method(client, fds[i].fd, clientStr,
                           client.client_serverConfig);
+          clientInput.clear();
+          clientStr.clear();
+          client.req.buffer.clear();
         }
         else
         {
           clientInput.clear();
+          clientStr.clear();
+          client.req.buffer.clear();
           throw HttpException(405, "Method is not allowed on that path");
         }
       }

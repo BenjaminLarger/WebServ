@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 19:25:17 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 19:59:11 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,6 @@ void Webserv::readScriptOutput(size_t &i)
   }
   else
   {
-    // Handle script completion or pipe closure
     closePipe(i);
     --i;
   }

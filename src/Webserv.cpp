@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 19:25:07 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 20:04:26 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ int Webserv::setNonBlocking(int fd)
 }
 
 // Close client connection and remove from pollfd and clients array, and remove any pending script pipes for that connection
-void Webserv::closeConnection(size_t i)
+void Webserv::closeConnection(size_t &i)
 {
   std::cout << "Connection closed: " << fds[i].fd << std::endl;
 
@@ -147,7 +147,7 @@ void Webserv::closeConnection(size_t i)
 }
 
 // Close pipe and remove from pollfd, clients and clientScriptMap array
-void Webserv::closePipe(size_t i)
+void Webserv::closePipe(size_t &i)
 {
   std::cout << "Pipe closed: " << fds[i].fd << std::endl;
 

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 19:00:20 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 20:02:16 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "Webserv.hpp"
 #include "core.hpp"
 
-void Webserv::handleClientResponse(size_t i)
+void Webserv::handleClientResponse(size_t &i)
 {
   try
   {

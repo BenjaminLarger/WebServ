@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/13 18:58:46 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 20:25:54 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,14 +63,13 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
         response = composeOkHtmlResponse(extractHtmlContentFromFile(path),
                                          req.buffer);
       }
-      // if file is php
+      // if file is a script in php or python
       else if (extension == "php" || extension == "py")
       {
         std::cout << RED << "file is a script in " << extension << RESET
                   << std::endl;
 
         webserv.executeScript(path, extension, clientFD);
-
         response = "";
       }
       // other files
@@ -94,8 +93,7 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
     else if (!it->second.index.empty())
     {
       path += "/" + it->second.index;
-      std::cout << RED << "!it->second.index.empty() path: " << path << RESET
-                << std::endl;
+      std::cout << RED << "file at: " << path << RESET << std::endl;
 
       response
           = composeOkHtmlResponse(extractHtmlContentFromFile(path), req.buffer);
@@ -135,32 +133,21 @@ void printASCIIstr(std::string &line)
   std::cout << std::endl;
 }
 
-GET::GET(Webserv &webserv, ClientInfo &client, int clientFD,
-         std::string &clientInput, const ServerConfig &serverConfig)
+GET::GET(Webserv &webserv, ClientInfo &client, const ServerConfig &serverConfig)
     : serverConfig(serverConfig)
 {
-
-  std::istringstream iss(clientInput);
-  std::string key;
-
-  client.req.buffer.clear();
-  clientInput.clear();
-
   try
   {
-    // Body: The actual content (e.g., HTML, JSON).
+    // Get headers + body
     client.response
         = getResponseAtLocation(webserv, client.req, client.socketFD);
-
-    // if (response != "wait for cgi script execution")
-    //   sendRGeneric(clientFD, response); //
   }
   catch (const HttpException &e)
   {
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
 
-    sendDefaultErrorPage(clientFD, e.getStatusCode(),
+    sendDefaultErrorPage(client.socketFD, e.getStatusCode(),
                          getReasonPhrase(e.getStatusCode()),
                          serverConfig.errorPages);
   }

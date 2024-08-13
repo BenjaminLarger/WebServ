@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:01 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 18:56:15 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 20:04:37 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "core.hpp"
 
 void Webserv::handleNewConnection(
-    size_t i, const std::vector<ServerConfig> &serverConfigs)
+    size_t &i, const std::vector<ServerConfig> &serverConfigs)
 {
   (void)serverConfigs;
   while (true)
