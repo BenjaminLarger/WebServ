@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ClientInfo.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 20:29:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 12:27:13 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/12 13:57:28 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "dependencies.hpp"
+#include "ServerConfig.hpp"
 
 struct ClientRequest
 {
@@ -40,7 +41,7 @@ public:
 
   int socketFD;       // Client socket file descriptor
   int port;           // Server port where client is connected
-  size_t serverIndex; // Index of the server in serverConfigs vector
+  ServerConfig client_serverConfig; // ServerConfig of the server where client is connected
 
   ClientRequest req;
 };

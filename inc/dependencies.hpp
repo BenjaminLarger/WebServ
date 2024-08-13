@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   dependencies.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/10 19:51:51 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/12 19:25:40 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,30 +16,32 @@
 #include <algorithm>
 #include <arpa/inet.h>
 #include <cctype>
-#include <ctime>
 #include <cerrno>
 #include <climits>
 #include <cmath>
 #include <csignal>
 #include <cstdio>
 #include <cstring>
+#include <ctime>
 #include <dirent.h>
 #include <fcntl.h>
 #include <fstream>
 #include <functional>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <map>
 #include <netinet/in.h>
 #include <ostream>
 #include <poll.h>
 #include <sstream>
 #include <stdexcept>
+#include <stdio.h>
 #include <string>
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <vector>
 
@@ -66,4 +68,3 @@
 
 // ---------------------MESSAGES
 #define DEFAULT_CONFIG_PATH "config/simple.conf"
-

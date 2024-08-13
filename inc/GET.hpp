@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 18:14:13 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 12:02:20 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,12 @@ private:
   const ServerConfig &serverConfig;
 
 public:
-  GET(ClientInfo &client, int clientFD, std::string &clientInput,
-      const ServerConfig &serverConfig);
+  GET(Webserv &webserv, ClientInfo &client, int clientFD,
+      std::string &clientInput, const ServerConfig &serverConfig);
   ~GET(void);
 
-  std::string getResponseAtLocation(ClientRequest &req);
+  std::string getResponseAtLocation(Webserv &webserv, ClientRequest &req,
+                                    int &clientFD);
 
   // Return vector of all file names in folder
   std::vector<std::string> listDirectoryContent(const std::string &path);

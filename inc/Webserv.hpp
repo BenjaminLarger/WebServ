@@ -6,16 +6,16 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 18:24:53 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 12:02:58 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "ClientInfo.hpp"
+#include "HttpExceptions.hpp"
 #include "ServerConfig.hpp"
 #include "dependencies.hpp"
-#include "HttpExceptions.hpp"
 
 // ************************************************************************** //
 //                               Class //
@@ -31,6 +31,10 @@ class Webserv
 private:
   std::vector<pollfd> fds;
   std::vector<ClientInfo> clients;
+
+  // map < pipe_fd, client_fd >, to keep track of which pipe belongs to which client when a cgi script is writing in a pipe
+  std::map< int, int > clientScriptMap;
+
   int contentLength;
 
   Webserv(void);
@@ -57,10 +61,14 @@ public:
 
   void closeConnection(size_t index);
 
-  void handleLocations(ClientRequest &req, const ServerConfig &serverConfig);
   void parseClientRequest(ClientRequest &req);
   void resolveRequestedPathFromLocations(ClientRequest &req,
                                          const ServerConfig &serverConfig);
+
+  void executeScript(std::string const &filePath, std::string const &scriptType,
+                     int &clientFD);
+
+  void handleClientResponse(size_t index);
 
   //SIGNAL
   static void sigInt(int code);

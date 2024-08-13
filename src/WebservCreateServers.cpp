@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 11:06:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 19:45:08 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/12 13:47:48 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,11 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
       pfd.events = POLLIN | POLLOUT; // Monitor both read and write events
       pfd.revents = 0;
       fds.push_back(pfd);
+      
+      // Add a dummy client info for the listening socket
+      ClientInfo ci;
+      ci.socketFD = fds[fd_pos].fd;
+      clients.push_back(ci);
       continue;
     }
 
@@ -112,7 +117,6 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
     // Add a dummy client info for the listening socket
     ClientInfo ci;
     ci.socketFD = serverFD;
-    ci.serverIndex = i; // Associate with the respective server
     ci.port = serverConfigs[i].getPort();
     clients.push_back(ci);
   }
