@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 15:10:36 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 15:32:17 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,14 +132,11 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
 
   while (true)
   {
-    std::cerr << RED << "recvAll 1" << RESET << '\n';
     bytesReceived = recv(sockfd, tempBuffer, BUFFER_SIZE - 1, 0);
     if (bytesReceived == -1)
     {
-      std::cerr << RED << "recvAll 2" << RESET << '\n';
       if (errno == EAGAIN || errno == EWOULDBLOCK)
       {
-        std::cerr << RED << "recvAll 3" << RESET << '\n';
         std::cout << "HERE!\n";
         // Resource temporarily unavailable, retry the recv call
         break;
@@ -149,13 +146,11 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
     }
     else if (bytesReceived == 0)
     {
-      std::cerr << RED << "recvAll 4" << RESET << '\n';
       // Connection closed
       break;
     }
     else
     {
-      std::cerr << RED << "recvAll 5" << RESET << '\n';
       tempBuffer[bytesReceived] = '\0';
       buffer.insert(buffer.end(), tempBuffer, tempBuffer + bytesReceived);
       totalBytesReceived += bytesReceived;
@@ -182,12 +177,10 @@ void Webserv::handleClientRequest(
 
   try
   {
-    std::cerr << RED << "handleClientRequest 1" << RESET << '\n';
     std::cerr << RED << "fds[i].fd: " << fds[i].fd << RESET << '\n';
     ssize_t bytesRead = recvAll(fds[i].fd, buffer);
     if (bytesRead < 0)
     {
-      std::cerr << RED << "handleClientRequest 2" << RESET << '\n';
       if (errno != EAGAIN && errno != EWOULDBLOCK)
       {
         closeConnection(i);
@@ -197,19 +190,15 @@ void Webserv::handleClientRequest(
     }
     else if (bytesRead == 0)
     {
-      std::cerr << RED << "handleClientRequest 3" << RESET << '\n';
       closeConnection(i);
       --i;
     }
     else
     {
-      std::cerr << RED << "handleClientRequest 4" << RESET << '\n';
       ClientInfo &client = clients[i];
       //std::vector<char> &clientInput += client.req.buffer;
-      std::cerr << RED << "handleClientRequest 5" << RESET << '\n';
       std::vector<char> clientInput(client.req.buffer.begin(),
                                     client.req.buffer.end());
-      std::cerr << RED << "handleClientRequest 6" << RESET << '\n';
 
       clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
       std::string clientStr(clientInput.begin(), clientInput.end());
