@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 14:15:41 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 15:04:27 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,9 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
                   << " event detected" << RESET << std::endl;
         try
         {
-          // handleClientResponse(i);
+          if (clients[i].response.size())
+            handleClientResponse(i);
+          // clean clients[i].response after send
         }
         catch (const HttpException &e)
         {
