@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 15:07:49 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 19:00:20 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,10 @@
 
 void Webserv::handleClientResponse(size_t i)
 {
-  (void)i;
   try
   {
+    sendRGeneric(clients[i].socketFD, clients[i].response);
+    clients[i].response.clear();
   }
   catch (const HttpException &e)
   {

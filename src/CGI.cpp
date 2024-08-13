@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 14:33:04 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 19:11:51 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void Webserv::executeScript(std::string const &filePath,
 
     pollfd pfd;
     pfd.fd = pipefd[0];
-    pfd.events = POLLIN;
+    pfd.events |= (POLLIN | POLLOUT);
     pfd.revents = 0;
 
     // Associate the pipe FD with the client connection

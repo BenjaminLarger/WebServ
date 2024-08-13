@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservNewConnection.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:01 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 18:50:27 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/13 18:56:15 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,15 +30,16 @@ void Webserv::handleNewConnection(
       else
       {
         // Error accepting new connection
-        throw HttpException(500, "Internal Server Error: Failed to accept new connection");
+        throw HttpException(
+            500, "Internal Server Error: Failed to accept new connection");
         break;
       }
     }
     if (setNonBlocking(newSocket) < 0)
     {
       close(newSocket);
-      throw HttpException(
-          500, "Internal Server Error: Data failed to be sent to the client (socket)");
+      throw HttpException(500, "Internal Server Error: Data failed to be sent "
+                               "to the client (socket)");
     }
     std::cout << "New connection accepted: " << newSocket
               << ", on port: " << clients[i].port << std::endl;
@@ -46,7 +47,7 @@ void Webserv::handleNewConnection(
     // Add the new socket to the pollfd vector
     pollfd pfd;
     pfd.fd = newSocket;
-    pfd.events = POLLIN;
+    pfd.events |= (POLLIN | POLLOUT);
     pfd.revents = 0;
     fds.push_back(pfd);
 

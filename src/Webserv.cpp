@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 15:04:27 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 19:12:47 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,17 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
                 buffer[bytesRead] = '\0';
 
                 int clientFD = clientScriptMap[fds[i].fd];
-                std::string response
-                    = composeOkHtmlResponse(buffer, clients[i].req.buffer);
-                sendRGeneric(clientFD, response);
+                // find index in clients where clientFD == clients[i].socketFD
+                size_t j = 0;
+                while (j < clients.size())
+                {
+                  if (clients[j].socketFD == clientFD)
+                    break;
+                  ++j;
+                }
+                clients[j].response
+                    = composeOkHtmlResponse(buffer, clients[j].req.buffer);
+                // sendRGeneric(clientFD, response);
 
                 closePipe(i);
                 --i;
@@ -92,10 +100,10 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
           }
         }
       }
-      else if (fds[i].revents & POLLOUT) // when ?
+      else if (fds[i].revents & POLLOUT)
       {
-        std::cout << CYAN << "New " << RED << POLLOUT << CYAN
-                  << " event detected" << RESET << std::endl;
+        // std::cout << CYAN << "New " << RED << POLLOUT << CYAN
+        //           << " event detected" << RESET << std::endl;
         try
         {
           if (clients[i].response.size())

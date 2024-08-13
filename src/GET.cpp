@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/13 15:31:20 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 18:58:46 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
 
         webserv.executeScript(path, extension, clientFD);
 
-        response = "wait for cgi script execution";
+        response = "";
       }
       // other files
       else if (extension.size())
@@ -149,11 +149,11 @@ GET::GET(Webserv &webserv, ClientInfo &client, int clientFD,
   try
   {
     // Body: The actual content (e.g., HTML, JSON).
-    std::string response
+    client.response
         = getResponseAtLocation(webserv, client.req, client.socketFD);
 
-    if (response != "wait for cgi script execution")
-      sendRGeneric(clientFD, response); //
+    // if (response != "wait for cgi script execution")
+    //   sendRGeneric(clientFD, response); //
   }
   catch (const HttpException &e)
   {
