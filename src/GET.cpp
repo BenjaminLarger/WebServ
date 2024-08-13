@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/13 12:03:47 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 15:01:38 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
       if (extension == "html")
       {
         std::cout << RED << "file is html" << RESET << std::endl;
-        response = composeOkHtmlResponse(extractHtmlContentFromFile(path),  req.buffer);
+        response = composeOkHtmlResponse(extractHtmlContentFromFile(path),
+                                         req.buffer);
       }
       // if file is php
       else if (extension == "php" || extension == "py")
@@ -100,7 +101,8 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
       std::cout << RED << "!it->second.index.empty() path: " << path << RESET
                 << std::endl;
 
-      response = composeOkHtmlResponse(extractHtmlContentFromFile(path), req.buffer);
+      response
+          = composeOkHtmlResponse(extractHtmlContentFromFile(path), req.buffer);
       return (response);
     }
     // If location doesn't have a file, is a folder, and autoindex on
@@ -112,8 +114,8 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
       std::vector<std::string> contents = listDirectoryContent(path);
 
       // response = composeOkHtmlResponse(createFileListHtml(path));
-      response
-          = composeOkHtmlResponse(generateDirectoryListing(path, contents), req.buffer);
+      response = composeOkHtmlResponse(generateDirectoryListing(path, contents),
+                                       req.buffer);
       return (response);
     }
     else
@@ -159,7 +161,7 @@ GET::GET(Webserv &webserv, ClientInfo &client, int clientFD,
 
     std::cerr << RED << "GET 4" << RESET << '\n';
     if (response != "wait for cgi script execution")
-      sendRGeneric(clientFD, response);
+      sendRGeneric(clientFD, response); //
     std::cerr << RED << "GET 5" << RESET << '\n';
     // std::cout << "response sent." << std::endl;
   }

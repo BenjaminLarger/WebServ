@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ClientInfo.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 20:29:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 13:57:28 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/13 15:00:20 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "dependencies.hpp"
 #include "ServerConfig.hpp"
+#include "dependencies.hpp"
 
 struct ClientRequest
 {
@@ -39,9 +39,11 @@ public:
   ClientInfo(void);
   ~ClientInfo(void);
 
-  int socketFD;       // Client socket file descriptor
-  int port;           // Server port where client is connected
-  ServerConfig client_serverConfig; // ServerConfig of the server where client is connected
+  int socketFD; // Client socket file descriptor
+  int port;     // Server port where client is connected
+  ServerConfig
+      client_serverConfig; // ServerConfig of the server where client is connected
 
   ClientRequest req;
+  std::string response;
 };

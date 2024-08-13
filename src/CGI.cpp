@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 13:12:30 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 14:33:04 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,11 @@ void Webserv::executeScript(std::string const &filePath,
   {
     close(pipefd[1]);
 
+    setNonBlocking(pipefd[0]);
+
+    // Store the pid to manage multiple processes
+    pidMap[pipefd[0]] = pid;
+
     pollfd pfd;
     pfd.fd = pipefd[0];
     pfd.events = POLLIN;
@@ -91,7 +96,5 @@ void Webserv::executeScript(std::string const &filePath,
     ci.socketFD = pipefd[0];
     ci.port = -1;
     clients.push_back(ci);
-
-    // waitpid ??
   }
 }

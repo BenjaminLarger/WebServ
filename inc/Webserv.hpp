@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 13:45:45 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 14:43:53 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@ private:
   // map < pipe_fd, client_fd >, to keep track of which pipe belongs to which client when a cgi script is writing in a pipe
   std::map< int, int > clientScriptMap;
 
+  // map < pipe_fd, pid >, to keep track of which pipe belongs to which pid when a cgi script is being executed
+  std::map< int, pid_t > pidMap;
+
   int contentLength;
 
   Webserv(void);
@@ -42,9 +45,6 @@ public:
   ~Webserv(void);
 
   int setNonBlocking(int fd);
-
-  // void processClientInput(std::string clientInput, int serverFD, int clientFD,
-  //                         std::string &staticBuffer);
 
   ssize_t recvAll(int sockfd, std::vector<char> &buffer);
 
