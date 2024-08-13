@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 16:01:58 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 17:49:56 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void Webserv::handleClientResponse(size_t i)
   {
 		std::cout << GREEN << "Sending request to fd " << clients[i].socketFD << RESET << std::endl;
 		sendRGeneric(clients[i].socketFD, clients[i].response);
+		clients[i].response.clear();
   }
   catch (const HttpException &e)
   {
