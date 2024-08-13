@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/13 12:33:58 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 12:50:19 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,7 +234,7 @@ bool hasBlankLineInput(std::string &clientInput)
   size_t lastNewlinePos = clientInput.rfind('\n');
 
   // If there is no newline character, return false
-  if (lastNewlinePos == std::string::npos)
+  if (lastNewlinePos == std::string::npos || clientInput.size() <= 3)
   {
     std::cout << YELLOW << "No newline character found." << RESET << std::endl;
     return (false);
@@ -248,7 +248,7 @@ bool hasBlankLineInput(std::string &clientInput)
     return (false);
   }
 
-  if (clientInput[lastNewlinePos - 2] == '\r'
+  if (lastNewlinePos > 2 && clientInput[lastNewlinePos - 2] == '\r'
       && clientInput[lastNewlinePos - 1] == '\n')
   {
     std::cout << YELLOW
@@ -257,9 +257,6 @@ bool hasBlankLineInput(std::string &clientInput)
               << RESET << std::endl;
     return true;
   }
-  std::cout << clientInput[clientInput.size() - 1] << "; "
-            << clientInput[clientInput.size() - 2] << "; "
-            << clientInput[clientInput.size() - 3] << std::endl;
   if (clientInput[clientInput.size() - 1] == '\n'
       && clientInput[clientInput.size() - 2] == '\r'
       && clientInput[clientInput.size() - 3] == '\n')
