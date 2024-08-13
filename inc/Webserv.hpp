@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 12:02:58 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 13:45:45 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,8 @@
 //                               Class //
 // ************************************************************************** //
 
-
-struct	Cookies
+struct Cookies
 {
-
 };
 class Webserv
 {
@@ -59,7 +57,11 @@ public:
   void handleClientRequest(size_t index,
                            const std::vector<ServerConfig> &serverConfigs);
 
+  // Close client connection and remove from pollfd and clients array, and remove any pending script pipes for that connection
   void closeConnection(size_t index);
+
+  // Close pipe and remove from pollfd, clients and clientScriptMap array
+  void closePipe(size_t index);
 
   void parseClientRequest(ClientRequest &req);
   void resolveRequestedPathFromLocations(ClientRequest &req,
@@ -81,10 +83,9 @@ public:
   void restoreReadCapability(size_t clientIndex, std::string &buffer);
   void restoreWriteCapability(size_t clientIndex, std::string &buffer);
 
-	//COOKIES
-	std::map<std::string, Cookies> sessionIdMap;
-	std::vector<std::string> sessionID;
-	void	parseCookies(ClientRequest req);
-	std::string getCookieLine(const std::string &clientInput) const;
-
+  //COOKIES
+  std::map<std::string, Cookies> sessionIdMap;
+  std::vector<std::string> sessionID;
+  void parseCookies(ClientRequest req);
+  std::string getCookieLine(const std::string &clientInput) const;
 };
