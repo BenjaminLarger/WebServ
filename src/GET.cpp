@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/13 15:01:38 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 15:31:20 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,12 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
   std::map<std::string, LocationConfig> locations = serverConfig.locations;
   std::map<std::string, LocationConfig>::const_iterator it;
 
-  //delete this and replace it by req...
   findURIstartInLocations(req.URI, locations, it);
 
   if (it != locations.end())
   {
-    std::cout << RED << "req.pathFolder: " << req.pathFolder << RESET
-              << std::endl;
+    // std::cout << RED << "req.pathFolder: " << req.pathFolder << RESET
+    //           << std::endl;
 
     std::string path = req.pathOnServer;
 
@@ -94,9 +93,6 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
     // Check if the location has a file to serve
     else if (!it->second.index.empty())
     {
-      std::cout << RED << "it->second.serverPath: " << it->second.serverPath
-                << RESET << std::endl;
-
       path += "/" + it->second.index;
       std::cout << RED << "!it->second.index.empty() path: " << path << RESET
                 << std::endl;
@@ -147,11 +143,8 @@ GET::GET(Webserv &webserv, ClientInfo &client, int clientFD,
   std::istringstream iss(clientInput);
   std::string key;
 
-  std::cerr << RED << "GET 1" << RESET << '\n';
   client.req.buffer.clear();
-  std::cerr << RED << "GET 2" << RESET << '\n';
   clientInput.clear();
-  std::cerr << RED << "GET 3" << RESET << '\n';
 
   try
   {
@@ -159,11 +152,8 @@ GET::GET(Webserv &webserv, ClientInfo &client, int clientFD,
     std::string response
         = getResponseAtLocation(webserv, client.req, client.socketFD);
 
-    std::cerr << RED << "GET 4" << RESET << '\n';
     if (response != "wait for cgi script execution")
       sendRGeneric(clientFD, response); //
-    std::cerr << RED << "GET 5" << RESET << '\n';
-    // std::cout << "response sent." << std::endl;
   }
   catch (const HttpException &e)
   {
