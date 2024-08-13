@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:35 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/13 15:35:06 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 15:44:05 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ DELETE::DELETE(ClientInfo &client, int clientFD, std::string &clientInput,
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
 
-    sendDefaultErrorPage(clientFD, e.getStatusCode(),
+    client.response = sendDefaultErrorPage(clientFD, e.getStatusCode(),
                          getReasonPhrase(e.getStatusCode()),
                          serverConfig.errorPages);
   }

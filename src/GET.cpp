@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/13 15:40:17 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 16:20:38 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,14 +126,6 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
   }
 }
 
-void printASCIIstr(std::string &line)
-{
-  for (int i = 0; line[i]; i++)
-  {
-    std::cout << (int)line[i] << ", ";
-  }
-  std::cout << std::endl;
-}
 
 GET::GET(Webserv &webserv, ClientInfo &client, int clientFD,
          std::string &clientInput, const ServerConfig &serverConfig)
@@ -151,7 +143,7 @@ GET::GET(Webserv &webserv, ClientInfo &client, int clientFD,
     // Body: The actual content (e.g., HTML, JSON).
    client.response
         = getResponseAtLocation(webserv, client.req, client.socketFD);
-
+		std::cout << BLUE << "client " << client.socketFD << client.response << RESET << std::endl;
     std::cerr << RED << "GET 4" << RESET << '\n';
     /* if (response != "wait for cgi script execution")
       sendRGeneric(clientFD, response);  *///
@@ -165,7 +157,7 @@ GET::GET(Webserv &webserv, ClientInfo &client, int clientFD,
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
 
-    sendDefaultErrorPage(clientFD, e.getStatusCode(),
+    client.response = sendDefaultErrorPage(clientFD, e.getStatusCode(),
                          getReasonPhrase(e.getStatusCode()),
                          serverConfig.errorPages);
   }

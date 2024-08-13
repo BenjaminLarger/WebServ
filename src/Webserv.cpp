@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 15:04:27 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 16:50:32 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,28 +84,31 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
                 --i;
               }
             }
-          }
+					}
+						catch (const HttpException &e)
+						{
+							std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
+												<< RESET << std::endl;
+						}
+					}
+					if (fds[i].revents & POLLOUT) // when ?
+					{
+						std::cout << CYAN << "New " << RED << POLLOUT << CYAN
+											<< " event detected" << RESET << std::endl;
+						try
+						{
+							std::cout << RED << "client " << clients[i].socketFD << clients[i].response << RESET << std::endl;
+							if (clients[i].response.size())
+								handleClientResponse(i);
+							else
+								std::cout << RED << "Client " << clients[i].socketFD << " has no response" << RESET << std::endl;
+							// clean clients[i].response after send
+						}
           catch (const HttpException &e)
           {
             std::cerr << RED << "Error: " << e.getStatusCode() << " "
                       << e.what() << RESET << std::endl;
           }
-        }
-      }
-      else if (fds[i].revents & POLLOUT) // when ?
-      {
-        std::cout << CYAN << "New " << RED << POLLOUT << CYAN
-                  << " event detected" << RESET << std::endl;
-        try
-        {
-          if (clients[i].response.size())
-            handleClientResponse(i);
-          // clean clients[i].response after send
-        }
-        catch (const HttpException &e)
-        {
-          std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
-                    << RESET << std::endl;
         }
       }
     }

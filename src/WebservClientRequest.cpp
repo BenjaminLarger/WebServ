@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 15:32:17 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 16:47:58 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,7 @@ void Webserv::handleClientRequest(
   //char buffer[100000];
   std::vector<char> buffer;
 
+	ClientInfo &client = clients[i];
   try
   {
     std::cerr << RED << "fds[i].fd: " << fds[i].fd << RESET << '\n';
@@ -195,7 +196,7 @@ void Webserv::handleClientRequest(
     }
     else
     {
-      ClientInfo &client = clients[i];
+      //ClientInfo &client = clients[i];
       //std::vector<char> &clientInput += client.req.buffer;
       std::vector<char> clientInput(client.req.buffer.begin(),
                                     client.req.buffer.end());
@@ -246,8 +247,9 @@ void Webserv::handleClientRequest(
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
     std::cout << "Sending default error page\n";
-    sendDefaultErrorPage(fds[i].fd, e.getStatusCode(),
+    client.response = sendDefaultErrorPage(fds[i].fd, e.getStatusCode(),
                          getReasonPhrase(e.getStatusCode()),
                          clients[i].client_serverConfig.errorPages);
+		std::cout << ORANGE << "client " << clients[i].socketFD << " | response = " << client.response << RESET << std::endl;
   }
 }

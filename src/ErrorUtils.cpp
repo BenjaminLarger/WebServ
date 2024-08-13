@@ -6,16 +6,17 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:54:52 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 15:38:42 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 17:00:56 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ErrorUtils.hpp"
 #include "HttpExceptions.hpp"
 
-void sendErrorResponse(int clientSocket, int statusCode,
+std::string sendErrorResponse(int clientSocket, int statusCode,
                        const std::string &statusMessage, std::string errorBody)
 {
+	(void)clientSocket;
   std::ostringstream response;
   response << "HTTP/1.1 " << statusCode << " " << statusMessage + "\r\n"
            << "Content-Type: text/html\r\n"
@@ -23,7 +24,7 @@ void sendErrorResponse(int clientSocket, int statusCode,
            << "Connection: close\r\n\r\n"
            << errorBody;
 
-  std::string responseStr = response.str();
+	return (response.str());
   /* if (sendall(clientSocket, responseStr.c_str(), responseStr.size()) == -1)
   {
     throw HttpException(
@@ -44,6 +45,6 @@ std::string sendDefaultErrorPage(int clientSocket, int statusCode,
   else // 
     response = "<html><body><h1>" + toString(statusCode) + " " + errorMessage
                + "</h1></body></html>";
-
-  sendErrorResponse(clientSocket, statusCode, errorMessage, response);
+	(void)clientSocket;
+	return (sendErrorResponse(clientSocket, statusCode, errorMessage, response));	
 }

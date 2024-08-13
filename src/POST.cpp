@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/13 15:33:00 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 15:52:35 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,8 @@ POST::POST(ClientInfo &client, int clientFD,
 		}
   }
   else
-    throw HttpException(415, "Unsupported Media Type.");
+    //
+		throw HttpException(415, "Unsupported Media Type.");
   //sendRGeneric(clientFD, client.response);
 }
 

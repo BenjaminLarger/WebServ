@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientResponse.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 15:07:49 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 16:01:58 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ void Webserv::handleClientResponse(size_t i)
   (void)i;
   try
   {
+		std::cout << GREEN << "Sending request to fd " << clients[i].socketFD << RESET << std::endl;
+		sendRGeneric(clients[i].socketFD, clients[i].response);
   }
   catch (const HttpException &e)
   {

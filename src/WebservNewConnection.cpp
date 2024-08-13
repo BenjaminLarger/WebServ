@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservNewConnection.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:01 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 18:50:27 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/13 16:43:43 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void Webserv::handleNewConnection(
     // Add the new socket to the pollfd vector
     pollfd pfd;
     pfd.fd = newSocket;
-    pfd.events = POLLIN;
+    pfd.events |= (POLLIN | POLLOUT);
     pfd.revents = 0;
     fds.push_back(pfd);
 
