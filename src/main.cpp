@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 09:46:47 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/10 20:21:27 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/13 13:10:23 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 #include "core.hpp"
+#include "utils.hpp"
 
 int main(int argc, const char **argv)
 {

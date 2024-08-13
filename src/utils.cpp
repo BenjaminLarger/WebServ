@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/13 12:50:19 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/13 13:18:04 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,12 +134,9 @@ bool lineIsEmpty(std::string line)
 {
   for (int i = 0; line[i]; i++)
   {
-    //std::cout << (int)line[i] << ", ";
     if ((line[i] < 9 || line[i] > 13) && line[i] != 32)
       return (false);
   }
-  //std::cout << std::endl;
-  //std::cout << ORANGE << "Line is empty!\n" << RESET;
   return (true);
 }
 
@@ -248,8 +245,9 @@ bool hasBlankLineInput(std::string &clientInput)
     return (false);
   }
 
-  if (lastNewlinePos > 2 && clientInput[lastNewlinePos - 2] == '\r'
-      && clientInput[lastNewlinePos - 1] == '\n')
+	std::cout << "clientInput[lastNewlinePos - 2] " << (int)clientInput[lastNewlinePos - 2] << "clientInput[lastNewlinePos - 1] = " << (int)clientInput[lastNewlinePos - 1] << RESET << std::endl;
+  if (lastNewlinePos > 2 && ((clientInput[lastNewlinePos - 2] == '\r'
+      && clientInput[lastNewlinePos - 1] == '\n') || (clientInput[lastNewlinePos - 2] == '\n' && clientInput[lastNewlinePos - 1] == '\r')))
   {
     std::cout << YELLOW
               << "The last newline character is preceded by another newline "
