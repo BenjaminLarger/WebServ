@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 19:59:11 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/14 13:35:47 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,29 +101,42 @@ void Webserv::executeScript(std::string const &filePath,
 
 void Webserv::readScriptOutput(size_t &i)
 {
-  char buffer[1024];
-  ssize_t bytesRead = read(fds[i].fd, buffer, sizeof(buffer) - 1);
-  if (bytesRead > 0)
+  try
   {
-    buffer[bytesRead] = '\0';
-    int clientFD = clientScriptMap[fds[i].fd];
-
-    size_t j = 0;
-    while (j < clients.size())
+    char buffer[1024];
+    ssize_t bytesRead = read(fds[i].fd, buffer, sizeof(buffer) - 1);
+    if (bytesRead > 0)
     {
-      if (clients[j].socketFD == clientFD)
-        break;
-      ++j;
+      buffer[bytesRead] = '\0';
+      int clientFD = clientScriptMap[fds[i].fd];
+
+      size_t j = 0;
+      while (j < clients.size())
+      {
+        if (clients[j].socketFD == clientFD)
+          break;
+        ++j;
+      }
+
+      clients[j].response
+          = composeOkHtmlResponse(buffer, clients[j].req.buffer);
+
+      closePipe(i);
+      --i;
     }
-
-    clients[j].response = composeOkHtmlResponse(buffer, clients[j].req.buffer);
-
-    closePipe(i);
-    --i;
+    else
+    {
+      closePipe(i);
+      --i;
+    }
   }
-  else
+  catch (const HttpException &e)
   {
-    closePipe(i);
-    --i;
+    std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
+              << RESET << '\n';
+
+    clients[i].response = composeErrorHtmlPage(
+        e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
+        clients[i].client_serverConfig.errorPages);
   }
 }

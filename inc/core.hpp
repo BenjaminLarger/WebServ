@@ -6,12 +6,13 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:52:13 by demre             #+#    #+#             */
-/*   Updated: 2024/08/14 13:02:59 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/14 13:37:04 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+#include "ErrorUtils.hpp"
 #include "HttpExceptions.hpp"
 #include "dependencies.hpp"
 #include "utils.hpp"
@@ -32,7 +33,7 @@ std::string extractHtmlContentFromFile(const std::string &filePath);
 
 // Returns a 200 OK header with an HTML response in the given body
 std::string composeOkHtmlResponse(std::string responseBody,
-                                  std::string request);
+                                  std::string reqBuffer);
 
 // Returns a redirection header response (Location + Content-Length: 0)
 std::string createRedirectResponse(const int &code,

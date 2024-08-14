@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:49:50 by demre             #+#    #+#             */
-/*   Updated: 2024/08/14 13:02:25 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/14 13:24:48 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,13 @@ std::string extractHtmlContentFromFile(const std::string &filePath)
   return (buffer.str());
 }
 
-std::string composeOkHtmlResponse(std::string responseBody, std::string request)
+std::string composeOkHtmlResponse(std::string responseBody,
+                                  std::string reqBuffer)
 {
   std::ostringstream response;
+
   std::string sessionId;
-  size_t findSessionId = request.find("sessionId");
+  size_t findSessionId = reqBuffer.find("sessionId");
   if (findSessionId == std::string::npos)
   {
     std::cout << GREEN
@@ -42,8 +44,8 @@ std::string composeOkHtmlResponse(std::string responseBody, std::string request)
   else
   {
     std::cout << RED << "Session ID not found\n" << RESET << std::endl;
-    sessionId
-        = "Set-Cookie: sessionId=" + findSessionID(request) + "; HttpOnly\r\n";
+    sessionId = "Set-Cookie: sessionId=" + findSessionID(reqBuffer)
+                + "; HttpOnly\r\n";
   }
 
   response << "HTTP/1.1 200 OK\r\n"
