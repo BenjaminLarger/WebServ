@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:59 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 21:56:45 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/14 12:21:41 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,6 @@
 //                        const std::string &statusMessage, std::string errorBody);
 
 // Finds and sends a default error page to the client
-std::string sendDefaultErrorPage(int const &statusCode,
+std::string composeErrorHtmlPage(int const &statusCode,
                                  std::string const &errorMessage,
                                  std::map<int, std::string> errorPages);

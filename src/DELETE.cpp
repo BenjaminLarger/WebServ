@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:35 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/13 21:53:02 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/14 12:21:43 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ DELETE::DELETE(ClientInfo &client, std::string &clientInput,
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
 
-    client.response = sendDefaultErrorPage(e.getStatusCode(),
+    client.response = composeErrorHtmlPage(e.getStatusCode(),
                                            getReasonPhrase(e.getStatusCode()),
                                            serverConfig.errorPages);
   }

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 21:54:09 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/14 12:21:48 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,8 +253,8 @@ void Webserv::handleClientRequest(
   {
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
-    std::cout << "Sending default error page\n";
-    clients[i].response = sendDefaultErrorPage(
+
+    clients[i].response = composeErrorHtmlPage(
         e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
         clients[i].client_serverConfig.errorPages);
   }
