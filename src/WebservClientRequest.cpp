@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/14 12:21:48 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/14 13:00:11 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,9 @@ const ServerConfig &findClientServerConfig(
     ClientInfo &client, const std::vector<ServerConfig> &serverConfigs)
 {
   std::string serverName;
-  std::string reqHost = client.req.fields["Host"];
+  std::string reqHost = !client.req.fields["Host"].empty()
+                            ? client.req.fields["Host"]
+                            : client.req.fields["host"];
 
   for (size_t i = 0; i < serverConfigs.size(); i++)
   {
@@ -209,16 +211,16 @@ void Webserv::handleClientRequest(
       {
         parseClientRequest(client.req);
 
-        //Looks for the serverConfig that matches the Host value of the request
-        client.client_serverConfig
-            = findClientServerConfig(client, serverConfigs);
-
         std::cout << "Request received on port " << client.port
                   << ", client.socketFD " << client.socketFD
                   << ", root: " << client.client_serverConfig.serverRoot
                   << std::endl;
 
         displayParsedHeaderRequest(client);
+
+        //Looks for the serverConfig that matches the Host value of the request
+        client.client_serverConfig
+            = findClientServerConfig(client, serverConfigs);
 
         resolveRequestedPathFromLocations(client.req,
                                           client.client_serverConfig);
@@ -233,7 +235,7 @@ void Webserv::handleClientRequest(
             POST method(client, fds[i].fd, clientInput,
                         client.client_serverConfig);
           else if (client.req.method == "DELETE")
-            DELETE method(client, clientStr, client.client_serverConfig);
+            DELETE method(client, client.client_serverConfig);
 
           clientInput.clear();
           clientStr.clear();

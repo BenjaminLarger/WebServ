@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:52:13 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 18:17:38 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/14 13:02:59 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ void sendRGeneric(int clientFD, std::string responseStr);
 std::string extractHtmlContentFromFile(const std::string &filePath);
 
 // Returns a 200 OK header with an HTML response in the given body
-std::string composeOkHtmlResponse(std::string responseBody, std::string request);
+std::string composeOkHtmlResponse(std::string responseBody,
+                                  std::string request);
 
 // Returns a redirection header response (Location + Content-Length: 0)
 std::string createRedirectResponse(const int &code,
@@ -50,8 +51,8 @@ std::vector<char> readFile(const std::string &filename);
 std::string composeFileResponse(const std::vector<char> &fileContent,
                                 std::string filepath);
 
-// Retruns a 204 No content response
-std::string createDeleteOkResponse();
+// Returns a 204 No content response
+std::string composeDeleteOkHtmlResponse();
 
 // Returns the media type (Content-Type) based on the file extension
 std::string getMediaType(const std::string &filename);

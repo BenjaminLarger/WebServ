@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/14 12:21:45 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/14 13:09:56 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,15 +122,6 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
   {
     throw HttpException(404, "Not Found");
   }
-}
-
-void printASCIIstr(std::string &line)
-{
-  for (int i = 0; line[i]; i++)
-  {
-    std::cout << (int)line[i] << ", ";
-  }
-  std::cout << std::endl;
 }
 
 GET::GET(Webserv &webserv, ClientInfo &client, const ServerConfig &serverConfig)
