@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/14 13:35:47 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/15 20:55:15 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,12 +83,13 @@ void Webserv::executeScript(std::string const &filePath,
 
     pollfd pfd;
     pfd.fd = pipefd[0];
-    pfd.events |= (POLLIN | POLLOUT);
+    pfd.events = (POLLIN | POLLHUP);
     pfd.revents = 0;
 
     // Associate the pipe FD with the client connection
     clientScriptMap[pipefd[0]] = clientFD;
-
+    // std::cout << GREEN << "Adding to clientScriptMap " << RESET << pipefd[0]
+    //           << " " << clientFD << std::endl;
     fds.push_back(pfd);
 
     // Add a dummy client info for the listening socket
@@ -99,33 +100,85 @@ void Webserv::executeScript(std::string const &filePath,
   }
 }
 
-void Webserv::readScriptOutput(size_t &i)
+std::string Webserv::generateCgiOutputHtmlPage(const std::string &output)
+{
+  std::ostringstream htmlStream;
+
+  htmlStream << "<html>\n"
+             << "<head><title>CGI Script Output</title></head>\n"
+             << "<body>\n"
+             << "<h1>CGI script correctly executed</h1>\n"
+             << "<p>Content length is " << output.size() << "</p>\n"
+             << "<p>CGI output: " << output << "</p>\n"
+             << "</body>\n"
+             << "</html>";
+
+  return (htmlStream.str());
+}
+
+size_t Webserv::findClientIndexFromPipeFD(int pipeFD)
+{
+  int clientFD = clientScriptMap[pipeFD];
+
+  size_t j = 0;
+  while (j < clients.size())
+  {
+    if (clients[j].socketFD == clientFD)
+      break;
+    ++j;
+  }
+
+  return (j);
+}
+
+size_t Webserv::findClientIndexFromClientFD(int clientFD)
+{
+  size_t j = 0;
+  while (j < clients.size())
+  {
+    if (clients[j].socketFD == clientFD)
+      break;
+    ++j;
+  }
+
+  return (j);
+}
+
+void Webserv::handleScriptOutput(size_t &i)
 {
   try
   {
-    char buffer[1024];
+    size_t j = findClientIndexFromPipeFD(fds[i].fd);
+    int clientFD = clients[j].socketFD;
+
+    char buffer[10];
     ssize_t bytesRead = read(fds[i].fd, buffer, sizeof(buffer) - 1);
+    std::cout << "A bytesRead: " << bytesRead << std::endl;
     if (bytesRead > 0)
     {
       buffer[bytesRead] = '\0';
-      int clientFD = clientScriptMap[fds[i].fd];
 
-      size_t j = 0;
-      while (j < clients.size())
-      {
-        if (clients[j].socketFD == clientFD)
-          break;
-        ++j;
-      }
+      clients[j].responseBuffer += buffer;
 
-      clients[j].response
-          = composeOkHtmlResponse(buffer, clients[j].req.buffer);
-
+      std::cout << "(bytesRead: " << bytesRead << ". Read from pipe: '"
+                << buffer << "'" << std::endl;
+    }
+    else if (bytesRead < 0)
+    {
       closePipe(i);
       --i;
+      j = findClientIndexFromClientFD(clientFD);
+      closeConnection(j);
+      throw HttpException(500, "Error reading from pipe");
     }
-    else
+    else if (bytesRead == 0)
     {
+      std::cout << "(bytesRead == 0)" << std::endl;
+
+      clients[j].response = composeOkHtmlResponse(
+          generateCgiOutputHtmlPage(clients[j].responseBuffer),
+          clients[j].req.buffer);
+      clients[j].responseBuffer.clear();
       closePipe(i);
       --i;
     }

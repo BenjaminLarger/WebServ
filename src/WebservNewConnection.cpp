@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:01 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 20:04:37 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/15 20:55:56 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void Webserv::handleNewConnection(
     // Add the new socket to the pollfd vector
     pollfd pfd;
     pfd.fd = newSocket;
-    pfd.events |= (POLLIN | POLLOUT);
+    pfd.events = (POLLIN | POLLOUT);
     pfd.revents = 0;
     fds.push_back(pfd);
 
