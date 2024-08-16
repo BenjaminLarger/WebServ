@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/15 20:26:48 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 09:18:13 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,10 +238,15 @@ void Webserv::handleClientRequest(
             DELETE method(client, client.client_serverConfig);
 
           std::cout << RED << "Clearing request buffers" << RESET << std::endl;
-          clientInput.clear();
-          clientStr.clear();
-          client.req.buffer.clear();
-          buffer.clear();
+          clientInput.erase(clientInput.begin(), clientInput.end());
+          clientStr.erase(clientStr.begin(), clientStr.end());
+          client.req.buffer.erase(client.req.buffer.begin(),
+                                  client.req.buffer.end());
+          buffer.erase(buffer.begin(), buffer.end());
+          // clientInput.clear();
+          // clientStr.clear();
+          // client.req.buffer.clear();
+          // buffer.clear();
         }
         else
         {

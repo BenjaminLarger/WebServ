@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/15 20:43:06 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 08:56:05 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,4 +162,32 @@ void Webserv::closePipe(size_t &i)
 
   std::cout << "size() fds: " << fds.size() << ", clients: " << clients.size()
             << ", clientScriptMap: " << clientScriptMap.size() << std::endl;
+}
+
+size_t Webserv::findClientIndexFromPipeFD(int pipeFD)
+{
+  int clientFD = clientScriptMap[pipeFD];
+
+  size_t j = 0;
+  while (j < clients.size())
+  {
+    if (clients[j].socketFD == clientFD)
+      break;
+    j++;
+  }
+
+  return (j);
+}
+
+size_t Webserv::findClientIndexFromClientFD(int clientFD)
+{
+  size_t j = 0;
+  while (j < clients.size())
+  {
+    if (clients[j].socketFD == clientFD)
+      break;
+    j++;
+  }
+
+  return (j);
 }
