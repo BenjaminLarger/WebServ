@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 20:29:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 10:17:21 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 15:30:55 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,10 @@ struct ClientRequest
 {
   std::string buffer; // Appended whole request sent by client
 
-  // HTTP request line
+  // HTTP request line, ex: GET /new/new.png?query=string HTTP/1.1
   std::string method;      // GET
-  std::string URI;         // /new/new.png           /new/test
+  std::string URIpath;     // /new/new.png           /new/test
+  std::string queryString; // query=string
   std::string HTTPversion; // HTTP/1.1
 
   // Every other header field

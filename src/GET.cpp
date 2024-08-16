@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/16 14:18:10 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 15:52:00 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@
 std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
                                        int &clientFD)
 {
-  std::string URI = req.URI;
+  std::string URI = req.URIpath;
   std::string response;
   std::map<std::string, LocationConfig> locations = serverConfig.locations;
   std::map<std::string, LocationConfig>::const_iterator it;
 
-  findURIstartInLocations(req.URI, locations, it);
+  findURIstartInLocations(req.URIpath, locations, it);
 
   if (it != locations.end())
   {
@@ -69,7 +69,7 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
         std::cout << RED << "file is a script in " << extension << RESET
                   << std::endl;
 
-        webserv.executeScript(path, extension, clientFD);
+        webserv.executeScript(path, extension, req.queryString, clientFD);
         response = "";
       }
       // other files

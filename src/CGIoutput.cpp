@@ -6,14 +6,15 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 15:20:20 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 16:21:53 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 #include "core.hpp"
 
-std::string Webserv::generateCgiOutputHtmlPage(const std::string &output)
+std::string Webserv::generateCgiOutputHtmlPage(std::string const &output,
+                                               std::string const &URIpath)
 {
   std::ostringstream htmlStream;
 
@@ -21,6 +22,7 @@ std::string Webserv::generateCgiOutputHtmlPage(const std::string &output)
              << "<head><title>CGI Script Output</title></head>\n"
              << "<body>\n"
              << "<h1>CGI script correctly executed</h1>\n"
+             << "<h2>" << URIpath << "</h2>\n"
              << "<p>Content length is " << output.size() << "</p>\n"
              << "<p>CGI output: " << output << "</p>\n"
              << "</body>\n"
@@ -61,10 +63,10 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
     else if (bytesRead == 0)
     {
       // std::cout << "(bytesRead == 0)" << std::endl;
-
-      clients[j].response = composeOkHtmlResponse(
-          generateCgiOutputHtmlPage(clients[j].responseBuffer),
-          clients[j].req.buffer);
+      std::string responseBody = generateCgiOutputHtmlPage(
+          clients[j].responseBuffer, clients[j].req.URIpath);
+      clients[j].response
+          = composeOkHtmlResponse(responseBody, clients[j].req.buffer);
       clients[j].totalToSend = clients[j].response.size();
       clients[j].totalBytesSent = 0;
 

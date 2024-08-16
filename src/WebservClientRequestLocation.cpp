@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestLocation.cpp                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/12 10:35:32 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/16 15:41:23 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,26 +34,26 @@ void Webserv::resolveRequestedPathFromLocations(
   std::map<std::string, LocationConfig>::const_iterator it;
 
   // Looks for a direct match in locations or a match of any parent folder
-  // if (!findURIorParentFolderInLocations(req.URI, locations, it))
-  findURIstartInLocations(req.URI, locations, it);
+  // if (!findURIorParentFolderInLocations(req.URIpath, locations, it))
+  findURIstartInLocations(req.URIpath, locations, it);
   // if URI or parent folder found
   if (it != locations.end())
   {
     if (it->second.alias.size())
     {
-       std::cout << "replacing with alias" << std::endl;
+      std::cout << "replacing with alias" << std::endl;
       req.pathFolder = it->first == "/" ? "/" : formatPath(it->first);
       req.pathOnServer
-          = replaceUriPrefix(req.URI, it->first, it->second.serverPath);
+          = replaceUriPrefix(req.URIpath, it->first, it->second.serverPath);
       req.pathFolderOnServer = it->second.serverPath;
     }
     else if (it->second.root.size())
     {
-       std::cout << "replacing with root" << std::endl;
+      std::cout << "replacing with root" << std::endl;
 
       req.pathFolder = it->first == "/" ? "/" : formatPath(it->first);
       req.pathOnServer
-          = "." + formatPath(it->second.root) + formatPath(req.URI);
+          = "." + formatPath(it->second.root) + formatPath(req.URIpath);
       req.pathFolderOnServer
           = "." + formatPath(it->second.root) + formatPath(it->first);
     }

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 12:32:49 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 12:37:48 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 15:40:39 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void displayServerConfigs(std::vector<ServerConfig> const &serverConfigs)
 // Display client request location data in the terminal
 void displayClientRequestLocationData(ClientInfo const &client)
 {
-  std::cout << "URI: " << client.req.URI
+  std::cout << "URIpath: " << client.req.URIpath
             << ", pathFolder: " << client.req.pathFolder
             << ", pathOnServer: " << client.req.pathOnServer << ", isDir "
             << isDirectory(client.req.pathOnServer) << ", isFile "
@@ -89,7 +89,7 @@ void displayClientRequestLocationData(ClientInfo const &client)
 void displayParsedHeaderRequest(ClientInfo const &client)
 {
   std::cout << "Parsed request header: \n"
-            << MAGENTA << client.req.method << " " << client.req.URI << " "
+            << MAGENTA << client.req.method << " " << client.req.URIpath << " "
             << client.req.HTTPversion << std::endl;
   for (std::map<std::string, std::string>::const_iterator it
        = client.req.fields.begin();

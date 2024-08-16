@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGI.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 10:53:54 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 16:14:45 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,29 @@ static void checkFileAndScriptExecPaths(std::string const &filePath,
                         "Script file to execute not found at: " + filePath);
 }
 
-void Webserv::executeScript(std::string const &filePath,
-                            std::string const &script, int &clientFD)
+static void setEnvironmentVariables(std::string const &filePath,
+                                    std::string const &queryString)
 {
-  std::cout << "Executing: " << filePath << std::endl;
+  if (!queryString.empty())
+  {
+    if (setenv("QUERY_STRING", queryString.c_str(), 1) == -1)
+      throw HttpException(500, "Failed to setenv QUERY_STRING");
+  }
+
+  if (setenv("PATH_INFO", filePath.c_str(), 1) == -1)
+    throw HttpException(500, "Failed to setenv PATH_INFO");
+}
+
+void Webserv::executeScript(std::string const &filePath,
+                            std::string const &script,
+                            std::string const &queryString, int &clientFD)
+{
+  std::cout << "Executing: " << filePath;
+  if (queryString.size())
+    std::cout << " + " << queryString;
+  std::cout << std::endl;
+
+  setenv("PATH_INFO", filePath.c_str(), 1);
 
   checkFileAndScriptExecPaths(filePath, script);
 
@@ -59,6 +78,8 @@ void Webserv::executeScript(std::string const &filePath,
     if (close(pipefd[0]) == -1 || dup2(pipefd[1], STDOUT_FILENO) == -1
         || close(pipefd[1]) == -1)
       exit(1);
+
+    setEnvironmentVariables(filePath, queryString);
 
     if (script == "php")
     {

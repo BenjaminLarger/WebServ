@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 14:17:59 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 16:19:17 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,8 @@ public:
   // Get index of client in std::vector<ClientInfo> clients from clientFD
   size_t findClientIndexFromClientFD(int clientFD);
 
-  std::string generateCgiOutputHtmlPage(const std::string &output);
+  std::string generateCgiOutputHtmlPage(std::string const &output,
+                                        std::string const &URIpath);
 
   // Close client connection and remove from pollfd and clients array, and remove any pending script pipes for that connection
   void closeConnection(size_t &index);
@@ -81,7 +82,7 @@ public:
                                          const ServerConfig &serverConfig);
 
   void executeScript(std::string const &filePath, std::string const &scriptType,
-                     int &clientFD);
+                     std::string const &queryString, int &clientFD);
 
   void handleClientResponse(size_t &index);
 

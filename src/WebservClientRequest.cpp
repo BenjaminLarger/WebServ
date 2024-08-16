@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 15:17:06 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 16:06:46 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ bool checkIdenticalHostPort(const std::vector<ServerConfig> &serverConfigs,
 const ServerConfig &findClientServerConfigByLoc(
     ClientInfo &client, const std::vector<ServerConfig> &serverConfigs)
 {
-  std::string reqLoc = client.req.URI;
+  std::string reqLoc = client.req.URIpath;
   size_t firstPos = reqLoc.find('/');
   size_t secondPos = std::string::npos;
 
@@ -216,7 +216,9 @@ void Webserv::handleClientRequest(
       std::cout << MAGENTA << clientStr << RESET << std::endl;
       std::cout << CYAN << client.req.buffer << RESET << std::endl;
       std::cout << RED << "boundary = " << boundary << RESET << std::endl;
+
       parseClientRequest(client.req);
+
       if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
       {
 
