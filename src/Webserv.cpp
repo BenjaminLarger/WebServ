@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 08:56:05 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 09:33:21 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
             {
               std::cout << GREEN << "New script output pipe ready " << RESET
                         << fds[i].fd << std::endl;
-              handleScriptOutput(i);
+              readAndHandleScriptOutput(i);
             }
           }
           catch (const HttpException &e)

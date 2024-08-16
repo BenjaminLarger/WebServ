@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 09:05:31 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 10:01:37 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ std::string Webserv::generateCgiOutputHtmlPage(const std::string &output)
   return (htmlStream.str());
 }
 
-void Webserv::handleScriptOutput(size_t &i)
+void Webserv::readAndHandleScriptOutput(size_t &i)
 {
   size_t j = findClientIndexFromPipeFD(fds[i].fd);
   int clientFD = clients[j].socketFD;
@@ -65,6 +65,8 @@ void Webserv::handleScriptOutput(size_t &i)
       clients[j].response = composeOkHtmlResponse(
           generateCgiOutputHtmlPage(clients[j].responseBuffer),
           clients[j].req.buffer);
+      clients[j].totalToSend = clients[j].response.size();
+      clients[j].totalBytesSent = 0;
 
       clients[j].responseBuffer.clear();
       closePipe(i);
@@ -80,5 +82,7 @@ void Webserv::handleScriptOutput(size_t &i)
     clients[j].response = composeErrorHtmlPage(
         e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
         clients[j].client_serverConfig.errorPages);
+    clients[j].totalToSend = clients[j].response.size();
+    clients[j].totalBytesSent = 0;
   }
 }

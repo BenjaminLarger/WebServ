@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/14 13:09:56 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 14:10:47 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,18 +129,29 @@ GET::GET(Webserv &webserv, ClientInfo &client, const ServerConfig &serverConfig)
 {
   try
   {
-    // Get headers + body
-    client.response
+    // if the get is a CGI script, we are adding the pipe to pollfd and clients vectors, so we need to get the index again to have the correct client.
+    int clientFD = client.socketFD;
+    std::string response
         = getResponseAtLocation(webserv, client.req, client.socketFD);
+
+    size_t i = webserv.findClientIndexFromClientFD(clientFD);
+    webserv.clients[i].response = response;
+    webserv.clients[i].totalToSend = (!webserv.clients[i].response.empty()
+                                          ? webserv.clients[i].response.size()
+                                          : 0);
+    webserv.clients[i].totalBytesSent = 0;
   }
   catch (const HttpException &e)
   {
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
 
-    client.response = composeErrorHtmlPage(e.getStatusCode(),
-                                           getReasonPhrase(e.getStatusCode()),
-                                           serverConfig.errorPages);
+    size_t i = webserv.findClientIndexFromClientFD(client.socketFD);
+    webserv.clients[i].response = composeErrorHtmlPage(
+        e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
+        serverConfig.errorPages);
+    webserv.clients[i].totalToSend = webserv.clients[i].response.size();
+    webserv.clients[i].totalBytesSent = 0;
   }
 }
 

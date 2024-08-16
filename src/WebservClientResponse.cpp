@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/14 12:21:50 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 10:24:53 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,44 @@ void Webserv::handleClientResponse(size_t &i)
 {
   try
   {
-    sendRGeneric(clients[i].socketFD, clients[i].response);
-    clients[i].response.clear();
+    if (clients[i].totalBytesSent < clients[i].totalToSend)
+    {
+      size_t bytesToSend
+          = std::min(250, clients[i].totalToSend - clients[i].totalBytesSent);
+      int bytesSent
+          = send(clients[i].socketFD,
+                 clients[i].response.c_str() + clients[i].totalBytesSent,
+                 /* clients[i].totalToSend - clients[i].totalBytesSent */
+                 bytesToSend, 0);
+      if (bytesSent == -1)
+      {
+        std::cout << "bytesSent == -1 " << std::endl;
+        closeConnection(i);
+        i--;
+        throw HttpException(500, strerror(errno));
+      }
+      else if (bytesSent == 0)
+      {
+        std::cout << "bytesSent == 0 " << bytesSent << std::endl;
+        clients[i].totalBytesSent = 0;
+        clients[i].totalToSend = 0;
+        clients[i].response.clear();
+      }
+      else if (bytesSent > 0)
+      {
+        std::cout << "Bytes sent: " << bytesSent << std::endl;
+        clients[i].totalBytesSent += bytesSent;
+      }
+    }
+    else
+    {
+      std::cout << "(totalBytesSent >= totalToSend) "
+                << clients[i].totalBytesSent << " " << clients[i].totalToSend
+                << std::endl;
+      clients[i].totalBytesSent = 0;
+      clients[i].totalToSend = 0;
+      clients[i].response.clear();
+    }
   }
   catch (const HttpException &e)
   {

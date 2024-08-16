@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:35 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/14 13:14:23 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 10:01:08 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,11 @@ DELETE::DELETE(ClientInfo &client, const ServerConfig &serverConfig)
     if (remove(pathOnServer.c_str()) != 0)
       throw HttpException(500, "Internal Server Error");
     else
+    {
       client.response = composeDeleteOkHtmlResponse();
+      client.totalToSend = client.response.size();
+      client.totalBytesSent = 0;
+    }
 
     std::cout << GREEN
               << "Deleted file and response 204 No Content sent: " << RESET
@@ -42,6 +46,8 @@ DELETE::DELETE(ClientInfo &client, const ServerConfig &serverConfig)
     client.response = composeErrorHtmlPage(e.getStatusCode(),
                                            getReasonPhrase(e.getStatusCode()),
                                            serverConfig.errorPages);
+    client.totalToSend = client.response.size();
+    client.totalBytesSent = 0;
   }
 }
 

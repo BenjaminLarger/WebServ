@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/15 20:50:21 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 13:58:01 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ class Webserv
 {
 private:
   std::vector<pollfd> fds;
-  std::vector<ClientInfo> clients;
 
   // map < pipe_fd, client_fd >, to keep track of which pipe belongs to which client when a cgi script is writing in a pipe
   std::map< int, int > clientScriptMap;
@@ -41,6 +40,8 @@ private:
   Webserv(void);
 
 public:
+  std::vector<ClientInfo> clients;
+
   Webserv(std::vector<ServerConfig> &serverConfigs);
   ~Webserv(void);
 
@@ -57,7 +58,8 @@ public:
   void handleClientRequest(size_t &index,
                            const std::vector<ServerConfig> &serverConfigs);
 
-  void handleScriptOutput(size_t &index);
+  // Read from pipe and save script output to client.response
+  void readAndHandleScriptOutput(size_t &index);
 
   // Get index of client in std::vector<ClientInfo> clients from corresponding pipe_fd in std::map< pipe_fd, client_fd > clientScriptMap
   size_t findClientIndexFromPipeFD(int pipeFD);

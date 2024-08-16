@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 20:29:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/15 20:14:42 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 10:17:21 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,17 @@ public:
   ServerConfig
       client_serverConfig; // ServerConfig of the server where client is connected
 
+  // Client request data
   ClientRequest req;
-  std::string response;
+
+  // Client response data
+
+  // Temporary string to build response to be sent to client
   std::string responseBuffer;
+  // Response to be sent to client
+  std::string response;
+  // Total bytes to send to client (= response.size())
+  int totalToSend;
+  // Total bytes sent to client
+  int totalBytesSent;
 };
