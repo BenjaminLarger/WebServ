@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 16:06:46 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 17:54:57 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,7 +251,7 @@ void Webserv::handleClientRequest(
           std::cout << RED << "Clearing request buffers" << RESET << std::endl;
 
           // if the method is a CGI script, we are adding the pipe to pollfd and clients vectors, so we need to get the index again to have the correct client.
-          size_t j = findClientIndexFromClientFD(clientFD);
+          size_t j = findClientIndexFromFD(clientFD);
           clients[j].req.buffer.clear();
           clientInput.clear();
           clientStr.clear();
@@ -260,7 +260,7 @@ void Webserv::handleClientRequest(
         else
         {
           std::cerr << RED << "Clearing request buffers" << RESET << std::endl;
-          size_t j = findClientIndexFromClientFD(clientFD);
+          size_t j = findClientIndexFromFD(clientFD);
           clients[j].req.buffer.clear();
           clientInput.clear();
           clientStr.clear();

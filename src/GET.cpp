@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/16 15:52:00 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 17:55:06 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ GET::GET(Webserv &webserv, ClientInfo &client, const ServerConfig &serverConfig)
     std::string response
         = getResponseAtLocation(webserv, client.req, client.socketFD);
 
-    size_t i = webserv.findClientIndexFromClientFD(clientFD);
+    size_t i = webserv.findClientIndexFromFD(clientFD);
     webserv.clients[i].response = response;
     webserv.clients[i].totalToSend = (!webserv.clients[i].response.empty()
                                           ? webserv.clients[i].response.size()
@@ -146,7 +146,7 @@ GET::GET(Webserv &webserv, ClientInfo &client, const ServerConfig &serverConfig)
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
 
-    size_t i = webserv.findClientIndexFromClientFD(client.socketFD);
+    size_t i = webserv.findClientIndexFromFD(client.socketFD);
     webserv.clients[i].response = composeErrorHtmlPage(
         e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
         serverConfig.errorPages);

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 16:21:53 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 18:13:18 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,13 @@ std::string Webserv::generateCgiOutputHtmlPage(std::string const &output,
 
 void Webserv::readAndHandleScriptOutput(size_t &i)
 {
-  size_t j = findClientIndexFromPipeFD(fds[i].fd);
+  size_t j = findClientIndexOfConnectionFromPipeFD(fds[i].fd);
   int clientFD = clients[j].socketFD;
 
   try
   {
 
-    char buffer[1024];
+    char buffer[4096];
     ssize_t bytesRead = read(fds[i].fd, buffer, sizeof(buffer) - 1);
     // std::cout << "A bytesRead: " << bytesRead << std::endl;
     if (bytesRead > 0)
@@ -55,7 +55,7 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
     {
       closePipe(i);
       --i;
-      j = findClientIndexFromClientFD(clientFD);
+      j = findClientIndexFromFD(clientFD);
       clients[j].responseBuffer.clear();
       closeConnection(j);
       throw HttpException(500, "Error reading from pipe");
@@ -69,10 +69,14 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
           = composeOkHtmlResponse(responseBody, clients[j].req.buffer);
       clients[j].totalToSend = clients[j].response.size();
       clients[j].totalBytesSent = 0;
-
       clients[j].responseBuffer.clear();
-      closePipe(i);
-      --i;
+      // Close pipe if child process has terminated
+      if (terminatedPidMap.find(fds[i].fd) != terminatedPidMap.end())
+      {
+        terminatedPidMap.erase(fds[i].fd);
+        closePipe(i);
+        --i;
+      }
     }
   }
   catch (const HttpException &e)
@@ -80,7 +84,7 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
 
-    j = findClientIndexFromClientFD(clientFD);
+    j = findClientIndexFromFD(clientFD);
     clients[j].response = composeErrorHtmlPage(
         e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
         clients[j].client_serverConfig.errorPages);
