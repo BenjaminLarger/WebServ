@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 14:13:03 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 14:18:34 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,6 +170,11 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
   // std::cout << buffer << std::endl;
   return (totalBytesReceived);
 }
+void readClientInput(const std::vector<char> &clientInput)
+{
+  std::string str(clientInput.begin(), clientInput.end());
+  std::cout << BLUE << str << RESET << std::endl;
+}
 
 void Webserv::handleClientRequest(
     size_t &i, const std::vector<ServerConfig> &serverConfigs)
@@ -177,6 +182,7 @@ void Webserv::handleClientRequest(
   //char buffer[100000];
   std::vector<char> buffer;
 
+  ClientInfo &client = clients[i];
   try
   {
     std::cerr << RED << "fds[i].fd: " << fds[i].fd << RESET << '\n';
@@ -203,14 +209,17 @@ void Webserv::handleClientRequest(
 
       std::vector<char> clientInput(client.req.buffer.begin(),
                                     client.req.buffer.end());
-
+      std::cout << GREEN << client.req.buffer << RESET << std::endl;
+      readClientInput(clientInput);
       clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
       std::string clientStr(clientInput.begin(), clientInput.end());
       client.req.buffer = clientStr;
-
-      if (hasBlankLineInput(client.req.buffer) == true)
+      std::cout << MAGENTA << clientStr << RESET << std::endl;
+      std::cout << CYAN << client.req.buffer << RESET << std::endl;
+      std::cout << RED << "boundary = " << boundary << RESET << std::endl;
+      parseClientRequest(client.req);
+      if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
       {
-        parseClientRequest(client.req);
 
         std::cout << "Request received on port " << client.port
                   << ", client.socketFD " << client.socketFD
@@ -234,7 +243,7 @@ void Webserv::handleClientRequest(
             GET method(*this, client, client.client_serverConfig);
           else if (client.req.method == "POST")
             POST method(client, fds[i].fd, clientInput,
-                        client.client_serverConfig);
+                        client.client_serverConfig, boundary);
           else if (client.req.method == "DELETE")
             DELETE method(client, client.client_serverConfig);
 

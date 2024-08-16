@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/12 10:40:54 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 10:48:22 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ int	POST::parseContent(int index)
 	return (handleFileUpload(index));
 }
 
-int	POST::extractMultipartFormData()
+int	POST::extractMultipartFormData(std::string &_boundary)
 {
 	std::string	key;
 	std::string	value;
@@ -97,6 +97,7 @@ int	POST::extractMultipartFormData()
 
 	requestStream.clear();
 	requestStream.seekg(0);
+	_boundary = boundary;
 	boundary = skipBoundaryPart();
 	if (boundary.empty())
 		throw HttpException(400, "Bad Request: missing boundary in post request.");
@@ -150,6 +151,7 @@ int POST::handleFileUpload(int index)
 			if (!outFile)
 				throw HttpException(400, strerror(errno));
 			fileContentBinary = extractBinaryContent(clientInputVector);
+			
 			outFile.write(fileContentBinary.data(), fileContentBinary.size());
 			std::cout << GREEN << "File successfully uploaded !" << RESET << std::endl;
 			outFile.close();

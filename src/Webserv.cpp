@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 09:33:21 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 14:18:16 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,26 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
         {
           if (clients[i].response.size())
             handleClientResponse(i);
+          // clean clients[i].response after send
+        }
+        catch (const HttpException &e)
+        {
+          std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
+                    << RESET << std::endl;
+        }
+      }
+      if (fds[i].revents & POLLOUT) // when ?
+      {
+        // std::cout << CYAN << "New " << RED << POLLOUT << CYAN
+        // 					<< " event detected" << RESET << std::endl;
+        try
+        {
+          if (clients[i].response.size())
+          {
+            handleClientResponse(i);
+          }
+          // else
+          // 	std::cout << RED << "Client " << clients[i].socketFD << " has no response" << RESET << std::endl;
           // clean clients[i].response after send
         }
         catch (const HttpException &e)
