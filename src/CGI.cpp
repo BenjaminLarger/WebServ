@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/15 13:00:10 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 10:53:54 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,12 +83,13 @@ void Webserv::executeScript(std::string const &filePath,
 
     pollfd pfd;
     pfd.fd = pipefd[0];
-    pfd.events |= (POLLIN | POLLOUT);
+    pfd.events = (POLLIN | POLLHUP);
     pfd.revents = 0;
 
     // Associate the pipe FD with the client connection
     clientScriptMap[pipefd[0]] = clientFD;
-
+    // std::cout << GREEN << "Adding to clientScriptMap " << RESET << pipefd[0]
+    //           << " " << clientFD << std::endl;
     fds.push_back(pfd);
 
     // Add a dummy client info for the listening socket
@@ -96,47 +97,5 @@ void Webserv::executeScript(std::string const &filePath,
     ci.socketFD = pipefd[0];
     ci.port = -1;
     clients.push_back(ci);
-  }
-}
-
-void Webserv::readScriptOutput(size_t &i)
-{
-  try
-  {
-    char buffer[1024];
-    ssize_t bytesRead = read(fds[i].fd, buffer, sizeof(buffer) - 1);
-    if (bytesRead > 0)
-    {
-      buffer[bytesRead] = '\0';
-      int clientFD = clientScriptMap[fds[i].fd];
-
-      size_t j = 0;
-      while (j < clients.size())
-      {
-        if (clients[j].socketFD == clientFD)
-          break;
-        ++j;
-      }
-
-      clients[j].response
-          = composeOkHtmlResponse(buffer, clients[j].req.buffer);
-
-      closePipe(i);
-      --i;
-    }
-    else
-    {
-      closePipe(i);
-      --i;
-    }
-  }
-  catch (const HttpException &e)
-  {
-    std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
-              << RESET << '\n';
-
-    clients[i].response = composeErrorHtmlPage(
-        e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
-        clients[i].client_serverConfig.errorPages);
   }
 }

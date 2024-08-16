@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/15 17:38:44 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 10:54:04 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
     {
       //withdrawWriteCapability(i, clients[i].buffer);
 
-      if (fds[i].revents & POLLIN)
+      if (fds[i].revents & (POLLIN | POLLHUP))
       {
         std::cout << CYAN << "New POLLIN event detected " << RESET << fds[i].fd
                   << std::endl;
@@ -52,7 +52,8 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
           try
           {
             // Check if client socket (is not a pipefd)
-            if (clientScriptMap.find(fds[i].fd) == clientScriptMap.end())
+            if (!(fds[i].revents & POLLHUP)
+                && clientScriptMap.find(fds[i].fd) == clientScriptMap.end())
             {
               std::cout << GREEN << "New client request detected " << RESET
                         << fds[i].fd << std::endl;
@@ -63,7 +64,7 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
             {
               std::cout << GREEN << "New script output pipe ready " << RESET
                         << fds[i].fd << std::endl;
-              readScriptOutput(i);
+              handleScriptOutput(i);
             }
           }
           catch (const HttpException &e)
@@ -152,15 +153,15 @@ void Webserv::closeConnection(size_t &i)
   std::cout << "size() fds: " << fds.size() << ", clients: " << clients.size()
             << ", clientScriptMap: " << clientScriptMap.size() << std::endl;
 
-  close(fds[i].fd);
-  fds.erase(fds.begin() + i);
-  clients.erase(clients.begin() + i);
   for (std::map<int, int>::const_iterator it = clientScriptMap.begin();
        it != clientScriptMap.end(); ++it)
   {
     if (it->second == fds[i].fd)
       clientScriptMap.erase(it->first);
   }
+  close(fds[i].fd);
+  fds.erase(fds.begin() + i);
+  clients.erase(clients.begin() + i);
 
   std::cout << "size() fds: " << fds.size() << ", clients: " << clients.size()
             << ", clientScriptMap: " << clientScriptMap.size() << std::endl;
@@ -181,4 +182,32 @@ void Webserv::closePipe(size_t &i)
 
   std::cout << "size() fds: " << fds.size() << ", clients: " << clients.size()
             << ", clientScriptMap: " << clientScriptMap.size() << std::endl;
+}
+
+size_t Webserv::findClientIndexFromPipeFD(int pipeFD)
+{
+  int clientFD = clientScriptMap[pipeFD];
+
+  size_t j = 0;
+  while (j < clients.size())
+  {
+    if (clients[j].socketFD == clientFD)
+      break;
+    j++;
+  }
+
+  return (j);
+}
+
+size_t Webserv::findClientIndexFromClientFD(int clientFD)
+{
+  size_t j = 0;
+  while (j < clients.size())
+  {
+    if (clients[j].socketFD == clientFD)
+      break;
+    j++;
+  }
+
+  return (j);
 }

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 11:06:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/15 13:03:32 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 10:54:31 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
       pollfd pfd;
       printf("Same host and port as server %d\n", fd_pos);
       pfd.fd = fds[fd_pos].fd;
-      pfd.events |= (POLLIN | POLLOUT);
+      pfd.events = (POLLIN | POLLOUT);
       pfd.revents = 0;
       fds.push_back(pfd);
 
@@ -109,7 +109,7 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
     // Add the listening socket to the pollfd vector
     pollfd pfd;
     pfd.fd = serverFD;
-    pfd.events |= (POLLIN | POLLOUT);
+    pfd.events = (POLLIN | POLLOUT);
     pfd.revents = 0;
     fds.push_back(pfd);
 

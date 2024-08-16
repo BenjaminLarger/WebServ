@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 20:29:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 15:00:20 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/15 20:14:42 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,5 @@ public:
 
   ClientRequest req;
   std::string response;
+  std::string responseBuffer;
 };

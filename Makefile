@@ -22,12 +22,15 @@ SRC_FILES		= main.cpp ClientProcessMethods.cpp Webserv.cpp \
 	ErrorUtils.cpp utils.cpp core.cpp \
 	ServerConfig.cpp ServerConfigParsing.cpp ServerConfigParsingLocation.cpp \
 	ClientInfo.cpp \
-	GET.cpp GETdirectoryListing.cpp CGI.cpp POST.cpp POSTupload.cpp  POSTutils.cpp POSTpng.cpp\
-	WebservCreateServers.cpp WebservClientRequest.cpp WebservNewConnection.cpp WebservSignal.cpp WebservClientRequestHeader.cpp \
+	GET.cpp GETdirectoryListing.cpp CGI.cpp CGIoutput.cpp \
+	POST.cpp POSTupload.cpp POSTutils.cpp POSTpng.cpp \
+	WebservCreateServers.cpp WebservClientRequest.cpp WebservNewConnection.cpp \
+	WebservSignal.cpp WebservClientRequestHeader.cpp \
 	WebservClientRequestLocation.cpp WebservClientResponse.cpp \
 	ManageWriteReadClientCapability.cpp HttpExceptions.cpp \
-	coreResponse.cpp coreResponseHeaderStatusLine.cpp DELETE.cpp coreResponseMediaType.cpp coreHtml.cpp \
-	deleteEndPoint.cpp Cookies.cpp devTools.cpp
+	coreResponse.cpp coreResponseHeaderStatusLine.cpp DELETE.cpp \
+	coreResponseMediaType.cpp coreHtml.cpp \
+	deleteEndPoint.cpp Cookies.cpp devTools.cpp \
 	
 
 SRCS				= $(addprefix $(SRCS_DIR),$(SRC_FILES))

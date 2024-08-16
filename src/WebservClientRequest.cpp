@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 08:57:07 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 10:54:23 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,15 +245,24 @@ void Webserv::handleClientRequest(
           else if (client.req.method == "DELETE")
             DELETE method(client, client.client_serverConfig);
 
-          clientInput.clear();
-          clientStr.clear();
-          client.req.buffer.clear();
+          std::cout << RED << "Clearing request buffers" << RESET << std::endl;
+          clientInput.erase(clientInput.begin(), clientInput.end());
+          clientStr.erase(clientStr.begin(), clientStr.end());
+          client.req.buffer.erase(client.req.buffer.begin(),
+                                  client.req.buffer.end());
+          buffer.erase(buffer.begin(), buffer.end());
+          // clientInput.clear();
+          // clientStr.clear();
+          // client.req.buffer.clear();
+          // buffer.clear();
         }
         else
         {
+          std::cerr << RED << "Clearing request buffers" << RESET << std::endl;
           clientInput.clear();
           clientStr.clear();
           client.req.buffer.clear();
+          buffer.clear();
           throw HttpException(405, "Method is not allowed on that path");
         }
       }
