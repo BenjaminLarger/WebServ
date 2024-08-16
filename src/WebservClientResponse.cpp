@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 17:49:56 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/15 17:38:18 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,20 @@
 #include "Webserv.hpp"
 #include "core.hpp"
 
-void Webserv::handleClientResponse(size_t i)
+void Webserv::handleClientResponse(size_t &i)
 {
-  (void)i;
   try
   {
-		std::cout << GREEN << "Sending request to fd " << clients[i].socketFD << RESET << std::endl;
-		sendRGeneric(clients[i].socketFD, clients[i].response);
-		clients[i].response.clear();
+    sendRGeneric(clients[i].socketFD, clients[i].response);
+    clients[i].response.clear();
   }
   catch (const HttpException &e)
   {
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
 
-    // sendDefaultErrorPage(fds[i].fd, e.getStatusCode(),
-    //                      getReasonPhrase(e.getStatusCode()),
-    //                      serverConfigs[clients[i].serverIndex].errorPages);
+    clients[i].response = composeErrorHtmlPage(
+        e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
+        clients[i].client_serverConfig.errorPages);
   }
 }

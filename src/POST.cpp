@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/13 15:52:35 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/15 17:09:56 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void POST::extractFirstLine()
 
 //We extract all the content of a POST request
 POST::POST(ClientInfo &client, int clientFD,
-           std::vector<char> &clientInput, const ServerConfig &serverConfig)
+           std::vector<char> &clientInput, const ServerConfig &serverConfig, std::string &_boundary)
     : clientInputVector(clientInput), clientInputString(clientInput.begin(), clientInput.end()), contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
 {
   //std::string response;
@@ -117,18 +117,24 @@ POST::POST(ClientInfo &client, int clientFD,
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
   {
 
-    if (extractMultipartFormData() == SUCCESS)
+		
+    if (extractMultipartFormData(_boundary) == SUCCESS)
 		{
+			std::cout << "RETURN SUCCESS\n";
 			client.req.buffer.clear();
+			std::cout << "multipart/form-data return SUCCESS\n";
 			if (lineIsEmpty(contentMap[2].filename) == true) //no file has been uploaded
 				client.response = createPostOkResponse(_formValues);
 			else
 				client.response = createPostOkResponseWithFile(_formValues);
 		}
+		std::cout << "multipart/form-data return FAILURE\n";
   }
   else
-    //
+  {
+		std::cout << RED << "POST method unfinded\n" << RESET;
 		throw HttpException(415, "Unsupported Media Type.");
+	}
   //sendRGeneric(clientFD, client.response);
 }
 

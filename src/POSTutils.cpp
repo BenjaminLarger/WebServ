@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/12 17:27:29 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 10:44:46 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,17 +219,18 @@ std::map<std::string, std::string>	POST::formValuestoMap(std::string body)
 
 std::string POST::makeCopy(const std::string &original)
 {
-  if (original.length() < 4)
+  if (original.length() < 2)
   {
     return "";
   }
   std::string copy;
-  for (size_t i = 4; i < original.length(); ++i)
+  for (size_t i = 2; i < original.length(); ++i)
   {
     copy += original[i];
   }
+	trimBothEnds(copy);
  // std::cout << RED << copy << RESET << std::endl;
-  return copy;
+  return (copy);
 }
 
 bool	POST::isClosingBoundary(std::string line)
@@ -248,6 +249,7 @@ bool	POST::isBoundary(std::string line)
 	if (line[0] == '-' && line[1] == '-')
 	{
 		newline = makeCopy(line);
+		std::cout << BLUE << "boundary : " << boundary << ", newline = " << newline << RESET << std::endl;
 		if (!strcmp(newline.c_str(), boundary.c_str()))
 		{
 			return (true);
@@ -279,13 +281,18 @@ int	POST::extractValues(std::string line, std::map<int, Content> &myMap, int ind
 
 std::string POST::extractBoundary(const std::string& input)
 {
-   std::size_t pos = input.find('=');
-  if (pos != std::string::npos)
-	{
-		if (input.substr(pos + 1)[0] == '-' && input.substr(pos + 1)[1] == '-')
-			return input.substr(pos + 3);
-	}
-	return "";
+    std::size_t pos = input.find('=');
+    if (pos != std::string::npos)
+    {
+        std::string bound = input.substr(pos + 1);
+        std::size_t endPos = bound.find('\r');
+        if (endPos != std::string::npos)
+        {
+            return bound.substr(0, endPos);
+        }
+        return bound; // In case there is no '\r' character
+    }
+    return "";
 }
 
 void	POST::readAllRequest()//delete
@@ -296,9 +303,9 @@ void	POST::readAllRequest()//delete
 	requestStream.seekg(0);
 	std::cout << "\n--------------READING ALL CONTENT--------------";
 	while (std::getline(requestStream, line))
-	 {
-		std::cout << "\n" << /* RESET << */ line /* << RESET */;
-	 }
+	{
+	std::cout << "\n" << /* RESET << */ line /* << RESET */;
+	}
 	 std::cout << std::endl;
 }
 std::string	POST::skipBoundaryPart(void)
@@ -322,6 +329,7 @@ void	POST::handleBody(const std::string &line, int index)
 	if (contentMap[index].HasBody == true)
 	contentMap[index].body += '\n';
 	contentMap[index].body += line;
+	std::cout << YELLOW << index << " => " << line << RESET <<std::endl;
 	if (index == 0)
 		_formValues["name"] = line;
 	else if (index == 1)
@@ -331,6 +339,7 @@ void	POST::handleBody(const std::string &line, int index)
 
 void	POST::handleNewPart(int &index)
 {
+	std::cout << "Index increase\n";
 	index++;
 		contentMap[index].HasContentType = false;
 		contentMap[index].HasContentDisposition = false;

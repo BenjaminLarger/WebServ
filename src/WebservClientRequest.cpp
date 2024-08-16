@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 17:26:41 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 08:57:07 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,9 @@ const ServerConfig &findClientServerConfig(
     ClientInfo &client, const std::vector<ServerConfig> &serverConfigs)
 {
   std::string serverName;
-  std::string reqHost = client.req.fields["Host"];
+  std::string reqHost = !client.req.fields["Host"].empty()
+                            ? client.req.fields["Host"]
+                            : client.req.fields["host"];
 
   for (size_t i = 0; i < serverConfigs.size(); i++)
   {
@@ -168,9 +170,14 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
   // std::cout << buffer << std::endl;
   return (totalBytesReceived);
 }
+void readClientInput(const std::vector<char>& clientInput)
+{
+    std::string str(clientInput.begin(), clientInput.end());
+		std::cout << BLUE << str << RESET << std::endl;
+}
 
 void Webserv::handleClientRequest(
-    size_t i, const std::vector<ServerConfig> &serverConfigs)
+    size_t &i, const std::vector<ServerConfig> &serverConfigs)
 {
   //char buffer[100000];
   std::vector<char> buffer;
@@ -179,6 +186,7 @@ void Webserv::handleClientRequest(
   try
   {
     std::cerr << RED << "fds[i].fd: " << fds[i].fd << RESET << '\n';
+	
     ssize_t bytesRead = recvAll(fds[i].fd, buffer);
     if (bytesRead < 0)
     {
@@ -196,21 +204,21 @@ void Webserv::handleClientRequest(
     }
     else
     {
-      //ClientInfo &client = clients[i];
-      //std::vector<char> &clientInput += client.req.buffer;
+
       std::vector<char> clientInput(client.req.buffer.begin(),
                                     client.req.buffer.end());
-
+			std::cout << GREEN << client.req.buffer << RESET << std::endl;
+			readClientInput(clientInput);
       clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
       std::string clientStr(clientInput.begin(), clientInput.end());
       client.req.buffer = clientStr;
-      if (hasBlankLineInput(client.req.buffer) == true)
+			std::cout << MAGENTA << clientStr << RESET << std::endl;
+			std::cout << CYAN << client.req.buffer << RESET << std::endl;
+			std::cout << RED << "boundary = " << boundary << RESET << std::endl;
+      parseClientRequest(client.req);
+      if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
       {
-        parseClientRequest(client.req);
 
-        //Looks for the serverConfig that matches the Host value of the request
-        client.client_serverConfig
-            = findClientServerConfig(client, serverConfigs);
         std::cout << "Request received on port " << client.port
                   << ", client.socketFD " << client.socketFD
                   << ", root: " << client.client_serverConfig.serverRoot
@@ -218,25 +226,34 @@ void Webserv::handleClientRequest(
 
         displayParsedHeaderRequest(client);
 
+        //Looks for the serverConfig that matches the Host value of the request
+        client.client_serverConfig
+            = findClientServerConfig(client, serverConfigs);
+
         resolveRequestedPathFromLocations(client.req,
                                           client.client_serverConfig);
 
         displayClientRequestLocationData(client);
+
         if (isMethodAllowedAtLoc(client.req, client.client_serverConfig))
         {
           if (client.req.method == "GET")
-            GET method(*this, client, fds[i].fd, clientStr,
-                       client.client_serverConfig);
+            GET method(*this, client, client.client_serverConfig);
           else if (client.req.method == "POST")
             POST method(client, fds[i].fd, clientInput,
-                        client.client_serverConfig);
+                        client.client_serverConfig, boundary);
           else if (client.req.method == "DELETE")
-            DELETE method(client, fds[i].fd, clientStr,
-                          client.client_serverConfig);
+            DELETE method(client, client.client_serverConfig);
+
+          clientInput.clear();
+          clientStr.clear();
+          client.req.buffer.clear();
         }
         else
         {
           clientInput.clear();
+          clientStr.clear();
+          client.req.buffer.clear();
           throw HttpException(405, "Method is not allowed on that path");
         }
       }
@@ -246,10 +263,9 @@ void Webserv::handleClientRequest(
   {
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
-    std::cout << "Sending default error page\n";
-    client.response = sendDefaultErrorPage(fds[i].fd, e.getStatusCode(),
-                         getReasonPhrase(e.getStatusCode()),
-                         clients[i].client_serverConfig.errorPages);
-		std::cout << ORANGE << "client " << clients[i].socketFD << " | response = " << client.response << RESET << std::endl;
+
+    clients[i].response = composeErrorHtmlPage(
+        e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
+        clients[i].client_serverConfig.errorPages);
   }
 }

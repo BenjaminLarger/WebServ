@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 20:02:46 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/11 19:44:59 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 10:53:09 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ std::vector<char> POST::extractBinaryContent(const std::vector<char>& content)
     if (boundaryPos == end)
     {
         // No final boundary found, return an empty vector
+				std::cout << RED << "No final boundary found!\n" << RESET << std::endl;
         return std::vector<char>();
     }
 
@@ -89,8 +90,6 @@ std::vector<char>	POST::getBoundaryEnd()
     // Convert the boundary string to a vector of chars
     std::vector<char> boundaryVec(boundary.begin(), boundary.end());
 
-		boundaryVec.insert(boundaryVec.begin(), '-');
-		boundaryVec.insert(boundaryVec.begin(), '-');
 		boundaryVec.insert(boundaryVec.begin(), '-');
 		boundaryVec.insert(boundaryVec.begin(), '-');
     // Append the final boundary marker "--"

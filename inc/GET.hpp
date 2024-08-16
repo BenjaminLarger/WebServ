@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 12:02:20 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/13 20:25:56 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,7 @@ private:
   const ServerConfig &serverConfig;
 
 public:
-  GET(Webserv &webserv, ClientInfo &client, int clientFD,
-      std::string &clientInput, const ServerConfig &serverConfig);
+  GET(Webserv &webserv, ClientInfo &client, const ServerConfig &serverConfig);
   ~GET(void);
 
   std::string getResponseAtLocation(Webserv &webserv, ClientRequest &req,

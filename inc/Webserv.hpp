@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 14:43:53 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/15 13:23:38 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class Webserv
 private:
   std::vector<pollfd> fds;
   std::vector<ClientInfo> clients;
+	std::string	boundary;
 
   // map < pipe_fd, client_fd >, to keep track of which pipe belongs to which client when a cgi script is writing in a pipe
   std::map< int, int > clientScriptMap;
@@ -50,18 +51,20 @@ public:
 
   void createServers(std::vector<ServerConfig> &serverConfigs);
 
-  void handleNewConnection(size_t index,
+  void handleNewConnection(size_t &index,
                            const std::vector<ServerConfig> &serverConfigs);
   bool isMethodAllowedAtLoc(ClientRequest &req,
                             const ServerConfig &serverConfig);
-  void handleClientRequest(size_t index,
+  void handleClientRequest(size_t &index,
                            const std::vector<ServerConfig> &serverConfigs);
 
+  void readScriptOutput(size_t &index);
+
   // Close client connection and remove from pollfd and clients array, and remove any pending script pipes for that connection
-  void closeConnection(size_t index);
+  void closeConnection(size_t &index);
 
   // Close pipe and remove from pollfd, clients and clientScriptMap array
-  void closePipe(size_t index);
+  void closePipe(size_t &index);
 
   void parseClientRequest(ClientRequest &req);
   void resolveRequestedPathFromLocations(ClientRequest &req,
@@ -70,7 +73,7 @@ public:
   void executeScript(std::string const &filePath, std::string const &scriptType,
                      int &clientFD);
 
-  void handleClientResponse(size_t index);
+  void handleClientResponse(size_t &index);
 
   //SIGNAL
   static void sigInt(int code);

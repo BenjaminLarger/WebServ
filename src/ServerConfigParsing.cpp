@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfigParsing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 14:33:15 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 16:57:02 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/13 21:32:55 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,10 +249,10 @@ void ServerConfig::endServerBlock(bool &insideServerBlock,
     // Add default values
     //if (!this->findSameHostPort(serverConfigs))
     //{
-      //if (this->getHost().empty())
-      //  this->addServerName("127.0.0.1");
-      //else
-        this->addServerName(this->getHost());
+    //if (this->getHost().empty())
+    //  this->addServerName("127.0.0.1");
+    //else
+    this->addServerName(this->getHost());
     //}
     // Set default maxBodySize
     if (this->maxBodySize == -1)
@@ -263,6 +263,7 @@ void ServerConfig::endServerBlock(bool &insideServerBlock,
     //   this->serverIndex = "index.html";
 
     resolveServerPathForLocations();
+    resolveServerPathForErrorPages();
 
     // Create a new serverConfig for each port of each server
     for (size_t i = 0; i < tempPorts.size(); i++)
@@ -270,11 +271,12 @@ void ServerConfig::endServerBlock(bool &insideServerBlock,
       this->addPort(tempPorts[i]);
       serverConfigs.push_back(*this);
     }
-  } else
-    {
+  }
+  else
+  {
     file.close();
     throw(std::runtime_error("Invalid server block in config file."));
-    }
+  }
   insideServerBlock = false;
 }
 
@@ -301,6 +303,11 @@ void ServerConfig::resolveServerPathForLocations()
         else if (it->second.alias.size())
           serverPath = "." + formatPath(it->second.alias);
       }
+      else
+      {
+        serverRoot = "";
+        serverPath = "";
+      }
     }
   }
 
@@ -323,5 +330,17 @@ void ServerConfig::resolveServerPathForLocations()
       it->second.serverPath
           = "." + formatPath(it->second.root) + formatPath(it->first);
     }
+  }
+}
+
+void ServerConfig::resolveServerPathForErrorPages()
+{
+  for (std::map<int, std::string>::iterator it = errorPages.begin();
+       it != errorPages.end(); it++)
+  {
+    if (serverPath.size())
+      it->second = serverPath + formatPath(it->second);
+    // std::cout << "errorPages path on server: " << it->first << " " << it->second
+    //           << std::endl;
   }
 }

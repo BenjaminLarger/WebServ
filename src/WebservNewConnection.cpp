@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:01 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 16:43:43 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/15 13:03:43 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "core.hpp"
 
 void Webserv::handleNewConnection(
-    size_t i, const std::vector<ServerConfig> &serverConfigs)
+    size_t &i, const std::vector<ServerConfig> &serverConfigs)
 {
   (void)serverConfigs;
   while (true)
@@ -30,15 +30,16 @@ void Webserv::handleNewConnection(
       else
       {
         // Error accepting new connection
-        throw HttpException(500, "Internal Server Error: Failed to accept new connection");
+        throw HttpException(
+            500, "Internal Server Error: Failed to accept new connection");
         break;
       }
     }
     if (setNonBlocking(newSocket) < 0)
     {
       close(newSocket);
-      throw HttpException(
-          500, "Internal Server Error: Data failed to be sent to the client (socket)");
+      throw HttpException(500, "Internal Server Error: Data failed to be sent "
+                               "to the client (socket)");
     }
     std::cout << "New connection accepted: " << newSocket
               << ", on port: " << clients[i].port << std::endl;

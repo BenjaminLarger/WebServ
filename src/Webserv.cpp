@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 17:56:55 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/15 17:38:44 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,34 +63,31 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
             {
               std::cout << GREEN << "New script output pipe ready " << RESET
                         << fds[i].fd << std::endl;
-              char buffer[1024];
-              ssize_t bytesRead = read(fds[i].fd, buffer, sizeof(buffer) - 1);
-              if (bytesRead > 0)
-              {
-                buffer[bytesRead] = '\0';
-
-                int clientFD = clientScriptMap[fds[i].fd];
-                std::string response
-                    = composeOkHtmlResponse(buffer, clients[i].req.buffer);
-                sendRGeneric(clientFD, response);
-
-                closePipe(i);
-                --i;
-              }
-              else
-              {
-                // Handle script completion or pipe closure
-                closePipe(i);
-                --i;
-              }
+              readScriptOutput(i);
             }
-					}
-					catch (const HttpException &e)
-					{
-						std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
-											<< RESET << std::endl;
-					}
-				}
+          }
+          catch (const HttpException &e)
+          {
+            std::cerr << RED << "Error: " << e.getStatusCode() << " "
+                      << e.what() << RESET << std::endl;
+          }
+        }
+      }
+      else if (fds[i].revents & POLLOUT)
+      {
+        // std::cout << CYAN << "New " << RED << POLLOUT << CYAN
+        //           << " event detected" << RESET << std::endl;
+        try
+        {
+          if (clients[i].response.size())
+            handleClientResponse(i);
+          // clean clients[i].response after send
+        }
+        catch (const HttpException &e)
+        {
+          std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
+                    << RESET << std::endl;
+        }
       }
 			if (fds[i].revents & POLLOUT) // when ?
 			{
@@ -99,7 +96,9 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
 				try
 				{
 					if (clients[i].response.size())
+					{
 						handleClientResponse(i);
+					}
 					// else
 					// 	std::cout << RED << "Client " << clients[i].socketFD << " has no response" << RESET << std::endl;
 					// clean clients[i].response after send
@@ -146,7 +145,7 @@ int Webserv::setNonBlocking(int fd)
 }
 
 // Close client connection and remove from pollfd and clients array, and remove any pending script pipes for that connection
-void Webserv::closeConnection(size_t i)
+void Webserv::closeConnection(size_t &i)
 {
   std::cout << "Connection closed: " << fds[i].fd << std::endl;
 
@@ -168,7 +167,7 @@ void Webserv::closeConnection(size_t i)
 }
 
 // Close pipe and remove from pollfd, clients and clientScriptMap array
-void Webserv::closePipe(size_t i)
+void Webserv::closePipe(size_t &i)
 {
   std::cout << "Pipe closed: " << fds[i].fd << std::endl;
 

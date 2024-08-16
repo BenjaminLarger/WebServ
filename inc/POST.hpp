@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 18:42:17 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/15 13:29:54 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,39 +60,40 @@ private:
   const ServerConfig &serverConfig;
 	std::vector<char>	fileContentBinary;
 
-  //BodyUplaod
-  //Header
-
   //Util
   void extractFirstLine();
   void extractHeaders();
   std::string extractBody();
   bool saveInLogFile(std::map<std::string, std::string> formValues);
   std::map<std::string, std::string>	formValuestoMap(std::string body);
-  int extractMultipartFormData();
   std::string createPostOkResponse(std::map<std::string, std::string> formValues);
 	std::string createPostOkResponseWithFile(std::map<std::string, std::string> formValues);
 	std::string createPostOkResponseWithFilename(std::map<std::string, std::string> formValues);
 
   //Util uplaod file
+  int extractMultipartFormData(std::string &_boundary);
   void readAllRequest(void); //can delete before submit project
   std::map<int, std::string> headerUpload;
+	//Parsing
   int extractValues(std::string line, std::map<int, Content> &myMap, int index,
                     std::string key, const std::string &content);
-  bool isBoundary(std::string line);
-  std::string extractBoundary(const std::string &input);
-  bool isClosingBoundary(std::string line);
-  std::string makeCopy(const std::string &original);
   int parseContent(int index);
   void parseContentDisposition(int index, const std::string &content);
   void parseContentType(int index, std::string &content);
-  bool hasClosingBoundary;
-  std::string skipBoundaryPart(void);
-  int handleFileUpload(int index);
-	void	trimImageBody(std::string &binaryFileContent);
 	void	handleBody(const std::string &line, int index);
 	void	handleNewPart(int &index);
+	
+	//Boundary									
+  bool isBoundary(std::string line);
+  std::string extractBoundary(const std::string &input);
+  bool isClosingBoundary(std::string line);
+  bool hasClosingBoundary;
+  std::string makeCopy(const std::string &original);
+  std::string skipBoundaryPart(void);
 	std::vector<char>	getBoundaryEnd();
+	//Upload
+  int handleFileUpload(int index);
+	void	trimImageBody(std::string &binaryFileContent);
 	std::vector<char> extractBinaryContent(const std::vector<char>& content);
 	
 	std::vector<char> extractPng(const std::vector<char>& content);
@@ -105,7 +106,7 @@ private:
 
 public:
   POST(ClientInfo &client, int clientFD, std::vector<char> &clientInput,
-       const ServerConfig &serverConfig);
+       const ServerConfig &serverConfig, std::string &boundary);
   POST();
   ~POST(void);
 };

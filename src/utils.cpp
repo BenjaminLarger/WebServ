@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/13 13:18:04 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 10:24:37 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,16 +217,43 @@ void getFileNameAndExtension(const std::string &path, std::string &fileName,
   fileName = fileName.substr(0, lastDot);
 }
 
-bool hasBlankLineInput(std::string &clientInput)
+std::string extractBoundary(const std::string& input, std::string &boundary)
+{
+    std::size_t pos = input.find('=');
+    if (pos != std::string::npos)
+    {
+        boundary = input.substr(pos + 1);
+				std::cout << GREEN << "Boundary found : " << boundary << RESET << std::endl;
+        std::size_t endPos = boundary.find('\r');
+        if (endPos != std::string::npos)
+        {
+					trimBothEnds(boundary);
+            return ("--" + boundary.substr(0, endPos));
+        }
+				trimBothEnds(boundary);
+        return ("--" + boundary);
+    }
+    return ("");
+}
+
+bool hasBlankLineInput(std::string &clientInput, std::string &boundary, ClientInfo &client)
 {
   //Find if it is a POST request
   size_t isPost = clientInput.rfind("POST /submit-form HTTP/1.1");
   if (isPost != std::string::npos)
   {
     std::cout << YELLOW << "Is a post request\n" << RESET << std::endl;
-    return (true);
+    if (extractBoundary(client.req.fields["Content-Type"], boundary).size())
+		{
+			std::cout << boundary << std::endl;
+			size_t isFinalBoundary = clientInput.rfind(boundary + "--");
+			if (isFinalBoundary != std::string::npos)
+				return (true);
+			else
+				return (false);
+		}
   }
-
+	
   // Find the position of the last newline character
   size_t lastNewlinePos = clientInput.rfind('\n');
 
@@ -259,6 +286,6 @@ bool hasBlankLineInput(std::string &clientInput)
       && clientInput[clientInput.size() - 2] == '\r'
       && clientInput[clientInput.size() - 3] == '\n')
     return (true);
-
+	std::cout << RED << "hasBlankLineInput return false!\n" << RESET;
   return (false);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 12:45:32 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 08:56:02 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,4 @@ void getFileNameAndExtension(const std::string &path, std::string &fileName,
                              std::string &extension);
 
 //Check if request is complete
-bool hasBlankLineInput(std::string &clientInput);
+bool hasBlankLineInput(std::string &clientInput, std::string &boundary, ClientInfo &client);
