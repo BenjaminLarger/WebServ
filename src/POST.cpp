@@ -3,14 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   POST.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/15 17:09:56 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 18:31:48 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #include "POST.hpp"
 #include "Webserv.hpp"
@@ -18,25 +16,25 @@
 
 std::string POST::extractBody()
 {
-    std::string body;
+  std::string body;
 
-    // Read body
-    if (contentLength > 0)
-    {
-      char *buffer = new char[contentLength + 1];
+  // Read body
+  if (contentLength > 0)
+  {
+    char *buffer = new char[contentLength + 1];
 
-      //Reads the content of the body from the actual position of the stream
-      requestStream.read(buffer, contentLength);
-      buffer[contentLength] = '\0';
-      //Converts the buffer to a string to make it easier to manipulate
-      body = buffer;
-      delete[] buffer;
-      std::cout << "body: " << body << std::endl;
-    }
-    else
-      throw HttpException(400, "Bad Request: Content-Length is missing");
+    //Reads the content of the body from the actual position of the stream
+    requestStream.read(buffer, contentLength);
+    buffer[contentLength] = '\0';
+    //Converts the buffer to a string to make it easier to manipulate
+    body = buffer;
+    delete[] buffer;
+    std::cout << "body: " << body << std::endl;
+  }
+  else
+    throw HttpException(400, "Bad Request: Content-Length is missing");
 
-    return (body);
+  return (body);
 }
 
 void POST::extractHeaders()
@@ -93,9 +91,11 @@ void POST::extractFirstLine()
 }
 
 //We extract all the content of a POST request
-POST::POST(ClientInfo &client, int clientFD,
-           std::vector<char> &clientInput, const ServerConfig &serverConfig, std::string &_boundary)
-    : clientInputVector(clientInput), clientInputString(clientInput.begin(), clientInput.end()), contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
+POST::POST(ClientInfo &client, int clientFD, std::vector<char> &clientInput,
+           const ServerConfig &serverConfig, std::string &_boundary)
+    : clientInputVector(clientInput),
+      clientInputString(clientInput.begin(), clientInput.end()),
+      contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
 {
   //std::string response;
   std::string body;
@@ -117,25 +117,24 @@ POST::POST(ClientInfo &client, int clientFD,
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
   {
 
-		
     if (extractMultipartFormData(_boundary) == SUCCESS)
-		{
-			std::cout << "RETURN SUCCESS\n";
-			client.req.buffer.clear();
-			std::cout << "multipart/form-data return SUCCESS\n";
-			if (lineIsEmpty(contentMap[2].filename) == true) //no file has been uploaded
-				client.response = createPostOkResponse(_formValues);
-			else
-				client.response = createPostOkResponseWithFile(_formValues);
-		}
-		std::cout << "multipart/form-data return FAILURE\n";
+    {
+      std::cout << "RETURN SUCCESS\n";
+      client.req.buffer.clear();
+      std::cout << "multipart/form-data return SUCCESS\n";
+      if (lineIsEmpty(contentMap[2].filename)
+          == true) //no file has been uploaded
+        client.response = createPostOkResponse(_formValues);
+      else
+        client.response = createPostOkResponseWithFile(_formValues);
+    }
+    std::cout << "multipart/form-data return FAILURE\n";
   }
   else
   {
-		std::cout << RED << "POST method unfinded\n" << RESET;
-		throw HttpException(415, "Unsupported Media Type.");
-	}
-  //sendRGeneric(clientFD, client.response);
+    std::cout << RED << "POST method unfinded\n" << RESET;
+    throw HttpException(415, "Unsupported Media Type.");
+  }
 }
 
 POST::~POST(void) {}

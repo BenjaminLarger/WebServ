@@ -3,40 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   core.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 17:17:18 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 18:31:41 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "core.hpp"
-
-int sendall(int s, const char *buf, int len)
-{
-  int totalBytesSent = 0; // how many bytes we've sent
-  int bytesleft = len;    // how many we have left to send
-  int n;
-
-  while (totalBytesSent < len)
-  {
-    n = send(s, buf + totalBytesSent, bytesleft, 0);
-    if (n == -1)
-      break;
-    totalBytesSent += n;
-    bytesleft -= n;
-  }
-
-  len = totalBytesSent;      // return number actually sent here
-  return (n == -1 ? -1 : 0); // return -1 on failure, 0 on success
-}
-
-void sendRGeneric(int clientFD, std::string responseStr)
-{
-  if (sendall(clientFD, responseStr.c_str(), responseStr.size()) == -1)
-    throw HttpException(
-        500, strerror(errno));
-}
 
 bool isDirectory(const std::string &path)
 {
@@ -66,7 +40,8 @@ std::vector<std::string> listFilesInDirectory(const std::string &dirPath)
     struct dirent *entry;
     while ((entry = readdir(dirp)) != NULL)
     {
-      if (entry->d_type == DT_REG && entry->d_name[0] != '.') //Verifies if it is a regular file
+      if (entry->d_type == DT_REG
+          && entry->d_name[0] != '.') //Verifies if it is a regular file
         files.push_back(entry->d_name);
     }
     closedir(dirp);

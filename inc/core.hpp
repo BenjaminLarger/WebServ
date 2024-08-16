@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:52:13 by demre             #+#    #+#             */
-/*   Updated: 2024/08/14 13:37:04 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 18:31:36 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,11 @@
 #include "dependencies.hpp"
 #include "utils.hpp"
 
-int sendall(int s, const char *buf, int len);
-
 // Checks if the path is a directory
 bool isDirectory(const std::string &path);
 
 // Checks file exists
 bool isFile(const std::string &path);
-
-// Sends directly the given response to the client
-void sendRGeneric(int clientFD, std::string responseStr);
 
 // Extracts the html content and return it as a string
 std::string extractHtmlContentFromFile(const std::string &filePath);
