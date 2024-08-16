@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 14:18:34 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 15:17:06 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,6 @@ void Webserv::handleClientRequest(
     }
     else
     {
-      ClientInfo &client = clients[i];
       int clientFD = client.socketFD; // required in case CGI script
 
       std::vector<char> clientInput(client.req.buffer.begin(),

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 10:01:37 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/16 15:20:20 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,17 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
   try
   {
 
-    char buffer[10];
+    char buffer[1024];
     ssize_t bytesRead = read(fds[i].fd, buffer, sizeof(buffer) - 1);
-    std::cout << "A bytesRead: " << bytesRead << std::endl;
+    // std::cout << "A bytesRead: " << bytesRead << std::endl;
     if (bytesRead > 0)
     {
       buffer[bytesRead] = '\0';
 
       clients[j].responseBuffer += buffer;
 
-      std::cout << "(bytesRead: " << bytesRead << ". Read from pipe: '"
-                << buffer << "'" << std::endl;
+      // std::cout << "(bytesRead: " << bytesRead << ". Read from pipe: '"
+      //           << buffer << "'" << std::endl;
     }
     else if (bytesRead < 0)
     {
@@ -60,7 +60,7 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
     }
     else if (bytesRead == 0)
     {
-      std::cout << "(bytesRead == 0)" << std::endl;
+      // std::cout << "(bytesRead == 0)" << std::endl;
 
       clients[j].response = composeOkHtmlResponse(
           generateCgiOutputHtmlPage(clients[j].responseBuffer),
