@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 10:53:48 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 13:01:24 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,8 @@ public:
 
   void executeScript(std::string const &filePath, std::string const &scriptType,
                      int &clientFD);
+	void executeScript(std::string const &filePath,
+                            std::string const &script, int &clientFD, std::string &reponse);
 
   void handleClientResponse(size_t &index);
 

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/15 13:02:22 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 12:21:54 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,12 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
   std::map<std::string, LocationConfig>::const_iterator it;
 
   findURIstartInLocations(req.URI, locations, it);
-
+	
   if (it != locations.end())
   {
-    // std::cout << RED << "req.pathFolder: " << req.pathFolder << RESET
-    //           << std::endl;
-
     std::string path = req.pathOnServer;
-
+		std::cout << RED << "PATH = " << path << RESET << std::endl;
+		
     if (it->first == "/delete")
       return (composeOkHtmlResponse(manageDeleteEndPoint(), req.buffer));
     // Check if the location has a redirection
@@ -49,6 +47,7 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
     }
     else if (isFile(path))
     {
+			std::cout << RED << "IS FILE" << RESET << std::endl;
       std::string fileName, extension;
       getFileNameAndExtension(path, fileName, extension);
 

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 10:54:04 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 13:17:56 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,10 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
             {
               std::cout << GREEN << "New script output pipe ready " << RESET
                         << fds[i].fd << std::endl;
+							if (clients[i].response.size())
+								std::cout << RED << "Client has response\n" << RESET << std::endl;
+							else
+								std::cout << RED << "Client hasn't response\n" << RESET << std::endl;
               handleScriptOutput(i);
             }
           }

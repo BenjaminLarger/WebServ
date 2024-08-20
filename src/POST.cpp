@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/15 17:09:56 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/20 09:33:17 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,20 +93,36 @@ void POST::extractFirstLine()
 }
 
 //We extract all the content of a POST request
-POST::POST(ClientInfo &client, int clientFD,
+POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
            std::vector<char> &clientInput, const ServerConfig &serverConfig, std::string &_boundary)
     : clientInputVector(clientInput), clientInputString(clientInput.begin(), clientInput.end()), contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
 {
   //std::string response;
   std::string body;
   std::map<std::string, std::string> formValues;
+	std::string path = client.req.pathOnServer;
 
   this->requestStream.str(clientInputString);
   std::cout << std::endl << "--------POST request---------" << std::endl;
   extractFirstLine();
   extractHeaders();
   // Depending on the content type of the form the body is formatted in a different way
-  if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded", 33))
+	std::cout << RED << "PATH = " << path << RESET << std::endl;
+	if (isFile(path))
+	{
+		std::cout << YELLOW << "This is a file\n" << RESET << std::endl;
+		std::string fileName, extension;
+    getFileNameAndExtension(path, fileName, extension);
+		if (extension == "php" || extension == "py")
+		{
+			std::cout << RED << "file is a script in " << extension << RESET
+								<< std::endl;
+
+			webserv.executeScript(path, extension, clientFD/* , client.response */);
+			std::cout << BLUE << "Client response = " << client.response << RESET << std::endl;
+		}
+	}
+  else if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded", 33))
   {
     body = extractBody();
     formValues = formValuestoMap(body);

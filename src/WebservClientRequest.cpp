@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 10:54:23 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 11:25:04 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,9 +212,6 @@ void Webserv::handleClientRequest(
       clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
       std::string clientStr(clientInput.begin(), clientInput.end());
       client.req.buffer = clientStr;
-			std::cout << MAGENTA << clientStr << RESET << std::endl;
-			std::cout << CYAN << client.req.buffer << RESET << std::endl;
-			std::cout << RED << "boundary = " << boundary << RESET << std::endl;
       parseClientRequest(client.req);
       if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
       {
@@ -240,7 +237,7 @@ void Webserv::handleClientRequest(
           if (client.req.method == "GET")
             GET method(*this, client, client.client_serverConfig);
           else if (client.req.method == "POST")
-            POST method(client, fds[i].fd, clientInput,
+            POST method(*this, client, fds[i].fd, clientInput,
                         client.client_serverConfig, boundary);
           else if (client.req.method == "DELETE")
             DELETE method(client, client.client_serverConfig);

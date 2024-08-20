@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestLocation.cpp                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/12 10:35:32 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/16 12:16:20 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ void Webserv::resolveRequestedPathFromLocations(
       req.pathOnServer
           = replaceUriPrefix(req.URI, it->first, it->second.serverPath);
       req.pathFolderOnServer = it->second.serverPath;
+			std::cout << RED << "req.pathOnServer = " << req.pathOnServer << RESET << std::endl;
     }
     else if (it->second.root.size())
     {
@@ -56,6 +57,7 @@ void Webserv::resolveRequestedPathFromLocations(
           = "." + formatPath(it->second.root) + formatPath(req.URI);
       req.pathFolderOnServer
           = "." + formatPath(it->second.root) + formatPath(it->first);
+				std::cout << RED << "req.pathOnServer = " << req.pathOnServer << RESET << std::endl;
     }
   }
   else

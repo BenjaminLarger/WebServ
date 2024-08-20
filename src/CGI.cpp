@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 10:53:54 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/20 09:32:36 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,3 +99,69 @@ void Webserv::executeScript(std::string const &filePath,
     clients.push_back(ci);
   }
 }
+
+/* void Webserv::executeScript(std::string const &filePath,
+                            std::string const &script, int &clientFD, std::string &response)
+{
+  std::cout << "Executing: " << filePath << std::endl;
+
+  checkFileAndScriptExecPaths(filePath, script);
+
+  int pipefd[2];
+  if (pipe(pipefd) == -1)
+    throw HttpException(500, "Pipe error when executing " + filePath);
+
+  pid_t pid = fork();
+  if (pid == -1)
+    throw HttpException(500, "Fork error when executing " + filePath);
+
+  if (pid == 0) // Execute script in child process
+  {
+    if (close(pipefd[0]) == -1 || dup2(pipefd[1], STDOUT_FILENO) == -1
+        || close(pipefd[1]) == -1)
+      exit(1);
+
+    if (script == "php")
+    {
+      char *argv[] = {(char *)"php", (char *)filePath.c_str(), NULL};
+      execve("/usr/bin/php", argv, environ);
+    }
+    else if (script == "py")
+    {
+      char *argv[] = {(char *)"python3", (char *)filePath.c_str(), NULL};
+      execve("/usr/bin/python3", argv, environ);
+    }
+    exit(1);
+  }
+  else // Add read end of the pipe to the pollfd vector in parent process
+  {
+    close(pipefd[1]);
+
+    setNonBlocking(pipefd[0]);
+
+    // Store the pid to manage multiple processes
+    pidMap[pipefd[0]] = pid;
+
+    pollfd pfd;
+   pfd.fd = pipefd[0];
+	else
+	std::cout << RED << "errno : " << strerror(errno) << RESET << std::endl;
+		
+		
+    pfd.events = (POLLIN | POLLHUP);
+    pfd.revents = 0;
+
+    // Associate the pipe FD with the client connection
+    clientScriptMap[pipefd[0]] = clientFD;
+    // std::cout << GREEN << "Adding to clientScriptMap " << RESET << pipefd[0]
+    //           << " " << clientFD << std::endl;
+    fds.push_back(pfd);
+
+    // Add a dummy client info for the listening socket
+    ClientInfo ci;
+    ci.socketFD = pipefd[0];
+    ci.port = -1;
+    clients.push_back(ci);
+	
+  }
+} */

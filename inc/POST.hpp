@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/15 13:29:54 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 11:25:22 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ private:
   POST &operator=(const POST &);
 
 public:
-  POST(ClientInfo &client, int clientFD, std::vector<char> &clientInput,
+  POST(Webserv &webserv, ClientInfo &client, int clientFD, std::vector<char> &clientInput,
        const ServerConfig &serverConfig, std::string &boundary);
   POST();
   ~POST(void);

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/12 17:17:18 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 11:46:55 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ bool findURIstartInLocations(
     std::map<std::string, LocationConfig>::const_iterator &it)
 {
   std::string currentURI = URI;
+	std::cout << "Current URI : " << URI << std::endl;
   while (!currentURI.empty())
   {
     // Check if the current URI segment matches any location
