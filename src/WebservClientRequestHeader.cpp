@@ -3,28 +3,66 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestHeader.cpp                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/15 16:45:44 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/16 16:07:09 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 #include "core.hpp"
 
+// Clears the struct ClientRequest before parsing new request
+static void reqReset(ClientRequest &req)
+{
+  req.method.erase();
+  req.URIpath.erase();
+  req.queryString.erase();
+  req.HTTPversion.erase();
+  req.fields.clear();
+  req.pathFolder.erase();
+  req.pathOnServer.erase();
+  req.pathFolderOnServer.erase();
+}
+
+// Modifies req.URIpath to exclude the query string and stores the query string separately in req.queryString.
+static void extractQueryString(ClientRequest &req)
+{
+  std::string::size_type lastSlashPos = req.URIpath.find_last_of('/');
+  if (lastSlashPos == std::string::npos)
+    return;
+
+  std::string::size_type queryPos = req.URIpath.find('?', lastSlashPos);
+
+  // If '?' is found, separate the query string from the URI
+  if (queryPos != std::string::npos)
+  {
+    req.queryString = req.URIpath.substr(queryPos + 1);
+    req.URIpath = req.URIpath.substr(0, queryPos);
+  }
+  else
+    req.queryString.erase();
+
+  // std::cout << "extractQueryString URIpath: " << req.URIpath
+  //           << ", req.queryString: " << req.queryString << std::endl;
+}
+
 void Webserv::parseClientRequest(ClientRequest &req)
 {
+  reqReset(req);
+
   std::istringstream iss(req.buffer);
   std::string line;
 
-  std::cout << GREEN << "Client request buffer: " << std::endl << req.buffer << RESET << std::endl;
+  std::cout << GREEN << "Client request buffer: " << std::endl
+            << req.buffer << RESET << std::endl;
   // Parse the first line (request line)
   if (std::getline(iss, line))
   {
     std::istringstream lineStream(line);
     lineStream >> req.method;
-    lineStream >> req.URI;
+    lineStream >> req.URIpath;
     lineStream >> req.HTTPversion;
     if ((req.method != "GET" && req.method != "POST" && req.method != "DELETE")
         /* || req.HTTPversion != "HTTP/1.1" */)
@@ -32,6 +70,7 @@ void Webserv::parseClientRequest(ClientRequest &req)
       req.buffer.erase();
       throw HttpException(400, "Bad request: Method not implemented.");
     }
+    extractQueryString(req);
   }
   else
   {

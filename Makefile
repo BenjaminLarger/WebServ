@@ -25,7 +25,7 @@ SRC_FILES		= main.cpp ClientProcessMethods.cpp Webserv.cpp \
 	GET.cpp GETdirectoryListing.cpp CGI.cpp CGIoutput.cpp \
 	POST.cpp POSTupload.cpp POSTutils.cpp POSTpng.cpp \
 	WebservCreateServers.cpp WebservClientRequest.cpp WebservNewConnection.cpp \
-	WebservSignal.cpp WebservClientRequestHeader.cpp \
+	WebservSignal.cpp WebservClientRequestHeader.cpp WebservCleanUp.cpp \
 	WebservClientRequestLocation.cpp WebservClientResponse.cpp \
 	ManageWriteReadClientCapability.cpp HttpExceptions.cpp \
 	coreResponse.cpp coreResponseHeaderStatusLine.cpp DELETE.cpp \

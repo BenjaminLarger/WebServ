@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 11:25:04 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/20 09:37:25 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ bool checkIdenticalHostPort(const std::vector<ServerConfig> &serverConfigs,
 const ServerConfig &findClientServerConfigByLoc(
     ClientInfo &client, const std::vector<ServerConfig> &serverConfigs)
 {
-  std::string reqLoc = client.req.URI;
+  std::string reqLoc = client.req.URIpath;
   size_t firstPos = reqLoc.find('/');
   size_t secondPos = std::string::npos;
 
@@ -170,10 +170,10 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
   // std::cout << buffer << std::endl;
   return (totalBytesReceived);
 }
-void readClientInput(const std::vector<char>& clientInput)
+void readClientInput(const std::vector<char> &clientInput)
 {
-    std::string str(clientInput.begin(), clientInput.end());
-		std::cout << BLUE << str << RESET << std::endl;
+  std::string str(clientInput.begin(), clientInput.end());
+  std::cout << BLUE << str << RESET << std::endl;
 }
 
 void Webserv::handleClientRequest(
@@ -182,11 +182,11 @@ void Webserv::handleClientRequest(
   //char buffer[100000];
   std::vector<char> buffer;
 
-	ClientInfo &client = clients[i];
+  ClientInfo &client = clients[i];
   try
   {
     std::cerr << RED << "fds[i].fd: " << fds[i].fd << RESET << '\n';
-	
+
     ssize_t bytesRead = recvAll(fds[i].fd, buffer);
     if (bytesRead < 0)
     {
@@ -204,15 +204,21 @@ void Webserv::handleClientRequest(
     }
     else
     {
+      int clientFD = client.socketFD; // required in case CGI script
 
       std::vector<char> clientInput(client.req.buffer.begin(),
                                     client.req.buffer.end());
-			std::cout << GREEN << client.req.buffer << RESET << std::endl;
-			readClientInput(clientInput);
+      std::cout << GREEN << client.req.buffer << RESET << std::endl;
+      readClientInput(clientInput);
       clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
       std::string clientStr(clientInput.begin(), clientInput.end());
       client.req.buffer = clientStr;
+      std::cout << MAGENTA << clientStr << RESET << std::endl;
+      std::cout << CYAN << client.req.buffer << RESET << std::endl;
+      std::cout << RED << "boundary = " << boundary << RESET << std::endl;
+
       parseClientRequest(client.req);
+
       if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
       {
 
@@ -223,7 +229,7 @@ void Webserv::handleClientRequest(
 
         displayParsedHeaderRequest(client);
 
-        //Looks for the serverConfig that matches the Host value of the request
+        // Looks for the serverConfig that matches the Host value of the request
         client.client_serverConfig
             = findClientServerConfig(client, serverConfigs);
 
@@ -243,22 +249,21 @@ void Webserv::handleClientRequest(
             DELETE method(client, client.client_serverConfig);
 
           std::cout << RED << "Clearing request buffers" << RESET << std::endl;
-          clientInput.erase(clientInput.begin(), clientInput.end());
-          clientStr.erase(clientStr.begin(), clientStr.end());
-          client.req.buffer.erase(client.req.buffer.begin(),
-                                  client.req.buffer.end());
-          buffer.erase(buffer.begin(), buffer.end());
-          // clientInput.clear();
-          // clientStr.clear();
-          // client.req.buffer.clear();
-          // buffer.clear();
+
+          // if the method is a CGI script, we are adding the pipe to pollfd and clients vectors, so we need to get the index again to have the correct client.
+          size_t j = findClientIndexFromFD(clientFD);
+          clients[j].req.buffer.clear();
+          clientInput.clear();
+          clientStr.clear();
+          buffer.clear();
         }
         else
         {
           std::cerr << RED << "Clearing request buffers" << RESET << std::endl;
+          size_t j = findClientIndexFromFD(clientFD);
+          clients[j].req.buffer.clear();
           clientInput.clear();
           clientStr.clear();
-          client.req.buffer.clear();
           buffer.clear();
           throw HttpException(405, "Method is not allowed on that path");
         }
@@ -273,5 +278,7 @@ void Webserv::handleClientRequest(
     clients[i].response = composeErrorHtmlPage(
         e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
         clients[i].client_serverConfig.errorPages);
+    clients[i].totalToSend = clients[i].response.size();
+    clients[i].totalBytesSent = 0;
   }
 }

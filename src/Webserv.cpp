@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 13:17:56 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/20 09:36:59 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,11 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
     int pollCount = poll(fds.data(), fds.size(), -1);
     if (pollCount < 0)
       throw(std::runtime_error("Failed to poll."));
+    if (pollCount == 0)
+      continue;
+
+    // Check for terminated child processes
+    checkTerminatedProcesses();
 
     // add try / catch around each incoming connection?
     for (size_t i = 0; i < fds.size(); ++i)
@@ -64,11 +69,7 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
             {
               std::cout << GREEN << "New script output pipe ready " << RESET
                         << fds[i].fd << std::endl;
-							if (clients[i].response.size())
-								std::cout << RED << "Client has response\n" << RESET << std::endl;
-							else
-								std::cout << RED << "Client hasn't response\n" << RESET << std::endl;
-              handleScriptOutput(i);
+              readAndHandleScriptOutput(i);
             }
           }
           catch (const HttpException &e)
@@ -94,26 +95,26 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
                     << RESET << std::endl;
         }
       }
-			if (fds[i].revents & POLLOUT) // when ?
-			{
-				// std::cout << CYAN << "New " << RED << POLLOUT << CYAN
-				// 					<< " event detected" << RESET << std::endl;
-				try
-				{
-					if (clients[i].response.size())
-					{
-						handleClientResponse(i);
-					}
-					// else
-					// 	std::cout << RED << "Client " << clients[i].socketFD << " has no response" << RESET << std::endl;
-					// clean clients[i].response after send
-				}
-				catch (const HttpException &e)
-				{
-					std::cerr << RED << "Error: " << e.getStatusCode() << " "
-										<< e.what() << RESET << std::endl;
-				}
-			}
+      if (fds[i].revents & POLLOUT) // when ?
+      {
+        // std::cout << CYAN << "New " << RED << POLLOUT << CYAN
+        // 					<< " event detected" << RESET << std::endl;
+        try
+        {
+          if (clients[i].response.size())
+          {
+            handleClientResponse(i);
+          }
+          // else
+          // 	std::cout << RED << "Client " << clients[i].socketFD << " has no response" << RESET << std::endl;
+          // clean clients[i].response after send
+        }
+        catch (const HttpException &e)
+        {
+          std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
+                    << RESET << std::endl;
+        }
+      }
     }
   }
 }
@@ -149,46 +150,7 @@ int Webserv::setNonBlocking(int fd)
   return (fcntl(fd, F_SETFL, flags | O_NONBLOCK));
 }
 
-// Close client connection and remove from pollfd and clients array, and remove any pending script pipes for that connection
-void Webserv::closeConnection(size_t &i)
-{
-  std::cout << "Connection closed: " << fds[i].fd << std::endl;
-
-  std::cout << "size() fds: " << fds.size() << ", clients: " << clients.size()
-            << ", clientScriptMap: " << clientScriptMap.size() << std::endl;
-
-  for (std::map<int, int>::const_iterator it = clientScriptMap.begin();
-       it != clientScriptMap.end(); ++it)
-  {
-    if (it->second == fds[i].fd)
-      clientScriptMap.erase(it->first);
-  }
-  close(fds[i].fd);
-  fds.erase(fds.begin() + i);
-  clients.erase(clients.begin() + i);
-
-  std::cout << "size() fds: " << fds.size() << ", clients: " << clients.size()
-            << ", clientScriptMap: " << clientScriptMap.size() << std::endl;
-}
-
-// Close pipe and remove from pollfd, clients and clientScriptMap array
-void Webserv::closePipe(size_t &i)
-{
-  std::cout << "Pipe closed: " << fds[i].fd << std::endl;
-
-  std::cout << "size() fds: " << fds.size() << ", clients: " << clients.size()
-            << ", clientScriptMap: " << clientScriptMap.size() << std::endl;
-
-  close(fds[i].fd);
-  clientScriptMap.erase(fds[i].fd);
-  fds.erase(fds.begin() + i);
-  clients.erase(clients.begin() + i);
-
-  std::cout << "size() fds: " << fds.size() << ", clients: " << clients.size()
-            << ", clientScriptMap: " << clientScriptMap.size() << std::endl;
-}
-
-size_t Webserv::findClientIndexFromPipeFD(int pipeFD)
+size_t Webserv::findClientIndexOfConnectionFromPipeFD(int pipeFD)
 {
   int clientFD = clientScriptMap[pipeFD];
 
@@ -203,12 +165,12 @@ size_t Webserv::findClientIndexFromPipeFD(int pipeFD)
   return (j);
 }
 
-size_t Webserv::findClientIndexFromClientFD(int clientFD)
+size_t Webserv::findClientIndexFromFD(int fd)
 {
   size_t j = 0;
   while (j < clients.size())
   {
-    if (clients[j].socketFD == clientFD)
+    if (clients[j].socketFD == fd)
       break;
     j++;
   }

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/16 12:21:54 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/20 09:37:59 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@
 std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
                                        int &clientFD)
 {
-  std::string URI = req.URI;
+  std::string URI = req.URIpath;
   std::string response;
   std::map<std::string, LocationConfig> locations = serverConfig.locations;
   std::map<std::string, LocationConfig>::const_iterator it;
 
-  findURIstartInLocations(req.URI, locations, it);
-	
+  findURIstartInLocations(req.URIpath, locations, it);
+
   if (it != locations.end())
   {
     std::string path = req.pathOnServer;
@@ -68,7 +68,7 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
         std::cout << RED << "file is a script in " << extension << RESET
                   << std::endl;
 
-        webserv.executeScript(path, extension, clientFD);
+        webserv.executeScript(path, extension, req.queryString, clientFD);
         response = "";
       }
       // other files
@@ -128,18 +128,29 @@ GET::GET(Webserv &webserv, ClientInfo &client, const ServerConfig &serverConfig)
 {
   try
   {
-    // Get headers + body
-    client.response
+    // if the get is a CGI script, we are adding the pipe to pollfd and clients vectors, so we need to get the index again to have the correct client.
+    int clientFD = client.socketFD;
+    std::string response
         = getResponseAtLocation(webserv, client.req, client.socketFD);
+
+    size_t i = webserv.findClientIndexFromFD(clientFD);
+    webserv.clients[i].response = response;
+    webserv.clients[i].totalToSend = (!webserv.clients[i].response.empty()
+                                          ? webserv.clients[i].response.size()
+                                          : 0);
+    webserv.clients[i].totalBytesSent = 0;
   }
   catch (const HttpException &e)
   {
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
 
-    client.response = composeErrorHtmlPage(e.getStatusCode(),
-                                           getReasonPhrase(e.getStatusCode()),
-                                           serverConfig.errorPages);
+    size_t i = webserv.findClientIndexFromFD(client.socketFD);
+    webserv.clients[i].response = composeErrorHtmlPage(
+        e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
+        serverConfig.errorPages);
+    webserv.clients[i].totalToSend = webserv.clients[i].response.size();
+    webserv.clients[i].totalBytesSent = 0;
   }
 }
 

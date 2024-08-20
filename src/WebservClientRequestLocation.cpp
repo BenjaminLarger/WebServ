@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/16 12:16:20 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/20 09:37:31 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,27 +34,27 @@ void Webserv::resolveRequestedPathFromLocations(
   std::map<std::string, LocationConfig>::const_iterator it;
 
   // Looks for a direct match in locations or a match of any parent folder
-  // if (!findURIorParentFolderInLocations(req.URI, locations, it))
-  findURIstartInLocations(req.URI, locations, it);
+  // if (!findURIorParentFolderInLocations(req.URIpath, locations, it))
+  findURIstartInLocations(req.URIpath, locations, it);
   // if URI or parent folder found
   if (it != locations.end())
   {
     if (it->second.alias.size())
     {
-       std::cout << "replacing with alias" << std::endl;
+      std::cout << "replacing with alias" << std::endl;
       req.pathFolder = it->first == "/" ? "/" : formatPath(it->first);
       req.pathOnServer
-          = replaceUriPrefix(req.URI, it->first, it->second.serverPath);
+          = replaceUriPrefix(req.URIpath, it->first, it->second.serverPath);
       req.pathFolderOnServer = it->second.serverPath;
 			std::cout << RED << "req.pathOnServer = " << req.pathOnServer << RESET << std::endl;
     }
     else if (it->second.root.size())
     {
-       std::cout << "replacing with root" << std::endl;
+      std::cout << "replacing with root" << std::endl;
 
       req.pathFolder = it->first == "/" ? "/" : formatPath(it->first);
       req.pathOnServer
-          = "." + formatPath(it->second.root) + formatPath(req.URI);
+          = "." + formatPath(it->second.root) + formatPath(req.URIpath);
       req.pathFolderOnServer
           = "." + formatPath(it->second.root) + formatPath(it->first);
 				std::cout << RED << "req.pathOnServer = " << req.pathOnServer << RESET << std::endl;

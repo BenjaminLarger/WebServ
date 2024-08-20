@@ -8,74 +8,24 @@ Crash:
 
 To implement:
 1)
-GET => process GET commmand if valid GET request input
-
-
   - Return every POST response to the main loop so we send it from there when POLLOUT available
 
   - Make receiv pass throught poll always and concatenate the buffer in each iteration
   - Replace errno after receiv for another error management
 
-  - Rewrite sendRGeneric so that it sends by chunk through poll() each time
+Doruk:
+- I think if a CGI returns an output, it should return a Content-type? text/html or text/plain, image... that way we can process it accordingly by wrapping the output in html if there isn't any for instance.
 
-  Bug:
-  Buffer not cleared when /wait15.py after /wait.py in same browser
+- It is currently possible for the CGI to not return any output, see http://localhost:8080/wait.py
 
-  New POLLIN event detected 4
-New client request detected 4
-fds[i].fd: 4
-bytes received = 562
- temp buffer = GET /wait15.py HTTP/1.1
-Host: localhost:8080
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8
-Accept-Language: en-US,en;q=0.5
-Accept-Encoding: gzip, deflate, br, zstd
-DNT: 1
-Sec-GPC: 1
-Connection: keep-alive
-Cookie: sessionId=; theme=light; rememberMe=yes
-Upgrade-Insecure-Requests: 1
-Sec-Fetch-Dest: document
-Sec-Fetch-Mode: navigate
-Sec-Fetch-Site: none
-Sec-Fetch-User: ?1
-Priority: u=0, i
+- I need to finish the clean up when a pipe or a connection is closed. In case one connection is executing scripts in the browser, but then quits.
+clientScriptMap, pidMap and terminatedPidMap need to be purged on closeConnection().
 
+- I added a function to check if the child processes terminated properly.
 
-clientInput[lastNewlinePos - 2] 10clientInput[lastNewlinePos - 1] = 13
-The last newline character is preceded by another newline character.
-Client request buffer: 
-GET /wait.py HTTP/1.1
-Host: localhost:8080
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8
-Accept-Language: en-US,en;q=0.5
-Accept-Encoding: gzip, deflate, br, zstd
-DNT: 1
-Sec-GPC: 1
-Connection: keep-alive
-Cookie: sessionId=j4Ru9xiJYhX7et8SUyE6KCyAW470zdch; theme=light; rememberMe=yes
-Upgrade-Insecure-Requests: 1
-Sec-Fetch-Dest: document
-Sec-Fetch-Mode: navigate
-Sec-Fetch-Site: none
-Sec-Fetch-User: ?1
-Priority: u=0, i
+- all responses are sent after a poll() in handleClientResponse()
 
-GET /wait15.py HTTP/1.1
-Host: localhost:8080
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8
-Accept-Language: en-US,en;q=0.5
-Accept-Encoding: gzip, deflate, br, zstd
-DNT: 1
-Sec-GPC: 1
-Connection: keep-alive
-Cookie: sessionId=; theme=light; rememberMe=yes
-Upgrade-Insecure-Requests: 1
-Sec-Fetch-Dest: document
-Sec-Fetch-Mode: navigate
-Sec-Fetch-Site: none
-Sec-Fetch-User: ?1
-Priority: u=0, i
+- the ouput of the CGI is sent to a pipe added to fds and read after a poll() in readAndHandleScriptOutput()
+
+https://www.jmarshall.com/easy/cgi/
+https://www.jmarshall.com/easy/cgi/cgi_footnotes.html#othertypes
