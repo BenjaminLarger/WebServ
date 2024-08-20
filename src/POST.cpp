@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/20 09:33:52 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/20 09:44:33 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void POST::extractFirstLine()
 }
 
 //We extract all the content of a POST request
-POST::POST(ClientInfo &client, int clientFD,
+POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
            std::vector<char> &clientInput, const ServerConfig &serverConfig, std::string &_boundary)
     : clientInputVector(clientInput), clientInputString(clientInput.begin(), clientInput.end()), contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
 {
@@ -116,7 +116,8 @@ POST::POST(ClientInfo &client, int clientFD,
 			std::cout << RED << "file is a script in " << extension << RESET
 								<< std::endl;
 
-			webserv.executeScript(path, extension, clientFD/* , client.response */);
+			(void)webserv;
+			//webserv.executeScript(path, extension, clientFD /* , client.response */ );
 			std::cout << BLUE << "Client response = " << client.response << RESET << std::endl;
 		}
 	}

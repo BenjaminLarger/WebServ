@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/20 09:35:29 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/20 09:39:19 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ public:
   void handleClientRequest(size_t &index,
                            const std::vector<ServerConfig> &serverConfigs);
   ssize_t recvAll(int sockfd, std::vector<char> &buffer);
-  void parseClientRequest(ClientRequest &req);
   void resolveRequestedPathFromLocations(ClientRequest &req,
                                          const ServerConfig &serverConfig);
   bool isMethodAllowedAtLoc(ClientRequest &req,
@@ -94,8 +93,6 @@ public:
   void closePipe(size_t &index);
 
   void parseClientRequest(ClientRequest &req);
-  void resolveRequestedPathFromLocations(ClientRequest &req,
-                                         const ServerConfig &serverConfig);
 
   void executeScript(std::string const &filePath, std::string const &scriptType,
                      int &clientFD);
