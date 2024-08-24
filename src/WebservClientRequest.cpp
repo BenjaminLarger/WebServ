@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/20 09:37:25 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/24 09:34:47 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,7 +208,7 @@ void Webserv::handleClientRequest(
 
       std::vector<char> clientInput(client.req.buffer.begin(),
                                     client.req.buffer.end());
-      std::cout << GREEN << client.req.buffer << RESET << std::endl;
+      //std::cout << GREEN << client.req.buffer << RESET << std::endl;
       readClientInput(clientInput);
       clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
       std::string clientStr(clientInput.begin(), clientInput.end());

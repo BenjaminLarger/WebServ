@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/20 09:44:33 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/24 10:08:09 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,12 @@ void POST::extractFirstLine()
   requestStream.clear();
   requestStream.seekg(0);
 }
-
+void	POST::setPostEnvVariables()
+{
+	setenv("CONTENT_LENGTH", "13", 1);
+	setenv("CONTENT_TYPE", contentType.c_str(), 1);
+	setenv("REQUEST_METHOD", "POST", 1);
+}
 //We extract all the content of a POST request
 POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
            std::vector<char> &clientInput, const ServerConfig &serverConfig, std::string &_boundary)
@@ -104,29 +109,33 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
   std::cout << std::endl << "--------POST request---------" << std::endl;
   extractFirstLine();
   extractHeaders();
+	(void)webserv;
   // Depending on the content type of the form the body is formatted in a different way
 	std::cout << RED << "PATH = " << path << RESET << std::endl;
-	if (isFile(path))
+	/* if (isFile(path))
 	{
 		std::cout << YELLOW << "This is a file\n" << RESET << std::endl;
+		std::cout << BLUE << client.req.buffer << RESET << std::endl;
 		std::string fileName, extension;
+		setPostEnvVariables();
     getFileNameAndExtension(path, fileName, extension);
 		if (extension == "php" || extension == "py")
 		{
 			std::cout << RED << "file is a script in " << extension << RESET
 								<< std::endl;
 
-			(void)webserv;
-			//webserv.executeScript(path, extension, clientFD /* , client.response */ );
+			webserv.executeScript(path, extension, "name", clientFD , client.response );
+			//webserv.executeScript(path, extension, clientFD , client.response );
 			std::cout << BLUE << "Client response = " << client.response << RESET << std::endl;
 		}
 	}
-  else if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded", 33))
+  else  */if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded", 33))
   {
     body = extractBody();
     formValues = formValuestoMap(body);
     saveInLogFile(formValues);
     client.response = createPostOkResponse(formValues);
+		client.totalToSend = client.response.size();
     client.req.buffer.clear();
   }
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
@@ -142,8 +151,8 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
         client.response = createPostOkResponse(_formValues);
       else
         client.response = createPostOkResponseWithFile(_formValues);
+			client.totalToSend = client.response.size();
     }
-    std::cout << "multipart/form-data return FAILURE\n";
   }
   else
   {

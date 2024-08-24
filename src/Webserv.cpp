@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/20 09:36:59 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/20 10:14:02 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
 
       if (fds[i].revents & (POLLIN | POLLHUP))
       {
-        std::cout << CYAN << "New POLLIN event detected " << RESET << fds[i].fd
-                  << std::endl;
+        /* std::cout << CYAN << "New POLLIN event detected " << RESET << fds[i].fd
+                  << std::endl; */
         if (i < serverConfigs.size())
         {
           // New connection request on listening socket

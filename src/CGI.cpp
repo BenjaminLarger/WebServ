@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/20 09:35:43 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/20 11:30:39 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,8 @@ void Webserv::executeScript(std::string const &filePath,
     else if (script == "py")
     {
       char *argv[] = {(char *)"python3", (char *)filePath.c_str(), NULL};
+			
+			dup2(pipefd[0], STDIN_FILENO);
       execve("/usr/bin/python3", argv, environ);
     }
     exit(1);

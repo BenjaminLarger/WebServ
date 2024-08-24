@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGIoutput.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 18:13:18 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/20 10:47:04 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ std::string Webserv::generateCgiOutputHtmlPage(std::string const &output,
 {
   std::ostringstream htmlStream;
 
+	std::cout << RED << "output = " << output << RESET << std::endl;
   htmlStream << "<html>\n"
              << "<head><title>CGI Script Output</title></head>\n"
              << "<body>\n"
@@ -48,8 +49,8 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
 
       clients[j].responseBuffer += buffer;
 
-      // std::cout << "(bytesRead: " << bytesRead << ". Read from pipe: '"
-      //           << buffer << "'" << std::endl;
+       std::cout << "(bytesRead: " << bytesRead << ". Read from pipe: '"
+                 << buffer << "'" << std::endl;
     }
     else if (bytesRead < 0)
     {

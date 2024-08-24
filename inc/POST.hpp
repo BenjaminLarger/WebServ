@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 11:25:22 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/20 11:38:10 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,9 @@ private:
 	void	handleBody(const std::string &line, int index);
 	void	handleNewPart(int &index);
 	
+	//CGI
+	void	setPostEnvVariables();
+
 	//Boundary									
   bool isBoundary(std::string line);
   std::string extractBoundary(const std::string &input);

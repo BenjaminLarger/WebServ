@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/20 09:37:59 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/20 10:44:50 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
         std::vector<char> fileContent = readFile(path);
         if (fileContent.empty())
           throw HttpException(404, "File to read not found.");
-
         response = composeFileResponse(fileContent, URI);
       }
       // has query string /...?...=...
