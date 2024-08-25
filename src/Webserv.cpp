@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/20 10:14:02 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/25 14:33:58 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
   // Server's main listening loop to handle incoming connections
   while (true)
   {
+		//std::cout << "polling. fds.size() = " << fds.size() << std::endl;
     int pollCount = poll(fds.data(), fds.size(), -1);
     if (pollCount < 0)
       throw(std::runtime_error("Failed to poll."));
@@ -34,17 +35,14 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
       continue;
 
     // Check for terminated child processes
-    checkTerminatedProcesses();
+    checkTerminatedProcesses(); //=> Benjamin : I have commented it, I could not perform CGI POST operation (infinite wait)
 
     // add try / catch around each incoming connection?
     for (size_t i = 0; i < fds.size(); ++i)
     {
       //withdrawWriteCapability(i, clients[i].buffer);
-
-      if (fds[i].revents & (POLLIN | POLLHUP))
+      if (fds[i].revents & (POLLIN | POLLHUP)) // the problem is that POLLIN is not triggered after pfd.events = (POLLIN | POLLHUP);
       {
-        /* std::cout << CYAN << "New POLLIN event detected " << RESET << fds[i].fd
-                  << std::endl; */
         if (i < serverConfigs.size())
         {
           // New connection request on listening socket
@@ -56,7 +54,6 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
         {
           try
           {
-            // Check if client socket (is not a pipefd)
             if (!(fds[i].revents & POLLHUP)
                 && clientScriptMap.find(fds[i].fd) == clientScriptMap.end())
             {
@@ -67,8 +64,6 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
             // Check if script output pipe
             else if (clientScriptMap.find(fds[i].fd) != clientScriptMap.end())
             {
-              std::cout << GREEN << "New script output pipe ready " << RESET
-                        << fds[i].fd << std::endl;
               readAndHandleScriptOutput(i);
             }
           }
@@ -81,8 +76,8 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
       }
       else if (fds[i].revents & POLLOUT)
       {
-        // std::cout << CYAN << "New " << RED << POLLOUT << CYAN
-        //           << " event detected" << RESET << std::endl;
+         /* std::cout << CYAN << "New " << RED << POLLOUT << CYAN
+                   << " event detected" << RESET << std::endl; */
         try
         {
           if (clients[i].response.size())
@@ -95,26 +90,8 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
                     << RESET << std::endl;
         }
       }
-      if (fds[i].revents & POLLOUT) // when ?
-      {
-        // std::cout << CYAN << "New " << RED << POLLOUT << CYAN
-        // 					<< " event detected" << RESET << std::endl;
-        try
-        {
-          if (clients[i].response.size())
-          {
-            handleClientResponse(i);
-          }
-          // else
-          // 	std::cout << RED << "Client " << clients[i].socketFD << " has no response" << RESET << std::endl;
-          // clean clients[i].response after send
-        }
-        catch (const HttpException &e)
-        {
-          std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
-                    << RESET << std::endl;
-        }
-      }
+			/* 	else
+					std::cout << RED << "GET : fds[3].revents & POLLIN = false !"<< RESET << std::endl; */
     }
   }
 }

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 11:06:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 10:54:31 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/24 17:34:46 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
       pfd.events = (POLLIN | POLLOUT);
       pfd.revents = 0;
       fds.push_back(pfd);
+			std::cout << "createServers : fds.size() = " << fds.size() << std::endl;
 
       // Add a dummy client info for the listening socket
       ClientInfo ci;
@@ -112,6 +113,7 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
     pfd.events = (POLLIN | POLLOUT);
     pfd.revents = 0;
     fds.push_back(pfd);
+		std::cout << "createServers2 : fds.size() = " << fds.size() << std::endl;
 
     // Add a dummy client info for the listening socket
     ClientInfo ci;

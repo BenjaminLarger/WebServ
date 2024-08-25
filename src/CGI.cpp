@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/20 11:30:39 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/25 14:34:27 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,10 +111,10 @@ void Webserv::executeScript(std::string const &filePath,
 
     // Associate the pipe FD with the client connection
     clientScriptMap[pipefd[0]] = clientFD;
-    // std::cout << GREEN << "Adding to clientScriptMap " << RESET << pipefd[0]
-    //           << " " << clientFD << std::endl;
+ 		std::cout << GREEN << "clientScriptMap[" << pipefd[0] << "] = " << clientFD << RESET << std::endl;
     fds.push_back(pfd);
-
+		std::cout << "cgi : fds.size() = " << fds.size() << std::endl;
+		
     // Add a dummy client info for the listening socket
     ClientInfo ci;
     ci.socketFD = pipefd[0];
@@ -123,16 +123,37 @@ void Webserv::executeScript(std::string const &filePath,
   }
 }
 
-/* void Webserv::executeScript(std::string const &filePath,
-                            std::string const &script, int &clientFD, std::string &response)
+void Webserv::executeScript(std::string const &filePath,
+                            std::string const &script,
+                            std::string const &queryString,
+														std::string &response)
 {
-  std::cout << "Executing: " << filePath << std::endl;
+  std::cout << "Executing: " << filePath;
+  if (queryString.size())
+    std::cout << " + " << queryString;
+  std::cout << std::endl;
 
+  //setenv("PATH_INFO", filePath.c_str(), 1);
+	char *envp[] = {
+        (char *)"CONTENT_LENGTH=13",  // Example content length
+        (char *)"CONTENT_TYPE=application/x-www-form-urlencoded",
+        (char *)"REQUEST_METHOD=POST",
+        NULL
+    };
+		// Example POST data
+    const char *post_data = "name=John&age=30";
+    size_t post_data_len = strlen(post_data);
+		(void)post_data_len;
   checkFileAndScriptExecPaths(filePath, script);
+	std::cout << GREEN << "Valid script" << RESET << std::endl;
 
   int pipefd[2];
   if (pipe(pipefd) == -1)
     throw HttpException(500, "Pipe error when executing " + filePath);
+
+	int output_pipefd[2];
+    if (pipe(output_pipefd) == -1)
+        throw HttpException(500, "Pipe error when executing " + filePath);
 
   pid_t pid = fork();
   if (pid == -1)
@@ -140,51 +161,45 @@ void Webserv::executeScript(std::string const &filePath,
 
   if (pid == 0) // Execute script in child process
   {
-    if (close(pipefd[0]) == -1 || dup2(pipefd[1], STDOUT_FILENO) == -1
-        || close(pipefd[1]) == -1)
+    if (close(pipefd[1]) == -1 || dup2(pipefd[0], STDIN_FILENO) == -1
+        || close(pipefd[0]) == -1)
       exit(1);
 
-    if (script == "php")
-    {
-      char *argv[] = {(char *)"php", (char *)filePath.c_str(), NULL};
-      execve("/usr/bin/php", argv, environ);
-    }
-    else if (script == "py")
-    {
-      char *argv[] = {(char *)"python3", (char *)filePath.c_str(), NULL};
-      execve("/usr/bin/python3", argv, environ);
-    }
+		// Close the read end of the output pipe
+		close(output_pipefd[0]);
+
+
+		// Redirect stdout to the write end of the output pipe
+		dup2(output_pipefd[1], STDOUT_FILENO);
+		close(output_pipefd[1]);
+
+		// Arguments for execve
+		char *argv[] = {
+				(char *)"/usr/bin/python3",
+				(char *)"./cgi-bin/python/hello.py",
+				NULL
+		};
+
+		// Execute the script
+		execve("./cgi-bin/python/hello.py", argv, envp);
+		//dprintf(2, "failed to exec script...\n");
     exit(1);
   }
   else // Add read end of the pipe to the pollfd vector in parent process
   {
-    close(pipefd[1]);
+    if (close(pipefd[0]) == -1 || write(pipefd[1], post_data, post_data_len) == -1
+			|| close(pipefd[1]) == -1 || close(output_pipefd[1]) == -1)
+			throw HttpException(500, "Pipe error when executing " + filePath);
 
-    setNonBlocking(pipefd[0]);
-
-    // Store the pid to manage multiple processes
-    pidMap[pipefd[0]] = pid;
-
-    pollfd pfd;
-   pfd.fd = pipefd[0];
-	else
-	std::cout << RED << "errno : " << strerror(errno) << RESET << std::endl;
-		
-		
-    pfd.events = (POLLIN | POLLHUP);
-    pfd.revents = 0;
-
-    // Associate the pipe FD with the client connection
-    clientScriptMap[pipefd[0]] = clientFD;
-    // std::cout << GREEN << "Adding to clientScriptMap " << RESET << pipefd[0]
-    //           << " " << clientFD << std::endl;
-    fds.push_back(pfd);
-
-    // Add a dummy client info for the listening socket
-    ClientInfo ci;
-    ci.socketFD = pipefd[0];
-    ci.port = -1;
-    clients.push_back(ci);
-	
+		// Read the output from the read end of the output pipe
+		std::vector<char> buffer(2048);
+		ssize_t bytes_read;
+		while ((bytes_read = read(output_pipefd[0], buffer.data(), buffer.size())) > 0)
+				response.append(buffer.data(), bytes_read);
+		close(output_pipefd[0]);
+		int status;
+		waitpid(pid, &status, 0);
+		std::cout << "Captured output: " << response << std::endl;
+		//make the copy into string result
   }
-} */
+}

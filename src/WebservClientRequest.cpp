@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/24 09:34:47 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/25 14:33:28 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,8 +185,6 @@ void Webserv::handleClientRequest(
   ClientInfo &client = clients[i];
   try
   {
-    std::cerr << RED << "fds[i].fd: " << fds[i].fd << RESET << '\n';
-
     ssize_t bytesRead = recvAll(fds[i].fd, buffer);
     if (bytesRead < 0)
     {
@@ -241,16 +239,23 @@ void Webserv::handleClientRequest(
         if (isMethodAllowedAtLoc(client.req, client.client_serverConfig))
         {
           if (client.req.method == "GET")
+					{
             GET method(*this, client, client.client_serverConfig);
+						std::cout << "fds.size() = " << fds.size() << std::endl;
+					}
           else if (client.req.method == "POST")
-            POST method(*this, client, fds[i].fd, clientInput,
-                        client.client_serverConfig, boundary);
+					{
+							POST method(*this, client, fds[i].fd, clientInput,
+													client.client_serverConfig, boundary);
+							std::cout << "fds.size() = " << fds.size() << std::endl;
+					}
           else if (client.req.method == "DELETE")
             DELETE method(client, client.client_serverConfig);
-
-          std::cout << RED << "Clearing request buffers" << RESET << std::endl;
+					
+          std::cout << RED << "Clearing request buffers. Method well proceeded" << RESET << std::endl;
 
           // if the method is a CGI script, we are adding the pipe to pollfd and clients vectors, so we need to get the index again to have the correct client.
+
           size_t j = findClientIndexFromFD(clientFD);
           clients[j].req.buffer.clear();
           clientInput.clear();

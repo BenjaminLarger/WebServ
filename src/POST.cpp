@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/24 10:08:09 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/25 14:24:06 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void POST::extractHeaders()
   //Reads line by line until it finds an empty line
   while (std::getline(requestStream, line) && line != "\r")
   {
-    std::cout << MAGENTA << line << std::endl;
+    //std::cout << MAGENTA << line << std::endl;
     size_t colonPos = line.find(":");
     if (colonPos != std::string::npos)
     {
@@ -112,10 +112,10 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
 	(void)webserv;
   // Depending on the content type of the form the body is formatted in a different way
 	std::cout << RED << "PATH = " << path << RESET << std::endl;
-	/* if (isFile(path))
+	if (isFile(path))
 	{
 		std::cout << YELLOW << "This is a file\n" << RESET << std::endl;
-		std::cout << BLUE << client.req.buffer << RESET << std::endl;
+		//std::cout << BLUE << client.req.buffer << RESET << std::endl;
 		std::string fileName, extension;
 		setPostEnvVariables();
     getFileNameAndExtension(path, fileName, extension);
@@ -124,19 +124,18 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
 			std::cout << RED << "file is a script in " << extension << RESET
 								<< std::endl;
 
-			webserv.executeScript(path, extension, "name", clientFD , client.response );
-			//webserv.executeScript(path, extension, clientFD , client.response );
+			webserv.executeScript(path, extension, client.req.queryString, client.response );
 			std::cout << BLUE << "Client response = " << client.response << RESET << std::endl;
 		}
 	}
-  else  */if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded", 33))
+  else if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded", 33))
   {
     body = extractBody();
     formValues = formValuestoMap(body);
     saveInLogFile(formValues);
     client.response = createPostOkResponse(formValues);
-		client.totalToSend = client.response.size();
-    client.req.buffer.clear();
+		//client.totalToSend = client.response.size();
+    client.req.buffer.clear();//may have to delete
   }
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
   {
@@ -151,7 +150,7 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
         client.response = createPostOkResponse(_formValues);
       else
         client.response = createPostOkResponseWithFile(_formValues);
-			client.totalToSend = client.response.size();
+			//client.totalToSend = client.response.size();
     }
   }
   else
@@ -159,6 +158,11 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
     std::cout << RED << "POST method unfinded\n" << RESET;
     throw HttpException(415, "Unsupported Media Type.");
   }
+	if (client.response.empty() == false)
+	{
+		client.totalToSend = client.response.size();
+		client.totalBytesSent = 0;
+	}
 }
 
 POST::~POST(void) {}

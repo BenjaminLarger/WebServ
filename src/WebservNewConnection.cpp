@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:01 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 10:54:36 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/24 17:59:02 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void Webserv::handleNewConnection(
     pfd.events = (POLLIN | POLLOUT);
     pfd.revents = 0;
     fds.push_back(pfd);
-
+		
     // Add the new client info to the clients vector
     ClientInfo ci;
     ci.socketFD = newSocket;
