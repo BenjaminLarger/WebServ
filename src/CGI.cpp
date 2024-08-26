@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/25 14:34:27 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/26 11:44:55 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,6 +182,7 @@ void Webserv::executeScript(std::string const &filePath,
 
 		// Execute the script
 		execve("./cgi-bin/python/hello.py", argv, envp);
+		dprintf(2, "Failed to execute script\n");
 		//dprintf(2, "failed to exec script...\n");
     exit(1);
   }

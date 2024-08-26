@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/25 14:33:28 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/25 16:43:09 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,16 +239,10 @@ void Webserv::handleClientRequest(
         if (isMethodAllowedAtLoc(client.req, client.client_serverConfig))
         {
           if (client.req.method == "GET")
-					{
             GET method(*this, client, client.client_serverConfig);
-						std::cout << "fds.size() = " << fds.size() << std::endl;
-					}
           else if (client.req.method == "POST")
-					{
 							POST method(*this, client, fds[i].fd, clientInput,
 													client.client_serverConfig, boundary);
-							std::cout << "fds.size() = " << fds.size() << std::endl;
-					}
           else if (client.req.method == "DELETE")
             DELETE method(client, client.client_serverConfig);
 					

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/16 11:09:58 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/26 11:08:14 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,9 +236,46 @@ std::string extractBoundary(const std::string& input, std::string &boundary)
     return ("");
 }
 
-bool hasBlankLineInput(std::string &clientInput, std::string &boundary, ClientInfo &client)
+bool	isPostCGIrequest(std::string &clientInput)
 {
-  //Find if it is a POST request
+	std::istringstream stream(clientInput);
+	std::string	firstLine;
+
+	std::getline(stream, firstLine);
+	size_t isPost = firstLine.rfind("POST");
+	if (isPost != std::string::npos)
+	{
+		size_t isCGI = firstLine.rfind(".py HTTP/");
+		if (isCGI != std::string::npos)
+			return (true);
+	}
+	return (false);
+}
+
+bool	hasNoInputFields(std::string &clientInput)
+{
+	std::cout << GREEN << "Is a Post CGI request!\n" << RESET;
+	std::istringstream stream(clientInput);
+	std::string line;
+	std::string lastLine;
+
+	while (std::getline(stream, line))
+		lastLine = line;
+
+	if (lastLine.find('=') != std::string::npos)
+	{
+		std::cout << GREEN << "Post CGI has input fields!\n" << RESET;
+        return (false);
+	}
+    else
+		{
+			std::cout << RED << "Post CGI has not input fields!\n" << RESET;
+			return (true);
+		}
+}
+bool	hasBlankLineInput(std::string &clientInput, std::string &boundary, ClientInfo &client)
+{
+  //Find if it is a POST submit-form request
   size_t isPost = clientInput.rfind("POST /submit-form HTTP/1.1");
   if (isPost != std::string::npos)
   {
@@ -253,6 +290,10 @@ bool hasBlankLineInput(std::string &clientInput, std::string &boundary, ClientIn
 				return (false);
 		}
   }
+
+	//Find if it is a POST request
+  if (isPostCGIrequest(clientInput) == true && hasNoInputFields(clientInput) == true)
+		return (false);
 	
   // Find the position of the last newline character
   size_t lastNewlinePos = clientInput.rfind('\n');
