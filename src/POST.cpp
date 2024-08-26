@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/26 13:10:59 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/26 16:48:14 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,6 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
 		{
 
 			webserv.executeScript(path, extension, client);
-			std::cout << BLUE << "Client response = " << client.response << RESET << std::endl;
 		}
 	}
   else if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded", 33))

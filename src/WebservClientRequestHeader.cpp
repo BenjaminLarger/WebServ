@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestHeader.cpp                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 16:07:09 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/26 16:43:48 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ void Webserv::parseClientRequest(ClientRequest &req)
     if ((req.method != "GET" && req.method != "POST" && req.method != "DELETE")
         /* || req.HTTPversion != "HTTP/1.1" */)
     {
+			std::cout << req.method << std::endl;
       req.buffer.erase();
       throw HttpException(400, "Bad request: Method not implemented.");
     }

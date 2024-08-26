@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/25 16:43:09 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/26 16:41:54 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,6 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
     {
       if (errno == EAGAIN || errno == EWOULDBLOCK)
       {
-        std::cout << "HERE!\n";
         // Resource temporarily unavailable, retry the recv call
         break;
       }
