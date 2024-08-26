@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/26 11:44:55 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/26 13:32:39 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,37 +123,101 @@ void Webserv::executeScript(std::string const &filePath,
   }
 }
 
-void Webserv::executeScript(std::string const &filePath,
-                            std::string const &script,
-                            std::string const &queryString,
-														std::string &response)
+std::string	getPostData(std::string &clientInput)
 {
-  std::cout << "Executing: " << filePath;
-  if (queryString.size())
-    std::cout << " + " << queryString;
-  std::cout << std::endl;
+	std::string line;
+	std::string lastLine;
+	std::istringstream stream(clientInput);
 
-  //setenv("PATH_INFO", filePath.c_str(), 1);
-	char *envp[] = {
-        (char *)"CONTENT_LENGTH=13",  // Example content length
-        (char *)"CONTENT_TYPE=application/x-www-form-urlencoded",
-        (char *)"REQUEST_METHOD=POST",
-        NULL
-    };
+	while (std::getline(stream, line))
+		lastLine = line;
+
+	std::cout << GREEN << "Last line : " << lastLine << RESET << std::endl;
+	return (lastLine);
+}
+
+char **getExceveEnvp(ClientInfo &client)
+{
+	std::vector<std::string> envVars;
+
+	if (client.req.fields.find("Content-Length") != client.req.fields.end())
+	{
+		std::string contentLength = "CONTENT_LENGTH=" + client.req.fields["Content-Length"];
+		envVars.push_back(contentLength);
+	}
+
+	if (client.req.fields.find("Content-Type") != client.req.fields.end())
+	{
+		std::string contentType = "CONTENT_TYPE=" + client.req.fields["Content-Type"];
+		envVars.push_back(contentType);
+	}
+
+	std::string requestMethod = "REQUEST_METHOD=POST";
+	envVars.push_back(requestMethod);
+	
+	// Convert std::vector<std::string> to char**
+	char **env = new char*[envVars.size() + 1];//TO FREE!
+	for (size_t i = 0; i < envVars.size(); ++i)
+	{
+		env[i] = new char[envVars[i].size() + 1];
+		std::strcpy(env[i], envVars[i].c_str());
+		std::cout << GREEN << envVars[i] << RESET << std::endl;
+	}
+	env[envVars.size()] = NULL;
+
+	return (env);
+}
+
+char **getExceveArgs(std::string &filePath)
+{
+	std::vector<std::string> ArgsVars;
+
+	std::string pythonPath = "/usr/bin/python3";
+	ArgsVars.push_back(pythonPath);
+	ArgsVars.push_back(filePath);
+	// Convert std::vector<std::string> to char**
+	char **env = new char*[ArgsVars.size() + 1];//TO FREE!
+	for (size_t i = 0; i < ArgsVars.size(); ++i)
+	{
+		env[i] = new char[ArgsVars[i].size() + 1];
+		std::strcpy(env[i], ArgsVars[i].c_str());
+		//std::cout << GREEN << ArgsVars[i] << RESET << std::endl;
+	}
+	env[ArgsVars.size()] = NULL;
+
+	return (env);
+}
+
+void	deleteCharArray(char **envp)
+{
+	int	i = 0;
+
+	while (envp[i])
+	{
+		delete[] envp[i];
+		i++;
+	}
+	delete[] envp;
+}
+void Webserv::executeScript(std::string &filePath,
+                            std::string const &script,
+														ClientInfo &client)
+{
+  std::cout << "Executing: " << filePath << std::endl;
+
+		// Arguments for execve
+	char **envp = getExceveEnvp(client);
+	char **argv = getExceveArgs(filePath);
 		// Example POST data
-    const char *post_data = "name=John&age=30";
-    size_t post_data_len = strlen(post_data);
-		(void)post_data_len;
+	std::string	post_data = getPostData(client.req.buffer);
+	size_t post_data_len = strlen(post_data.c_str());
   checkFileAndScriptExecPaths(filePath, script);
 	std::cout << GREEN << "Valid script" << RESET << std::endl;
 
   int pipefd[2];
-  if (pipe(pipefd) == -1)
-    throw HttpException(500, "Pipe error when executing " + filePath);
-
 	int output_pipefd[2];
-    if (pipe(output_pipefd) == -1)
-        throw HttpException(500, "Pipe error when executing " + filePath);
+  if (pipe(pipefd) == -1 || pipe(output_pipefd) == -1)
+    throw HttpException(500, "Pipe error when executing " + filePath);
 
   pid_t pid = fork();
   if (pid == -1)
@@ -166,29 +230,21 @@ void Webserv::executeScript(std::string const &filePath,
       exit(1);
 
 		// Close the read end of the output pipe
-		close(output_pipefd[0]);
-
-
 		// Redirect stdout to the write end of the output pipe
-		dup2(output_pipefd[1], STDOUT_FILENO);
-		close(output_pipefd[1]);
+		if (close(output_pipefd[0]) == -1 || dup2(output_pipefd[1], STDOUT_FILENO) == -1
+			|| close(output_pipefd[1]) == -1)
+			exit(1);
 
-		// Arguments for execve
-		char *argv[] = {
-				(char *)"/usr/bin/python3",
-				(char *)"./cgi-bin/python/hello.py",
-				NULL
-		};
 
 		// Execute the script
-		execve("./cgi-bin/python/hello.py", argv, envp);
+		execve(filePath.c_str(), argv, envp);
 		dprintf(2, "Failed to execute script\n");
 		//dprintf(2, "failed to exec script...\n");
     exit(1);
   }
   else // Add read end of the pipe to the pollfd vector in parent process
   {
-    if (close(pipefd[0]) == -1 || write(pipefd[1], post_data, post_data_len) == -1
+    if (close(pipefd[0]) == -1 || write(pipefd[1], post_data.c_str(), post_data_len) == -1
 			|| close(pipefd[1]) == -1 || close(output_pipefd[1]) == -1)
 			throw HttpException(500, "Pipe error when executing " + filePath);
 
@@ -196,11 +252,13 @@ void Webserv::executeScript(std::string const &filePath,
 		std::vector<char> buffer(2048);
 		ssize_t bytes_read;
 		while ((bytes_read = read(output_pipefd[0], buffer.data(), buffer.size())) > 0)
-				response.append(buffer.data(), bytes_read);
+				client.response.append(buffer.data(), bytes_read);
 		close(output_pipefd[0]);
 		int status;
 		waitpid(pid, &status, 0);
-		std::cout << "Captured output: " << response << std::endl;
+		std::cout << "Captured output: " << client.response << std::endl;
+		deleteCharArray(envp);
+		deleteCharArray(argv);
 		//make the copy into string result
   }
 }

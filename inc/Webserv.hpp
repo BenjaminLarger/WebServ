@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/25 14:21:06 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/26 13:05:33 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,9 @@ public:
 
   void executeScript(std::string const &filePath, std::string const &scriptType,
                      std::string const &queryString, int &clientFD);
-	void executeScript(std::string const &filePath,
+	void executeScript(std::string &filePath,
                             std::string const &script,
-                            std::string const &queryString,
-														std::string  &response);
+                            ClientInfo &client);
 
   // Read from pipe and save script output to client.response
   void readAndHandleScriptOutput(size_t &index);

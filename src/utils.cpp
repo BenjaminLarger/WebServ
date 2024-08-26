@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/26 11:08:14 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/26 13:17:20 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,7 +254,6 @@ bool	isPostCGIrequest(std::string &clientInput)
 
 bool	hasNoInputFields(std::string &clientInput)
 {
-	std::cout << GREEN << "Is a Post CGI request!\n" << RESET;
 	std::istringstream stream(clientInput);
 	std::string line;
 	std::string lastLine;

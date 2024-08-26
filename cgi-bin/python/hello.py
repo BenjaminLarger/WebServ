@@ -17,7 +17,6 @@ form = cgi.FieldStorage()
 
 # Retrieve the name and age fields from the form
 name = form.getvalue("name", "None")
-age = form.getvalue("age", "None")
 
 # Generate and print the HTML response
 print(f"""<!DOCTYPE html>
@@ -25,11 +24,25 @@ print(f"""<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <title>CGI Form Response</title>
+    <style>
+        body {{
+            background-color: black;
+						font-family: 'Arial, sans-serif', monospace;
+            color: #00FF00;
+						text-align: center;
+						font-size: 2rem; 
+        }}
+        h1 {{
+						font-family: 'Arial, sans-serif', monospace;
+            text-align: center;
+						font-size: 60px;
+						font-size: 3rem;
+        }}
+    </style>
 </head>
 <body>
-    <h1>Form Submission Result</h1>
-    <p>Name: {name}</p>
-    <p>Age: {age}</p>
+    <h1 style="color: white;">Hello {name}!</h1>
+		<a href='https://hackertyper.net/#'><img src='https://raw.githubusercontent.com/BenjaminLarger/BenjaminLarger/main/walk.gif' alt='walking' border='0'></a>
 </body>
 </html>
 """)
