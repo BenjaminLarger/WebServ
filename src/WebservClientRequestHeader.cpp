@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/26 16:43:48 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/27 11:42:48 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static void extractQueryString(ClientRequest &req)
   //           << ", req.queryString: " << req.queryString << std::endl;
 }
 
-void Webserv::parseClientRequest(ClientRequest &req)
+void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize)
 {
   reqReset(req);
 
@@ -104,4 +104,7 @@ void Webserv::parseClientRequest(ClientRequest &req)
       throw HttpException(400, "Bad request: Malformed header line");
     }
   }
+	long long int	bodyLength = std::strtol(req.fields["Content-Length"].c_str(), NULL, 10);
+	if (bodyLength > maxBodySize)
+		throw (HttpException(413, "Payload too large"));
 }

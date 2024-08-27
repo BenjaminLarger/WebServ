@@ -22,9 +22,11 @@ html_content = f"""<!DOCTYPE html>
     <style>
         body {{
             background-color: black;
-            color: #00FF00;
+            color: white;
 						text-align: center;
-						font-size: 2rem; 
+						font-size: 2rem;
+						display: flex; 
+            flex-direction: column; 
         }}
         h1 {{
             text-align: center;

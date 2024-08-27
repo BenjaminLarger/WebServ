@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/26 16:41:54 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/27 12:13:07 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,8 +124,9 @@ const ServerConfig &findClientServerConfig(
   throw HttpException(404, "No server found for the request host");
 }
 
-ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
+ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer, long long int maxBodySize, size_t &index)
 {
+	(void) index;
   char tempBuffer[BUFFER_SIZE];
   ssize_t totalBytesReceived = 0;
   ssize_t bytesReceived;
@@ -157,7 +158,7 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
       totalBytesReceived += bytesReceived;
       std::cout << "bytes received = " << bytesReceived
                 << "\n temp buffer = " << tempBuffer << std::endl;
-      if (hasContentLength == false
+			std::cout << RED << "Total bytes received : " << totalBytesReceived / (1024.0 * 1024.0) << " MB" << RESET << std::endl;      if (hasContentLength == false
           && std::string(buffer.begin(), buffer.end()).find("\r\n\r\n")
                  != std::string::npos)
       {
@@ -178,13 +179,12 @@ void readClientInput(const std::vector<char> &clientInput)
 void Webserv::handleClientRequest(
     size_t &i, const std::vector<ServerConfig> &serverConfigs)
 {
-  //char buffer[100000];
   std::vector<char> buffer;
 
   ClientInfo &client = clients[i];
   try
   {
-    ssize_t bytesRead = recvAll(fds[i].fd, buffer);
+    ssize_t bytesRead = recvAll(fds[i].fd, buffer, serverConfigs[0].maxBodySize, i);
     if (bytesRead < 0)
     {
       if (errno != EAGAIN && errno != EWOULDBLOCK)
@@ -199,6 +199,8 @@ void Webserv::handleClientRequest(
       closeConnection(i);
       --i;
     }
+		else if (bytesRead > serverConfigs[0].maxBodySize)
+			throw (HttpException(413, "Payload too large"));
     else
     {
       int clientFD = client.socketFD; // required in case CGI script
@@ -214,7 +216,7 @@ void Webserv::handleClientRequest(
       std::cout << CYAN << client.req.buffer << RESET << std::endl;
       std::cout << RED << "boundary = " << boundary << RESET << std::endl;
 
-      parseClientRequest(client.req);
+      parseClientRequest(client.req, serverConfigs[0].maxBodySize);
 
       if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
       {

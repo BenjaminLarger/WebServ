@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/26 13:05:33 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/27 11:56:01 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ public:
 
   void handleClientRequest(size_t &index,
                            const std::vector<ServerConfig> &serverConfigs);
-  ssize_t recvAll(int sockfd, std::vector<char> &buffer);
+  ssize_t recvAll(int sockfd, std::vector<char> &buffer, long long int maxBodySize, size_t &index);
   void resolveRequestedPathFromLocations(ClientRequest &req,
                                          const ServerConfig &serverConfig);
   bool isMethodAllowedAtLoc(ClientRequest &req,
@@ -95,7 +95,7 @@ public:
   // Close pipe and remove from pollfd, clients and clientScriptMap array
   void closePipe(size_t &index);
 
-  void parseClientRequest(ClientRequest &req);
+  void parseClientRequest(ClientRequest &req, long long int maxBodySize);
 
   void executeScript(std::string const &filePath, std::string const &scriptType,
                      int &clientFD);

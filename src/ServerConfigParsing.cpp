@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfigParsing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 14:33:15 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 21:32:55 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/27 11:08:29 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,7 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
       else if (key == "client_max_body_size")
       {
         ss >> valueLong;
+				valueLong *= (1024 * 2024); //Value in MB
         if (config.maxBodySize > 0 || valueLong < 1 || valueLong > INT_MAX
             || streamHasRemainingContent(ss))
           file.close(),
