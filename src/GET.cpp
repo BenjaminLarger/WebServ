@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/28 15:24:17 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 17:36:24 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv, ClientRequest &re
     else
     {
       throw HttpException(
-          403, "You don't have permission to access this directory." + path);
+          403, "You don't have permission to access this directory: " + path);
     }
   }
   else
