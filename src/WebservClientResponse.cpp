@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientResponse.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/28 12:30:32 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 13:15:11 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void Webserv::handleClientResponse(size_t &i)
         std::cout << "bytesSent == -1 " << std::endl;
         closeConnection(i);
         i--;
-        throw HttpException(500, strerror(errno));
+        throw HttpException(500, "Internal Server Error: Failed to send response.");
       }
       else if (bytesSent == 0)
       {

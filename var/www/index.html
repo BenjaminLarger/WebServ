@@ -1,23 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main Page</title>
     <style>
-        body { font-family: 'Arial, sans-serif', monospace; background-color: #000000; color: #00FF00; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        h1 { font-size: 3rem; }
-        p { font-size: 2rem; }
-        .container { text-align: center; }
-        img { max-width: 100%; height: auto; }
+        body {
+            font-family: 'Arial, sans-serif', monospace;
+            background-color: #000000;
+            color: #00FF00;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: white;
+        }
+
+        p {
+            font-size: 2rem;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        a {
+            display: block;
+            margin: 10px 0;
+            font-size: 1.5rem;
+            color: #00FF00;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
     </style>
-		
 </head>
+
 <body>
     <div class='container'>
-        <h1 style="color: white;">Welcome to our WebServer homepage!</h1>
+        <h1>Welcome to our WebServer homepage!</h1>
         <p>$> #BornToCode</p>
-        <a href='https://hackertyper.net/#'><img src='https://raw.githubusercontent.com/BenjaminLarger/BenjaminLarger/main/walk.gif' alt='walking' border='0'></a>
+        <a href="/upload">Uploaded Files</a>
+        <a href="/delete">Delete Content</a>
+        <a href="/form">Go to Form</a>
+        <a href="/formCGI">Go to Form CGI</a>
+        <a href="/hello.py">Execute HELLO script</a>
+        <a href="/date.php">Get date</a>
+        <a href="/wait.py">Execute WAIT script</a>
+        <a href="/images">See images</a>
+        <img src='https://raw.githubusercontent.com/BenjaminLarger/BenjaminLarger/main/walk.gif' alt='walking'>
     </div>
 </body>
+
 </html>
