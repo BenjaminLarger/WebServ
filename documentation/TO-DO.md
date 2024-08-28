@@ -10,6 +10,9 @@ To implement:
   - Make receiv pass throught poll always and concatenate the buffer in each iteration
   - Replace errno after receiv for another error management
 
+2)
+	-Delete recvAll, use recv chunk by chunk
+
 Doruk:
 - I think if a CGI returns an output, it should return a Content-type? text/html or text/plain, image... that way we can process it accordingly by wrapping the output in html if there isn't any for instance.
 
@@ -26,3 +29,18 @@ clientScriptMap, pidMap and terminatedPidMap need to be purged on closeConnectio
 
 https://www.jmarshall.com/easy/cgi/
 https://www.jmarshall.com/easy/cgi/cgi_footnotes.html#othertypes
+
+
+Bugs:
+
+1)
+	-redirection return 405
+	->		./webserv config/server.conf
+	->		http://localhost:8081/old-page
+	=>		serverName = 'localhost:8081'
+				Current URI : /old-page
+				URIpath: /old-page, pathFolder: , pathOnServer: , isDir 0, isFile 0, pathFolderOnServer: , isDir 0, isFile 0
+				Clearing request buffers
+				Error: 405 Method is not allowed on that path
+
+				Clearing request buffers. Method well proceeded

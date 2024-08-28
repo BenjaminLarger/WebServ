@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/27 11:56:01 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/27 15:23:14 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ public:
 
   void handleClientRequest(size_t &index,
                            const std::vector<ServerConfig> &serverConfigs);
-  ssize_t recvAll(int sockfd, std::vector<char> &buffer, long long int maxBodySize, size_t &index);
+  ssize_t recvAll(int sockfd, std::vector<char> &buffer);
   void resolveRequestedPathFromLocations(ClientRequest &req,
                                          const ServerConfig &serverConfig);
   bool isMethodAllowedAtLoc(ClientRequest &req,

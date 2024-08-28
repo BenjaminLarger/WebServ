@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/27 12:13:07 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/27 15:31:42 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ const ServerConfig &findClientServerConfig(
   throw HttpException(404, "No server found for the request host");
 }
 
-ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer, long long int maxBodySize, size_t &index)
+ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
 {
 	(void) index;
   char tempBuffer[BUFFER_SIZE];
@@ -184,7 +184,7 @@ void Webserv::handleClientRequest(
   ClientInfo &client = clients[i];
   try
   {
-    ssize_t bytesRead = recvAll(fds[i].fd, buffer, serverConfigs[0].maxBodySize, i);
+    ssize_t bytesRead = recvAll(fds[i].fd, buffer);
     if (bytesRead < 0)
     {
       if (errno != EAGAIN && errno != EWOULDBLOCK)
@@ -218,16 +218,21 @@ void Webserv::handleClientRequest(
 
       parseClientRequest(client.req, serverConfigs[0].maxBodySize);
 
-      if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
+			if (client.req.buffer.find("favicon.ico HTTP/") != std::string::npos)
+			{
+					clientInput.clear();
+					clientStr.clear();
+					buffer.clear();
+			}
+      else if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
       {
-
         std::cout << "Request received on port " << client.port
                   << ", client.socketFD " << client.socketFD
                   << ", root: " << client.client_serverConfig.serverRoot
                   << std::endl;
 
         displayParsedHeaderRequest(client);
-
+				
         // Looks for the serverConfig that matches the Host value of the request
         client.client_serverConfig
             = findClientServerConfig(client, serverConfigs);
