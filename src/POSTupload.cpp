@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POSTupload.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/28 17:00:29 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 17:55:48 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ int	POST::parseContent(int index)
 		}
 		parseContentType(i, contentMap[i].contentType);
 	}
+	saveInLogFile(_formValues);
 	return (handleFileUpload(index));
 }
 

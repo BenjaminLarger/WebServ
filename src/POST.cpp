@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/26 16:48:14 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 17:06:16 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,6 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
   }
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
   {
-
     if (extractMultipartFormData(_boundary) == SUCCESS)
     {
       std::cout << "RETURN SUCCESS\n";
