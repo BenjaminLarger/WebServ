@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/28 13:14:19 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:23:04 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
     else
     {
       throw HttpException(
-          403, "You don't have permission to access this directory." + path);
+          403, "You don't have permission to access this directory: " + path);
     }
   }
   else

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestLocation.cpp                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/20 09:37:31 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 16:49:49 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,12 @@ void Webserv::resolveRequestedPathFromLocations(
           = "." + formatPath(it->second.root) + formatPath(it->first);
 				std::cout << RED << "req.pathOnServer = " << req.pathOnServer << RESET << std::endl;
     }
+    else
+    {
+      req.pathFolder = it->first == "/" ? "/" : formatPath(it->first);
+      req.pathOnServer = "." + formatPath(req.URIpath);
+      req.pathFolderOnServer = "." + formatPath(it->first);
+    }
   }
   else
   {
@@ -69,9 +75,11 @@ void Webserv::resolveRequestedPathFromLocations(
 bool Webserv::isMethodAllowedAtLoc(ClientRequest &req,
                                    const ServerConfig &serverConfig)
 {
+  std::cout << "req.pathFolder:  " << req.pathFolder << std::endl;
   if (serverConfig.locations.find(req.pathFolder)
       != serverConfig.locations.end())
   {
+    std::cout << "Client request method: " << req.method << std::endl;
     LocationConfig loc = serverConfig.locations.find(req.pathFolder)->second;
     if (std::find(loc.allowedMethods.begin(), loc.allowedMethods.end(),
                   req.method)

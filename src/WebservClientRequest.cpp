@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/28 11:45:28 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 15:00:14 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,13 +202,7 @@ void Webserv::handleClientRequest(
 
       parseClientRequest(client.req, serverConfigs[0].maxBodySize);
 
-			if (client.req.buffer.find("favicon.ico HTTP/") != std::string::npos)
-			{
-					clientInput.clear();
-					clientStr.clear();
-					buffer.clear();
-			}
-      else if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
+			if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
       {
         std::cout << "Request received on port " << client.port
                   << ", client.socketFD " << client.socketFD
