@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   coreResponse.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:49:50 by demre             #+#    #+#             */
-/*   Updated: 2024/08/14 13:24:48 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/28 13:13:00 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,5 +122,6 @@ std::string composeFileResponse(const std::vector<char> &fileContent,
   // Body (binary data)
   response.append(&fileContent[0], fileContent.size());
 
+	//std::cout << YELLOW << "response : " << response << RESET << std::endl;
   return (response);
 }

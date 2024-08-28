@@ -1,0 +1,29 @@
+GET /upload/video_playa_corto_mp4.mp4 HTTP/1.1
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Accept-Encoding: gzip, deflate, br, zstd
+Accept-Language: en-US,en;q=0.9
+Connection: keep-alive
+Content-Length: 
+Cookie: theme=light; rememberMe=yes; sessionId=
+Host: localhost:8080
+Referer: http://localhost:8080/submit-form
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+sec-ch-ua: "Google Chrome";v="125", "Chromium";v="125", "Not.A/Brand";v="24"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "Linux"
+
+reqHost = 'localhost:8080'
+serverName = 'localhost:8080'
+Current URI : /upload/video_playa_corto_mp4.mp4
+replacing with alias
+req.pathOnServer = ./var/www/uploads/files/video_playa_corto_mp4.mp4
+URIpath: /upload/video_playa_corto_mp4.mp4, pathFolder: /upload, pathOnServer: ./var/www/uploads/files/video_playa_corto_mp4.mp4, isDir 0, isFile 1, pathFolderOnServer: ./var/www/uploads/files, isDir 1, isFile 0
+Current URI : /upload/video_playa_corto_mp4.mp4
+PATH = ./var/www/uploads/files/video_playa_corto_mp4.mp4
+IS FILE
+fileName: video_playa_corto_mp4, extension: mp4
+file has other type: mp4
+Clearing request buffers. Method well proceeded

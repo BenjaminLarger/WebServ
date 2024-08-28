@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/26 13:32:39 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 11:31:18 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void Webserv::executeScript(std::string const &filePath,
     }
     exit(1);
   }
-  else // Add read end of the pipe to the pollfd vector in parent process
+  else // Add read end
   {
     close(pipefd[1]);
 
@@ -156,7 +156,7 @@ char **getExceveEnvp(ClientInfo &client)
 	envVars.push_back(requestMethod);
 	
 	// Convert std::vector<std::string> to char**
-	char **env = new char*[envVars.size() + 1];//TO FREE!
+	char **env = new char*[envVars.size() + 1];
 	for (size_t i = 0; i < envVars.size(); ++i)
 	{
 		env[i] = new char[envVars[i].size() + 1];
@@ -181,7 +181,6 @@ char **getExceveArgs(std::string &filePath)
 	{
 		env[i] = new char[ArgsVars[i].size() + 1];
 		std::strcpy(env[i], ArgsVars[i].c_str());
-		//std::cout << GREEN << ArgsVars[i] << RESET << std::endl;
 	}
 	env[ArgsVars.size()] = NULL;
 

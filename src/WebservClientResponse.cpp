@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/24 17:55:07 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 12:30:32 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ void Webserv::handleClientResponse(size_t &i)
     {
       // size_t bytesToSend
       //     = std::min(250, clients[i].totalToSend - clients[i].totalBytesSent);
-			std::cout << GREEN << "response to client : " << clients[i].response << RESET << std::endl;
-			std::cout << "clients[i].totalBytesSent = " << clients[i].totalBytesSent << ", clients[i].totalToSend = " << clients[i].totalToSend << std::endl;
+			//std::cout << GREEN << "response to client : " << clients[i].response << RESET << std::endl;
+			//std::cout << "clients[i].totalBytesSent = " << clients[i].totalBytesSent << ", clients[i].totalToSend = " << clients[i].totalToSend << std::endl;
       int bytesSent
           = send(clients[i].socketFD,
                  clients[i].response.c_str() + clients[i].totalBytesSent,

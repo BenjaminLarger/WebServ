@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/27 15:31:42 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 11:45:28 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,25 +131,16 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
   ssize_t totalBytesReceived = 0;
   ssize_t bytesReceived;
   contentLength = 0;
-  bool hasContentLength = false;
 
-  while (true)
-  {
-    bytesReceived = recv(sockfd, tempBuffer, BUFFER_SIZE - 1, 0);
+   bytesReceived = recv(sockfd, tempBuffer, BUFFER_SIZE - 1, 0);
     if (bytesReceived == -1)
     {
-      if (errno == EAGAIN || errno == EWOULDBLOCK)
-      {
-        // Resource temporarily unavailable, retry the recv call
-        break;
-      }
-      // Handle error
       throw HttpException(400, strerror(errno));
     }
     else if (bytesReceived == 0)
     {
       // Connection closed
-      break;
+//      break;
     }
     else
     {
@@ -158,15 +149,8 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
       totalBytesReceived += bytesReceived;
       std::cout << "bytes received = " << bytesReceived
                 << "\n temp buffer = " << tempBuffer << std::endl;
-			std::cout << RED << "Total bytes received : " << totalBytesReceived / (1024.0 * 1024.0) << " MB" << RESET << std::endl;      if (hasContentLength == false
-          && std::string(buffer.begin(), buffer.end()).find("\r\n\r\n")
-                 != std::string::npos)
-      {
-        // We have received the end of the headers
-        break;
-      }
+			std::cout << RED << "Total bytes received : " << totalBytesReceived / (1024.0 * 1024.0) << " MB" << RESET << std::endl;
     }
-  }
   // std::cout << buffer << std::endl;
   return (totalBytesReceived);
 }
@@ -199,8 +183,8 @@ void Webserv::handleClientRequest(
       closeConnection(i);
       --i;
     }
-		else if (bytesRead > serverConfigs[0].maxBodySize)
-			throw (HttpException(413, "Payload too large"));
+/* 		else if (bytesRead > serverConfigs[0].maxBodySize)
+			throw (HttpException(413, "Payload too large")); */
     else
     {
       int clientFD = client.socketFD; // required in case CGI script
@@ -212,9 +196,9 @@ void Webserv::handleClientRequest(
       clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
       std::string clientStr(clientInput.begin(), clientInput.end());
       client.req.buffer = clientStr;
-      std::cout << MAGENTA << clientStr << RESET << std::endl;
-      std::cout << CYAN << client.req.buffer << RESET << std::endl;
-      std::cout << RED << "boundary = " << boundary << RESET << std::endl;
+      //std::cout << MAGENTA << clientStr << RESET << std::endl;
+      //std::cout << CYAN << client.req.buffer << RESET << std::endl;
+      //std::cout << RED << "boundary = " << boundary << RESET << std::endl;
 
       parseClientRequest(client.req, serverConfigs[0].maxBodySize);
 
@@ -281,8 +265,8 @@ void Webserv::handleClientRequest(
               << RESET << '\n';
 
     clients[i].response = composeErrorHtmlPage(
-        e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
-        clients[i].client_serverConfig.errorPages);
+		e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
+		clients[i].client_serverConfig.errorPages);
     clients[i].totalToSend = clients[i].response.size();
     clients[i].totalBytesSent = 0;
   }

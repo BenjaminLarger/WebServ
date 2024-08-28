@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/24 16:30:05 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 12:57:13 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,13 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
         std::cout << RED << "file has other type: " << extension << RESET
                   << std::endl;
         std::vector<char> fileContent = readFile(path);
+				std::cout << RED << "File has been readen"<< RESET << std::endl;
         if (fileContent.empty())
+				{
+					std::cout << RED << extension << "File is empty" << RESET << std::endl;
           throw HttpException(404, "File to read not found.");
+				}
+				std::cout << RED << "File is not empty"<< RESET << std::endl;
         response = composeFileResponse(fileContent, URI);
       }
       // has query string /...?...=...

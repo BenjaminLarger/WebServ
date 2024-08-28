@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 20:02:46 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/16 10:53:09 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 12:35:33 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ std::vector<char> POST::extractBinaryContent(const std::vector<char>& content)
 
     // Extract the binary content
     std::vector<char> binaryContent(it, boundaryPos);
-    std::cout << "extractBinaryContent " << std::string(binaryContent.begin(), binaryContent.end()) << std::endl;
+    //std::cout << "extractBinaryContent " << std::string(binaryContent.begin(), binaryContent.end()) << std::endl;
     return (binaryContent);
 }
 
