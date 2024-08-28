@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/28 17:35:35 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 17:41:50 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,23 +97,34 @@ std::vector<char> POST::createPostOkResponseWithFile(std::map<std::string, std::
   responseBody += "    </div>\n";
   responseBody += "</body>\n";
   responseBody += "</html>\n";
-  if (!filePath.empty())
-	{
+  if (!filePath.empty()) {
     responseBody += "        <div style=\"text-align: center;\">\n";
     responseBody += "            <h2 style=\"color: white;\">File uploaded:</h2>\n";
     std::string fileExtension = filePath.substr(filePath.find_last_of(".") + 1);
-    if (fileExtension == "mp4")
-		{
+    if (fileExtension == "mp4") {
       responseBody += "            <video width=\"320\" height=\"240\" controls>\n";
       responseBody += "                <source src=\"" + reqPath + "\" type=\"video/mp4\">\n";
       responseBody += "                Your browser does not support the video tag.\n";
       responseBody += "            </video>\n";
-    }
-		else if (fileExtension == "pdf")
-		  responseBody += "            <embed src=\"" + reqPath + "\" width=\"600\" height=\"500\" alt=\"pdf\" />\n";
-		else
+    } else if (fileExtension == "pdf") {
+      responseBody += "            <embed src=\"" + reqPath + "\" width=\"600\" height=\"500\" alt=\"pdf\" />\n";
+    } else if (fileExtension == "jpg" || fileExtension == "jpeg" || fileExtension == "png" || fileExtension == "gif") {
       responseBody += "            <img src=\"" + reqPath + "\" alt=\"Uploaded Image\" style=\"display: block; margin-left: auto; margin-right: auto;\" />\n";
+    } else if (fileExtension == "mp3" || fileExtension == "wav") {
+      responseBody += "            <audio controls>\n";
+      responseBody += "                <source src=\"" + reqPath + "\" type=\"audio/" + fileExtension + "\">\n";
+      responseBody += "                Your browser does not support the audio element.\n";
+      responseBody += "            </audio>\n";
+    } else if (fileExtension == "txt" || fileExtension == "csv") {
+      responseBody += "            <iframe src=\"" + reqPath + "\" width=\"600\" height=\"500\"></iframe>\n";
+    } else if (fileExtension == "zip" || fileExtension == "tar" || fileExtension == "gz") {
+      responseBody += "            <a href=\"" + reqPath + "\" download>Download " + contentMap[2].filename + "</a>\n";
+    } else {
+      responseBody += "            <p>Unsupported file type.</p>\n";
+    }
     responseBody += "        </div>\n";
+  } else {
+    responseBody += "        <p>File not found.</p>\n";
   }
   responseBody += "    </div>\n";
   responseBody += "</body>\n";
