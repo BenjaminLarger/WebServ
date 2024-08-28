@@ -6,18 +6,19 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:54:52 by demre             #+#    #+#             */
-/*   Updated: 2024/08/15 13:01:57 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 15:54:40 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ErrorUtils.hpp"
 #include "HttpExceptions.hpp"
 
-std::string composeErrorHtmlPage(int const &statusCode,
+std::vector<char> composeErrorHtmlPage(int const &statusCode,
                                  std::string const &errorMessage,
                                  std::map<int, std::string> errorPages)
 {
   std::string errorBody;
+	std::vector<char>	charVecResponse;
   // if code found and file accessible (correct path)
   if (errorPages.find(statusCode) != errorPages.end()
       && isFile(errorPages[statusCode]))
@@ -33,5 +34,7 @@ std::string composeErrorHtmlPage(int const &statusCode,
            << "Connection: close\r\n\r\n"
            << errorBody;
 
-  return (response.str());
+	std::string responseStr = response.str();
+	charVecResponse.insert(charVecResponse.begin(), responseStr.begin(), responseStr.end());
+  return (charVecResponse);
 }

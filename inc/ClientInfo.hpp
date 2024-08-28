@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientInfo.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 20:29:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 15:30:55 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/28 15:01:24 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ public:
   // Temporary string to build response to be sent to client
   std::string responseBuffer;
   // Response to be sent to client
-  std::string response;
+  std::vector<char> response;
   // Total bytes to send to client (= response.size())
   int totalToSend;
   // Total bytes sent to client

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:49:50 by demre             #+#    #+#             */
-/*   Updated: 2024/08/28 13:13:00 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 17:20:01 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,14 @@ std::string extractHtmlContentFromFile(const std::string &filePath)
   std::stringstream buffer;
   buffer << file.rdbuf();
   buffer << "\r\n";
-
   return (buffer.str());
 }
 
-std::string composeOkHtmlResponse(std::string responseBody,
+std::vector<char> composeOkHtmlResponse(std::string responseBody,
                                   std::string reqBuffer)
 {
   std::ostringstream response;
+	std::vector<char>	charVecResponse;
 
   std::string sessionId;
   size_t findSessionId = reqBuffer.find("sessionId");
@@ -58,31 +58,42 @@ std::string composeOkHtmlResponse(std::string responseBody,
            << "\r\n"
            << responseBody;
 
-  return (response.str());
+	std::string responseStr = response.str();
+	std::cout << YELLOW << "before charVecResponse"<< RESET << std::endl;
+	charVecResponse.insert(charVecResponse.begin(), responseStr.begin(), responseStr.end());
+
+	std::cout << YELLOW << "after charVecResponse"<< RESET << std::endl;
+  return (charVecResponse);
 }
 
-std::string composeDeleteOkHtmlResponse()
+std::vector<char> composeDeleteOkHtmlResponse()
 {
   std::ostringstream response;
+	std::vector<char>	charVecResponse;
+
   response << "HTTP/1.1 204 No Content\r\n"
            << "Content-Length: 0\r\n"
            << "Connection: close\r\n\r\n";
 
-  return (response.str());
+	std::string responseStr = response.str();
+	charVecResponse.insert(charVecResponse.begin(), responseStr.begin(), responseStr.end());
+  return (charVecResponse);
 }
 
-std::string createRedirectResponse(const int &code, const std::string &location)
+std::vector<char> createRedirectResponse(const int &code, const std::string &location)
 {
   // std::cout << BLUE << "Building redirection header : " << location
   //           << std::endl;
-
+	std::vector<char>	charVecResponse;
   std::ostringstream response;
   response << getHeaderStatusLine(code) << "Location: " << location << "\r\n"
            << "Content-Length: 0\r\n"
            << "Cache-Control: no-cache\r\n"
            << "\r\n";
 
-  return (response.str());
+	std::string responseStr = response.str();
+	charVecResponse.insert(charVecResponse.begin(), responseStr.begin(), responseStr.end());
+  return (charVecResponse);
 }
 
 std::vector<char> readFile(const std::string &filename)
@@ -99,7 +110,7 @@ std::vector<char> readFile(const std::string &filename)
   file.seekg(0, std::ios::beg);
 
   std::vector<char> buffer(size);
-  if (!file.read(&buffer[0], size))
+  if (!file.read(buffer.data(), size))
   {
     std::cerr << "Failed to read file" << std::endl;
     buffer.clear();
@@ -108,11 +119,23 @@ std::vector<char> readFile(const std::string &filename)
 
   return (buffer);
 }
-
-std::string composeFileResponse(const std::vector<char> &fileContent,
+/* 
+void	uploadFile(const std::vector<char> &fileContent,
                                 std::string filepath)
 {
-  std::string response;
+	std::string	filePath = "./var/www/uploads/files/test.mp4";
+	std::cout << GREEN << "filepath = " << filePath << RESET << std::endl;
+	std::ofstream outFile(filePath.c_str(), std::ios::binary);
+			if (!outFile)
+				throw HttpException(400, strerror(errno));
+	
+} */
+
+std::vector<char> composeFileResponse(const std::vector<char> &fileContent,
+                                std::string filepath)
+{
+  std::string 			response;
+	std::vector<char>	charVecResponse;
   response += "HTTP/1.1 200 OK\r\n";
   response += "Content-Type: " + getMediaType(filepath) + "\r\n";
   response += "Content-Length: " + toString(fileContent.size()) + "\r\n";
@@ -120,8 +143,11 @@ std::string composeFileResponse(const std::vector<char> &fileContent,
   response += "\r\n";
 
   // Body (binary data)
-  response.append(&fileContent[0], fileContent.size());
 
 	//std::cout << YELLOW << "response : " << response << RESET << std::endl;
-  return (response);
+  response.append(&fileContent[0], fileContent.size());
+	charVecResponse.insert(charVecResponse.begin(), response.begin(), response.end());
+	charVecResponse.insert(charVecResponse.end(), fileContent.begin(), fileContent.end());
+	//uploadFile(filepath, fileContent);
+  return (charVecResponse);
 }

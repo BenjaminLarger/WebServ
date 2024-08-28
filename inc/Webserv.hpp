@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/27 15:23:14 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 17:04:28 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class Webserv
 {
 private:
   std::string boundary;
+	const std::vector<char> fileContent;//CHECK IF USED
 
   // map < pipe_fd, client_fd >, to keep track of which pipe belongs to which client when a cgi script is writing in a pipe
   std::map< int, int > clientScriptMap;

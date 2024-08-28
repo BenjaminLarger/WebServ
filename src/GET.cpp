@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/28 13:14:19 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:24:17 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GET.hpp"
 #include "core.hpp"
 
-std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
+std::vector<char> GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
                                        int &clientFD)
 {
   std::string URI = req.URIpath;
-  std::string response;
+  std::vector<char> response;
   std::map<std::string, LocationConfig> locations = serverConfig.locations;
   std::map<std::string, LocationConfig>::const_iterator it;
   
@@ -69,7 +69,8 @@ std::string GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
                   << std::endl;
 
         webserv.executeScript(path, extension, req.queryString, clientFD);
-        response = "";
+				response.clear();
+        response.insert(response.end(), "", "");
       }
       // other files
       else if (extension.size())
@@ -134,11 +135,11 @@ GET::GET(Webserv &webserv, ClientInfo &client, const ServerConfig &serverConfig)
   {
     // if the get is a CGI script, we are adding the pipe to pollfd and clients vectors, so we need to get the index again to have the correct client.
     int clientFD = client.socketFD;
-    std::string response
+    std::vector<char> response
         = getResponseAtLocation(webserv, client.req, client.socketFD);
 
     size_t i = webserv.findClientIndexFromFD(clientFD);
-    webserv.clients[i].response = response;
+		webserv.clients[i].response.insert(webserv.clients[i].response.begin(), response.begin(), response.end());
     webserv.clients[i].totalToSend = (!webserv.clients[i].response.empty()
                                           ? webserv.clients[i].response.size()
                                           : 0);

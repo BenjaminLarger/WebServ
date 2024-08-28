@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientResponse.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/28 13:15:11 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:28:22 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,8 @@ void Webserv::handleClientResponse(size_t &i)
 			//std::cout << "clients[i].totalBytesSent = " << clients[i].totalBytesSent << ", clients[i].totalToSend = " << clients[i].totalToSend << std::endl;
       int bytesSent
           = send(clients[i].socketFD,
-                 clients[i].response.c_str() + clients[i].totalBytesSent,
+                 clients[i].response.data() + clients[i].totalBytesSent,
                  clients[i].totalToSend - clients[i].totalBytesSent,
-                 /* bytesToSend, */
                  0);
       if (bytesSent == -1)
       {

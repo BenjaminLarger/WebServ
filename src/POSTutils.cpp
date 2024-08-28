@@ -6,17 +6,18 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/16 10:44:46 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 17:35:35 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "POST.hpp"
 #include "Webserv.hpp"
 
-std::string POST::createPostOkResponse(std::map<std::string, std::string> formValues)
+std::vector<char> POST::createPostOkResponse(std::map<std::string, std::string> formValues)
 {
-  std::stringstream httpResponse;
-  std::string responseBody;
+  std::stringstream	httpResponse;
+  std::string				responseBody;
+	std::vector<char>	charVecResponse;
 
   responseBody = extractHtmlContentFromFile("./var/www/form/form_response.html");
   responseBody += "            <tbody>\n";
@@ -48,7 +49,9 @@ std::string POST::createPostOkResponse(std::map<std::string, std::string> formVa
   httpResponse << "\r\n";
   httpResponse << responseBody;
 
-  return (httpResponse.str());
+	std::string responseStr = httpResponse.str();
+	charVecResponse.insert(charVecResponse.begin(), responseStr.begin(), responseStr.end());
+  return (charVecResponse);
 }
 
 /*
@@ -59,18 +62,18 @@ std::string POST::createPostOkResponse(std::map<std::string, std::string> formVa
 	stylesheets, and scripts, and then send additional GET
 	requests to retrieve those resources.
 */
-std::string POST::createPostOkResponseWithFile(std::map<std::string, std::string> formValues)//might delete
+std::vector<char> POST::createPostOkResponseWithFile(std::map<std::string, std::string> formValues)//might delete
 {
   std::stringstream httpResponse;
   std::string responseBody;
   std::string filePath = UPLOAD_FILE_DIR + contentMap[2].filename;
   std::string reqPath = "/upload/" + contentMap[2].filename;
+	std::vector<char>	charVecResponse;
 
   // Check if the file exists
   std::ifstream file(filePath.c_str());
-  if (!file.good()) {
+  if (!file.good())
     filePath = ""; // Set filePath to empty if file does not exist
-  }
   file.close();
   
   responseBody = extractHtmlContentFromFile("./var/www/form/form_response.html");
@@ -94,13 +97,23 @@ std::string POST::createPostOkResponseWithFile(std::map<std::string, std::string
   responseBody += "    </div>\n";
   responseBody += "</body>\n";
   responseBody += "</html>\n";
-  if (!filePath.empty()) {
+  if (!filePath.empty())
+	{
     responseBody += "        <div style=\"text-align: center;\">\n";
     responseBody += "            <h2 style=\"color: white;\">File uploaded:</h2>\n";
-    responseBody += "            <img src=\"" + reqPath + "\" alt=\"Uploaded Image\" style=\"display: block; margin-left: auto; margin-right: auto;\" />\n";
+    std::string fileExtension = filePath.substr(filePath.find_last_of(".") + 1);
+    if (fileExtension == "mp4")
+		{
+      responseBody += "            <video width=\"320\" height=\"240\" controls>\n";
+      responseBody += "                <source src=\"" + reqPath + "\" type=\"video/mp4\">\n";
+      responseBody += "                Your browser does not support the video tag.\n";
+      responseBody += "            </video>\n";
+    }
+		else if (fileExtension == "pdf")
+		  responseBody += "            <embed src=\"" + reqPath + "\" width=\"600\" height=\"500\" alt=\"pdf\" />\n";
+		else
+      responseBody += "            <img src=\"" + reqPath + "\" alt=\"Uploaded Image\" style=\"display: block; margin-left: auto; margin-right: auto;\" />\n";
     responseBody += "        </div>\n";
-  } else {
-    responseBody += "        <p>File not found.</p>\n";
   }
   responseBody += "    </div>\n";
   responseBody += "</body>\n";
@@ -114,7 +127,9 @@ std::string POST::createPostOkResponseWithFile(std::map<std::string, std::string
   httpResponse << "\r\n";
   httpResponse << responseBody;
 
-  return (httpResponse.str());
+	std::string responseStr = httpResponse.str();
+	charVecResponse.insert(charVecResponse.begin(), responseStr.begin(), responseStr.end());
+  return (charVecResponse);
 }
 
 bool POST::saveInLogFile(std::map<std::string, std::string> formValues)
@@ -135,10 +150,11 @@ bool POST::saveInLogFile(std::map<std::string, std::string> formValues)
 	return (true);
 }
 
-std::string POST::createPostOkResponseWithFilename(std::map<std::string, std::string> formValues)//might delete
+std::vector<char> POST::createPostOkResponseWithFilename(std::map<std::string, std::string> formValues)//might delete
 {
   std::stringstream httpResponse;
   std::string responseBody;
+	std::vector<char>	charVecResponse;
 
   responseBody = extractHtmlContentFromFile("./var/www/form/form_response.html");
   responseBody += "            <tbody>\n";
@@ -170,7 +186,9 @@ std::string POST::createPostOkResponseWithFilename(std::map<std::string, std::st
   httpResponse << "\r\n";
   httpResponse << responseBody;
 
-  return (httpResponse.str());
+	std::string responseStr = httpResponse.str();
+	charVecResponse.insert(charVecResponse.begin(), responseStr.begin(), responseStr.end());
+  return (charVecResponse);
 }
 
 

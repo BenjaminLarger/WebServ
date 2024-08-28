@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 18:24:19 by demre             #+#    #+#             */
-/*   Updated: 2024/08/13 20:25:56 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/28 15:18:29 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ public:
   GET(Webserv &webserv, ClientInfo &client, const ServerConfig &serverConfig);
   ~GET(void);
 
-  std::string getResponseAtLocation(Webserv &webserv, ClientRequest &req,
+  std::vector<char> getResponseAtLocation(Webserv &webserv, ClientRequest &req,
                                     int &clientFD);
 
   // Return vector of all file names in folder

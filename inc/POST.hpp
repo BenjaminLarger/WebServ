@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/20 11:38:10 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 17:01:34 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
   "ERROR: Multipart/Form-Data must include closing boundary!"
 #define HAS_NOT_BOUNDARY_ERROR                                                 \
   "ERROR: Multipart/Form-Data must include boundary separation!"
-#define UPLOAD_FILE_DIR "./var/www/uploads/files/"
+
 struct Content
 {
   bool HasContentType;
@@ -66,9 +66,9 @@ private:
   std::string extractBody();
   bool saveInLogFile(std::map<std::string, std::string> formValues);
   std::map<std::string, std::string>	formValuestoMap(std::string body);
-  std::string createPostOkResponse(std::map<std::string, std::string> formValues);
-	std::string createPostOkResponseWithFile(std::map<std::string, std::string> formValues);
-	std::string createPostOkResponseWithFilename(std::map<std::string, std::string> formValues);
+  std::vector<char> createPostOkResponse(std::map<std::string, std::string> formValues);
+	std::vector<char> createPostOkResponseWithFile(std::map<std::string, std::string> formValues);
+	std::vector<char> createPostOkResponseWithFilename(std::map<std::string, std::string> formValues);
 
   //Util uplaod file
   int extractMultipartFormData(std::string &_boundary);

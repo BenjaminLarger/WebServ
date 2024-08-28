@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/28 11:31:18 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/28 15:02:27 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,11 +251,11 @@ void Webserv::executeScript(std::string &filePath,
 		std::vector<char> buffer(2048);
 		ssize_t bytes_read;
 		while ((bytes_read = read(output_pipefd[0], buffer.data(), buffer.size())) > 0)
-				client.response.append(buffer.data(), bytes_read);
+				client.response.insert(client.response.end(), buffer.data(), buffer.data() + bytes_read);
 		close(output_pipefd[0]);
 		int status;
 		waitpid(pid, &status, 0);
-		std::cout << "Captured output: " << client.response << std::endl;
+		//std::cout << "Captured output: " << std::string(client.response) << std::endl;
 		deleteCharArray(envp);
 		deleteCharArray(argv);
 		//make the copy into string result
