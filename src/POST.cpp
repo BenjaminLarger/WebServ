@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/28 17:06:16 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/29 11:37:34 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,6 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
 	if (isFile(path))
 	{
 		std::cout << YELLOW << "This is a file\n" << RESET << std::endl;
-		//std::cout << BLUE << client.req.buffer << RESET << std::endl;
 		std::string fileName, extension;
     getFileNameAndExtension(path, fileName, extension);
 		if (extension == "py")

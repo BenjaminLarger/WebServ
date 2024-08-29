@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POSTutils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/28 17:56:18 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/29 11:37:46 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,7 +278,6 @@ bool	POST::isBoundary(std::string line)
 	if (line[0] == '-' && line[1] == '-')
 	{
 		newline = makeCopy(line);
-		std::cout << BLUE << "boundary : " << boundary << ", newline = " << newline << RESET << std::endl;
 		if (!strcmp(newline.c_str(), boundary.c_str()))
 		{
 			return (true);

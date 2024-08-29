@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/28 11:44:57 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/29 15:47:35 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static void extractQueryString(ClientRequest &req)
   //           << ", req.queryString: " << req.queryString << std::endl;
 }
 
-void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize)
+void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize, size_t &i)
 {
   reqReset(req);
 
@@ -75,6 +75,7 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize)
   }
   else
   {
+		std::cout << "response : " << req.buffer << std::endl;
     req.buffer.erase();
     throw HttpException(400, "Bad request: There is no first line in header.");
   }
@@ -105,6 +106,12 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize)
     }
   }
 	long long int	bodyLength = std::strtol(req.fields["Content-Length"].c_str(), NULL, 10);
-	if (bodyLength > maxBodySize)
+	std::cout << RED << "bodyLength = " << bodyLength << ", maxBodySize = " << (maxBodySize * 1024 * 1024) << std::endl;
+	if (maxBodySize > 0 && bodyLength > (maxBodySize * 1024 * 1024))
+	{
+		(void)i;
+		/* closeConnection(i);
+       --i; */
 		throw (HttpException(413, "Payload too large"));
+	}
 }

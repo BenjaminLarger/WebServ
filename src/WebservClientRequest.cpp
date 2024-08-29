@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/28 17:36:49 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/29 15:39:13 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,23 +124,23 @@ const ServerConfig &findClientServerConfig(
   throw HttpException(404, "No server found for the request host");
 }
 
-ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
+int Webserv::recvChunk(int sockfd, std::vector<char> &buffer, size_t totalBytesReceived, size_t &i)
 {
-	(void) index;
   char tempBuffer[BUFFER_SIZE];
-  ssize_t totalBytesReceived = 0;
   ssize_t bytesReceived;
-  contentLength = 0;
 
    bytesReceived = recv(sockfd, tempBuffer, BUFFER_SIZE - 1, 0);
     if (bytesReceived == -1)
     {
-      throw HttpException(400, strerror(errno));
-    }
-    else if (bytesReceived == 0)
+        closeConnection(i);
+        --i;
+        throw HttpException(500, strerror(errno));
+     }
+	  else if (bytesReceived == 0)
     {
-      // Connection closed
-//      break;
+      closeConnection(i);
+       --i;
+			 return (FAILURE);
     }
     else
     {
@@ -152,12 +152,11 @@ ssize_t Webserv::recvAll(int sockfd, std::vector<char> &buffer)
 			std::cout << RED << "Total bytes received : " << totalBytesReceived / (1024.0 * 1024.0) << " MB" << RESET << std::endl;
     }
   // std::cout << buffer << std::endl;
-  return (totalBytesReceived);
+  return (SUCCESS);
 }
 void readClientInput(const std::vector<char> &clientInput)
 {
   std::string str(clientInput.begin(), clientInput.end());
-  std::cout << BLUE << str << RESET << std::endl;
 }
 
 void Webserv::handleClientRequest(
@@ -168,25 +167,9 @@ void Webserv::handleClientRequest(
   ClientInfo &client = clients[i];
   try
   {
-    ssize_t bytesRead = recvAll(fds[i].fd, buffer);
-    if (bytesRead < 0)
-    {
-      if (errno != EAGAIN && errno != EWOULDBLOCK)
-      {
-        closeConnection(i);
-        --i;
-        throw HttpException(500, strerror(errno));
-      }
-    }
-    else if (bytesRead == 0)
-    {
-      closeConnection(i);
-      --i;
-    }
-/* 		else if (bytesRead > serverConfigs[0].maxBodySize)
-			throw (HttpException(413, "Payload too large")); */
-    else
-    {
+     if (recvChunk(fds[i].fd, buffer, clients[i].req.buffer.size(), i) == SUCCESS)
+			{
+				
       int clientFD = client.socketFD; // required in case CGI script
 
       std::vector<char> clientInput(client.req.buffer.begin(),
@@ -200,7 +183,7 @@ void Webserv::handleClientRequest(
       //std::cout << CYAN << client.req.buffer << RESET << std::endl;
       //std::cout << RED << "boundary = " << boundary << RESET << std::endl;
 
-      parseClientRequest(client.req, serverConfigs[0].maxBodySize);
+      parseClientRequest(client.req, serverConfigs[0].maxBodySize, i);
 
 			/* if (client.req.buffer.find("favicon.ico HTTP/") != std::string::npos)
 			{
@@ -214,7 +197,6 @@ void Webserv::handleClientRequest(
                   << ", client.socketFD " << client.socketFD
                   << ", root: " << client.client_serverConfig.serverRoot
                   << std::endl;
-
         displayParsedHeaderRequest(client);
 				
         // Looks for the serverConfig that matches the Host value of the request
