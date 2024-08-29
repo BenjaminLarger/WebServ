@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/28 17:55:48 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/29 13:03:44 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,20 @@ void	POST::parseContentDisposition(int index, const std::string &content)
 	while (true)
 	{
 		std::getline(stream, key, '=');
-		if (lineIsEmpty(key) == true || lastWorld == key)
+		if (lineIsEmpty(key) == true || lastWorld == key) {
 			break ;
+		}
 		else if (!strncmp(key.c_str(), " name", 4) || key == "name")
 		{
 			std::getline(stream, contentMap[index].name, ';');
 			trimQuotes(contentMap[index].name);
 		}
-		else if (!strncmp(key.c_str(), " filename", 8))
+		else if (!strncmp(key.c_str(), " filename", 9))
 		{
+			std::cout << "KEY: " << key << std::endl;
 			std::getline(stream, contentMap[index].filename, ';');
 			trimQuotes(contentMap[index].filename);
+			std::cout << "FILENAME: " << contentMap[index].filename << "INDEX:" << index << std::endl;
 		}
 		else if (key.empty() == true || lineIsEmpty(key) == true || lastWorld == key)
 			break ;
@@ -81,7 +84,6 @@ int	POST::parseContent(int index)
 		}
 		parseContentType(i, contentMap[i].contentType);
 	}
-	saveInLogFile(_formValues);
 	return (handleFileUpload(index));
 }
 
@@ -146,6 +148,7 @@ int POST::handleFileUpload(int index)
 		if (lineIsEmpty(contentMap[i].filename) == false)
 			{
 			//std::string	filePath = directory + contentMap[i].filename;
+			_formValues["File"] = contentMap[i].filename;;
 			std::string	filePath = UPLOAD_FILE_DIR + contentMap[i].filename;
 			std::ofstream outFile(filePath.c_str(), std::ios::binary);
 			if (!outFile)

@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/28 17:56:18 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/29 12:59:24 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -363,6 +363,8 @@ void	POST::handleBody(const std::string &line, int index)
 		_formValues["name"] = line;
 	else if (index == 1)
 		_formValues["age"] = line;
+  std::cout << "filename: " << contentMap[2].filename << std::endl;
+  _formValues["ID"] = generateClientID();
 	contentMap[index].HasBody = true;
 }
 

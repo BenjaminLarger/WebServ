@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GETdirectoryListing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:25:42 by demre             #+#    #+#             */
-/*   Updated: 2024/08/11 17:55:54 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/29 12:22:42 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,20 +42,22 @@ std::vector<std::string> GET::listDirectoryContent(const std::string &path)
 std::string GET::generateDirectoryListing(
     const std::string &path, const std::vector<std::string> &contents)
 {
-  std::ostringstream html;
+    std::ostringstream html;
 
-  html << "<html><head><title>Directory listing for " << path
-       << "</title></head>";
-  html << "<body><h1>Directory listing for " << path << "</h1><ul>";
+    // Comienza la generación de HTML con referencia al archivo CSS externo
+    html << extractHtmlContentFromFile("./var/www/html/directory_listing.html");
+    html << "<body>";
 
-  for (std::vector<std::string>::const_iterator it = contents.begin();
-       it != contents.end(); ++it)
-  {
-    // We could include a link to each file but we need to allow each path for each file.
-    // html << "<li><a href=\"" << path << *it << "\">" << *it << "</a></li>";
-    html << "<li>" << *it << "</li>";
-  }
-  html << "</ul></body></html>";
+    html << "<div class=\"container\">";
+    html << "<h1>Directory listing for " << path << "</h1><ul>";
 
+    // Genera el listado de archivos
+    for (std::vector<std::string>::const_iterator it = contents.begin(); it != contents.end(); ++it)
+    {
+        html << "<li><a href=\"" << "upload" << "/" << *it << "\">" << *it << "</a></li>";
+    }
+    html << "</ul></div>";
+
+    html << "</body></html>";
   return (html.str());
 }

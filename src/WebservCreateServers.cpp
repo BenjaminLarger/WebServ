@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservCreateServers.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 11:06:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/24 17:34:46 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/29 11:07:58 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
     // Convert the host string to network address using inet_addr
     serverAddress.sin_addr.s_addr
         = inet_addr(serverConfigs[i].getHost().c_str());
-    if (serverAddress.sin_addr.s_addr == INADDR_NONE)
+    if (serverAddress.sin_addr.s_addr == INADDR_ANY)
     {
       close(serverFD);
       throw HttpException(500, "Invalid address/ Address not supported.");

@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/28 17:06:16 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/29 13:03:58 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,7 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
       std::cout << "RETURN SUCCESS\n";
       client.req.buffer.clear();
       std::cout << "multipart/form-data return SUCCESS\n";
+      saveInLogFile(_formValues);
       if (lineIsEmpty(contentMap[2].filename)
           == true) //no file has been uploaded
         client.response = createPostOkResponse(_formValues);
