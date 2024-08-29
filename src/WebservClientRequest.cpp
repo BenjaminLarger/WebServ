@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/29 15:39:13 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/29 20:01:33 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,16 +124,34 @@ const ServerConfig &findClientServerConfig(
   throw HttpException(404, "No server found for the request host");
 }
 
+bool isSocketOpen(int fd)
+{
+    return fcntl(fd, F_GETFL) != -1 || errno != EBADF;
+}
+
 int Webserv::recvChunk(int sockfd, std::vector<char> &buffer, size_t totalBytesReceived, size_t &i)
 {
   char tempBuffer[BUFFER_SIZE];
   ssize_t bytesReceived;
 
+	if (isSocketOpen(sockfd) == false)//may delete
+	{
+		clients[i].req.bodyTooLarge = false;
+		return (FAILURE);
+	}
    bytesReceived = recv(sockfd, tempBuffer, BUFFER_SIZE - 1, 0);
     if (bytesReceived == -1)
     {
+			/* if (clients[i].req.bodyTooLarge == true)
+			{
+				std::cout << "clients[i].req.bodyTooLarge == true\n";
+				clients[i].req.bodyTooLarge = false;
+				return (FAILURE);
+			}
+			*/
         closeConnection(i);
         --i;
+				std::cout << "---------------\n";
         throw HttpException(500, strerror(errno));
      }
 	  else if (bytesReceived == 0)
@@ -157,6 +175,7 @@ int Webserv::recvChunk(int sockfd, std::vector<char> &buffer, size_t totalBytesR
 void readClientInput(const std::vector<char> &clientInput)
 {
   std::string str(clientInput.begin(), clientInput.end());
+	//std::cout << ORANGE << "str = " << str << RESET << std::endl;
 }
 
 void Webserv::handleClientRequest(
@@ -179,12 +198,9 @@ void Webserv::handleClientRequest(
       clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
       std::string clientStr(clientInput.begin(), clientInput.end());
       client.req.buffer = clientStr;
-      //std::cout << MAGENTA << clientStr << RESET << std::endl;
-      //std::cout << CYAN << client.req.buffer << RESET << std::endl;
-      //std::cout << RED << "boundary = " << boundary << RESET << std::endl;
+
 
       parseClientRequest(client.req, serverConfigs[0].maxBodySize, i);
-
 			/* if (client.req.buffer.find("favicon.ico HTTP/") != std::string::npos)
 			{
 					clientInput.clear();

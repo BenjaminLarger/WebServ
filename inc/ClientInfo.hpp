@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 20:29:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/29 12:26:31 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/29 16:01:31 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 struct ClientRequest
 {
   std::string buffer; // Appended whole request sent by client
-	double			BytesReceivedInMB;
+	bool				bodyTooLarge;
 
   // HTTP request line, ex: GET /new/new.png?query=string HTTP/1.1
   std::string method;      // GET

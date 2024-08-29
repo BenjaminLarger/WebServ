@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/29 15:52:26 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/29 19:59:40 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static void extractQueryString(ClientRequest &req)
 void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize, size_t &i)
 {
   reqReset(req);
-
+	(void)i;
   std::istringstream iss(req.buffer);
   std::string line;
 
@@ -105,16 +105,14 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize, 
       throw HttpException(400, "Bad request: Malformed header line");
     }
   }
+//	std::cout << "buffer = " << req.buffer << std::endl;
+//	std::cout << "req.fields[ContentLength] = " << req.fields["Content-Length"] << std::endl;
 	long long int	bodyLength = std::strtol(req.fields["Content-Length"].c_str(), NULL, 10);
 	std::cout << RED << "bodyLength = " << bodyLength << ", maxBodySize = " << (maxBodySize * 1024 * 1024) << std::endl;
 	if (maxBodySize > 0 && bodyLength > (maxBodySize * 1024 * 1024))
 	{
-		(void)i;
-		/* closeConnection(i);
-       --i; */
-		/* close(fds[i].fd);
-  	fds.erase(fds.begin() + i);
-	  clients.erase(clients.begin() + i); */
+		//close(fds[i].fd);
+		req.bodyTooLarge = true;//may delete bodyTooLarge variable
 		throw (HttpException(413, "Payload too large"));
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/29 15:48:18 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/29 19:41:22 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,7 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
   else
   {
     std::cout << RED << "POST method unfound\n" << RESET;
+		std::cout << RED << "Content-Type: " << contentType << RESET << std::endl;
     throw HttpException(415, "Unsupported Media Type.");
   }
 	if (client.response.empty() == false)
