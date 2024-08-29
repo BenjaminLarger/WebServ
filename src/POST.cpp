@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/29 15:54:11 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/29 17:38:12 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,6 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
   if (isFile(path))
   {
     std::cout << YELLOW << "This is a file\n" << RESET << std::endl;
-    //std::cout << BLUE << client.req.buffer << RESET << std::endl;
     std::string fileName, extension;
     getFileNameAndExtension(path, fileName, extension);
     if (extension == "py")
@@ -138,6 +137,7 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
       std::cout << "RETURN SUCCESS\n";
       client.req.buffer.clear();
       std::cout << "multipart/form-data return SUCCESS\n";
+      saveInLogFile(_formValues);
       if (lineIsEmpty(contentMap[2].filename)
           == true) //no file has been uploaded
         client.response = createPostOkResponse(_formValues);

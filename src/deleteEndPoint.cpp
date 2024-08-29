@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 17:35:47 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/12 11:20:27 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/29 12:28:25 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ std::string GET::createHtmlDeleteRequest(std::vector<std::string> files, std::st
     for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it)
     {
         html << "<tr>";
-        html << "<td>" << *it << "</td>";
+        html << "<td><a href=\"" << "upload" << "/" << *it << "\">" << *it << "</a></td>";
         html << "<td class = \"narrow\">";
         html << "<button onclick=\"deleteFile('" << *it << "', this)\">Delete</button>";
         html << "</td>";

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/29 16:29:38 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/29 17:37:24 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,6 @@ private:
   std::map< int, pid_t > pidMap;
   std::map< int, pid_t > terminatedPidMap;
 
-  int contentLength;
-
   Webserv(void);
 
 public:
@@ -65,7 +63,8 @@ public:
 
   void handleClientRequest(size_t &index,
                            const std::vector<ServerConfig> &serverConfigs);
-  ssize_t recvAll(int sockfd, std::vector<char> &buffer);
+  int recvChunk(int sockfd, std::vector<char> &buffer,
+                size_t totalBytesReceived, size_t &i);
   void resolveRequestedPathFromLocations(ClientRequest &req,
                                          const ServerConfig &serverConfig);
   bool isMethodAllowedAtLoc(ClientRequest &req,
@@ -95,7 +94,8 @@ public:
   // Close pipe and remove from pollfd, clients and clientScriptMap array
   void closePipe(size_t &index);
 
-  void parseClientRequest(ClientRequest &req, long long int maxBodySize);
+  void parseClientRequest(ClientRequest &req, long long int maxBodySize,
+                          size_t &i);
 
   void handleClientResponse(size_t &index);
 

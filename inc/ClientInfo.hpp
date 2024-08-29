@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 20:29:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/28 15:01:24 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/29 12:26:31 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,14 @@
 struct ClientRequest
 {
   std::string buffer; // Appended whole request sent by client
+	double			BytesReceivedInMB;
 
   // HTTP request line, ex: GET /new/new.png?query=string HTTP/1.1
   std::string method;      // GET
   std::string URIpath;     // /new/new.png           /new/test
   std::string queryString; // query=string
   std::string HTTPversion; // HTTP/1.1
+
 
   // Every other header field
   std::map< std::string, std::string > fields;

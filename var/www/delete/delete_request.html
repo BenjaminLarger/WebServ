@@ -67,7 +67,7 @@
     if (button.disabled) return;
     button.disabled = true; // Disable the button to prevent multiple requests
   
-    fetch('/uploads/files/' + encodeURIComponent(filename), {
+    fetch('/delete' + '/' + encodeURIComponent(filename), {
       method: 'DELETE'
     }).then(response => {
       if (response.status === 204) {
