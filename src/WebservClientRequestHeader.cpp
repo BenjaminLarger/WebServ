@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/29 15:47:35 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/29 15:52:26 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,9 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize, 
 		(void)i;
 		/* closeConnection(i);
        --i; */
+		/* close(fds[i].fd);
+  	fds.erase(fds.begin() + i);
+	  clients.erase(clients.begin() + i); */
 		throw (HttpException(413, "Payload too large"));
 	}
 }
