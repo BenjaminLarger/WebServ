@@ -3,31 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/28 17:36:24 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/29 15:59:54 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GET.hpp"
 #include "core.hpp"
 
-std::vector<char> GET::getResponseAtLocation(Webserv &webserv, ClientRequest &req,
-                                       int &clientFD)
+std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
+                                             ClientRequest &req, int &clientFD)
 {
   std::string URI = req.URIpath;
   std::vector<char> response;
   std::map<std::string, LocationConfig> locations = serverConfig.locations;
   std::map<std::string, LocationConfig>::const_iterator it;
-  
+
   findURIstartInLocations(req.URIpath, locations, it);
 
   if (it != locations.end())
   {
     std::string path = req.pathOnServer;
-		std::cout << RED << "PATH = " << path << RESET << std::endl;
-		
+    std::cout << RED << "PATH = " << path << RESET << std::endl;
+
     if (it->first == "/delete")
       return (composeOkHtmlResponse(manageDeleteEndPoint(), req.buffer));
     // Check if the location has a redirection
@@ -47,7 +47,7 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv, ClientRequest &re
     }
     else if (isFile(path))
     {
-			std::cout << RED << "IS FILE" << RESET << std::endl;
+      std::cout << RED << "IS FILE" << RESET << std::endl;
       std::string fileName, extension;
       getFileNameAndExtension(path, fileName, extension);
 
@@ -69,8 +69,8 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv, ClientRequest &re
                   << std::endl;
 
         webserv.executeScript(path, extension, req.queryString, clientFD);
-				response.clear();
-        response.insert(response.end(), "", "");
+        // response.clear();
+        // response.insert(response.end(), "", "");
       }
       // other files
       else if (extension.size())
@@ -78,13 +78,14 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv, ClientRequest &re
         std::cout << RED << "file has other type: " << extension << RESET
                   << std::endl;
         std::vector<char> fileContent = readFile(path);
-				std::cout << RED << "File has been readen"<< RESET << std::endl;
+        std::cout << RED << "File has been readen" << RESET << std::endl;
         if (fileContent.empty())
-				{
-					std::cout << RED << extension << "File is empty" << RESET << std::endl;
+        {
+          std::cout << RED << extension << "File is empty" << RESET
+                    << std::endl;
           throw HttpException(404, "File to read not found.");
-				}
-				std::cout << RED << "File is not empty"<< RESET << std::endl;
+        }
+        std::cout << RED << "File is not empty" << RESET << std::endl;
         response = composeFileResponse(fileContent, URI);
       }
       // has query string /...?...=...
@@ -139,7 +140,8 @@ GET::GET(Webserv &webserv, ClientInfo &client, const ServerConfig &serverConfig)
         = getResponseAtLocation(webserv, client.req, client.socketFD);
 
     size_t i = webserv.findClientIndexFromFD(clientFD);
-		webserv.clients[i].response.insert(webserv.clients[i].response.begin(), response.begin(), response.end());
+    webserv.clients[i].response.insert(webserv.clients[i].response.begin(),
+                                       response.begin(), response.end());
     webserv.clients[i].totalToSend = (!webserv.clients[i].response.empty()
                                           ? webserv.clients[i].response.size()
                                           : 0);

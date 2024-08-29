@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/29 16:00:04 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/29 20:02:32 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class Webserv
 {
 private:
   std::string boundary;
-	const std::vector<char> fileContent;//CHECK IF USED
+  const std::vector<char> fileContent; //CHECK IF USED
 
   // map < pipe_fd, client_fd >, to keep track of which pipe belongs to which client when a cgi script is writing in a pipe
   std::map< int, int > clientScriptMap;
@@ -37,11 +37,10 @@ private:
   std::map< int, pid_t > pidMap;
   std::map< int, pid_t > terminatedPidMap;
 
-
   Webserv(void);
 
 public:
-  std::vector<pollfd> fds;//move to public for test
+  std::vector<pollfd> fds; //move to public for test
   std::vector<ClientInfo> clients;
 
   Webserv(std::vector<ServerConfig> &serverConfigs);
@@ -64,7 +63,8 @@ public:
 
   void handleClientRequest(size_t &index,
                            const std::vector<ServerConfig> &serverConfigs);
-  int recvChunk(int sockfd, std::vector<char> &buffer, size_t totalBytesReceived, size_t &i);
+  int recvChunk(int sockfd, std::vector<char> &buffer,
+                size_t totalBytesReceived, size_t &i);
   void resolveRequestedPathFromLocations(ClientRequest &req,
                                          const ServerConfig &serverConfig);
   bool isMethodAllowedAtLoc(ClientRequest &req,
@@ -74,9 +74,8 @@ public:
 
   void executeScript(std::string const &filePath, std::string const &scriptType,
                      std::string const &queryString, int &clientFD);
-	void executeScript(std::string &filePath,
-                            std::string const &script,
-                            ClientInfo &client);
+  void executeScript(std::string &filePath, std::string const &scriptType,
+                     ClientInfo &client);
 
   // Read from pipe and save script output to client.response
   void readAndHandleScriptOutput(size_t &index);
@@ -95,12 +94,8 @@ public:
   // Close pipe and remove from pollfd, clients and clientScriptMap array
   void closePipe(size_t &index);
 
-  void parseClientRequest(ClientRequest &req, long long int maxBodySize, size_t &i);
-
-  void executeScript(std::string const &filePath, std::string const &scriptType,
-                     int &clientFD);
-	void executeScript(std::string const &filePath,
-                            std::string const &script, int &clientFD, std::string &reponse);
+  void parseClientRequest(ClientRequest &req, long long int maxBodySize,
+                          size_t &i);
 
   void handleClientResponse(size_t &index);
 

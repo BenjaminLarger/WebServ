@@ -3,22 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   CGIoutput.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/20 10:47:04 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/29 18:35:04 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 #include "core.hpp"
 
+static std::string getContentType(const std::string &response)
+{
+  size_t pos = response.find("Content-Type:");
+  if (pos != std::string::npos)
+  {
+    size_t start = pos + 13;
+    size_t end = response.find("\n", start);
+    std::string contentType = response.substr(start, end - start);
+    trimBothEnds(contentType);
+    return (contentType);
+  }
+  return ("");
+}
+
 std::string Webserv::generateCgiOutputHtmlPage(std::string const &output,
                                                std::string const &URIpath)
 {
   std::ostringstream htmlStream;
 
-	std::cout << RED << "output = " << output << RESET << std::endl;
+  // std::cout << RED << "output = " << output << RESET << std::endl;
   htmlStream << "<html>\n"
              << "<head><title>CGI Script Output</title></head>\n"
              << "<body>\n"
@@ -39,7 +53,6 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
 
   try
   {
-
     char buffer[4096];
     ssize_t bytesRead = read(fds[i].fd, buffer, sizeof(buffer) - 1);
     // std::cout << "A bytesRead: " << bytesRead << std::endl;
@@ -49,8 +62,10 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
 
       clients[j].responseBuffer += buffer;
 
-       std::cout << "(bytesRead: " << bytesRead << ". Read from pipe: '"
-                 << buffer << "'" << std::endl;
+      std::cout << "readAndHandleScriptOutput (bytesRead: " << bytesRead
+                << ". Read from pipe: \n'\n"
+                << buffer << "\n'\n"
+                << std::endl;
     }
     else if (bytesRead < 0)
     {
@@ -63,14 +78,28 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
     }
     else if (bytesRead == 0)
     {
-      // std::cout << "(bytesRead == 0)" << std::endl;
-      std::string responseBody = generateCgiOutputHtmlPage(
-          clients[j].responseBuffer, clients[j].req.URIpath);
-      clients[j].response
-          = composeOkHtmlResponse(responseBody, clients[j].req.buffer);
+      std::string contentType = getContentType(clients[j].responseBuffer);
+      // If not html, build html page and add headers
+      if (contentType != "text/html")
+      {
+        std::string responseBody = generateCgiOutputHtmlPage(
+            clients[j].responseBuffer, clients[j].req.URIpath);
+
+        clients[j].response
+            = composeOkHtmlResponse(responseBody, clients[j].req.buffer);
+      }
+      // If cgi output is already html, insert the output string responseBuffer into response char vector
+      else
+      {
+        clients[j].response.insert(clients[j].response.begin(),
+                                   clients[j].responseBuffer.begin(),
+                                   clients[j].responseBuffer.end());
+      }
+
       clients[j].totalToSend = clients[j].response.size();
       clients[j].totalBytesSent = 0;
       clients[j].responseBuffer.clear();
+
       // Close pipe if child process has terminated
       if (terminatedPidMap.find(fds[i].fd) != terminatedPidMap.end())
       {
