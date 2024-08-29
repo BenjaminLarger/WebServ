@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGI.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/28 15:02:27 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/29 17:32:10 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ static void checkFileAndScriptExecPaths(std::string const &filePath,
                         "Script file to execute not found at: " + filePath);
 }
 
-static void setEnvironmentVariables(std::string const &filePath,
-                                    std::string const &queryString)
+static void setEnvVar(std::string const &filePath,
+                      std::string const &queryString)
 {
   if (!queryString.empty())
   {
@@ -53,7 +53,7 @@ static void setEnvironmentVariables(std::string const &filePath,
 }
 
 void Webserv::executeScript(std::string const &filePath,
-                            std::string const &script,
+                            std::string const &scriptType,
                             std::string const &queryString, int &clientFD)
 {
   std::cout << "Executing: " << filePath;
@@ -61,9 +61,7 @@ void Webserv::executeScript(std::string const &filePath,
     std::cout << " + " << queryString;
   std::cout << std::endl;
 
-  setenv("PATH_INFO", filePath.c_str(), 1);
-
-  checkFileAndScriptExecPaths(filePath, script);
+  checkFileAndScriptExecPaths(filePath, scriptType);
 
   int pipefd[2];
   if (pipe(pipefd) == -1)
@@ -79,18 +77,16 @@ void Webserv::executeScript(std::string const &filePath,
         || close(pipefd[1]) == -1)
       exit(1);
 
-    setEnvironmentVariables(filePath, queryString);
+    setEnvVar(filePath, queryString);
 
-    if (script == "php")
+    if (scriptType == "php")
     {
       char *argv[] = {(char *)"php", (char *)filePath.c_str(), NULL};
       execve("/usr/bin/php", argv, environ);
     }
-    else if (script == "py")
+    else if (scriptType == "py")
     {
       char *argv[] = {(char *)"python3", (char *)filePath.c_str(), NULL};
-			
-			dup2(pipefd[0], STDIN_FILENO);
       execve("/usr/bin/python3", argv, environ);
     }
     exit(1);
@@ -111,10 +107,11 @@ void Webserv::executeScript(std::string const &filePath,
 
     // Associate the pipe FD with the client connection
     clientScriptMap[pipefd[0]] = clientFD;
- 		std::cout << GREEN << "clientScriptMap[" << pipefd[0] << "] = " << clientFD << RESET << std::endl;
+    std::cout << GREEN << "clientScriptMap[" << pipefd[0] << "] = " << clientFD
+              << RESET << std::endl;
     fds.push_back(pfd);
-		std::cout << "cgi : fds.size() = " << fds.size() << std::endl;
-		
+    std::cout << "cgi : fds.size() = " << fds.size() << std::endl;
+
     // Add a dummy client info for the listening socket
     ClientInfo ci;
     ci.socketFD = pipefd[0];
@@ -123,99 +120,56 @@ void Webserv::executeScript(std::string const &filePath,
   }
 }
 
-std::string	getPostData(std::string &clientInput)
+std::string getPostData(std::string &clientInput) // also pass Content-Length
 {
-	std::string line;
-	std::string lastLine;
-	std::istringstream stream(clientInput);
+  std::string line;
+  std::string lastLine;
+  std::istringstream stream(clientInput);
 
-	while (std::getline(stream, line))
-		lastLine = line;
+  while (std::getline(stream, line))
+    lastLine = line;
 
-	std::cout << GREEN << "Last line : " << lastLine << RESET << std::endl;
-	return (lastLine);
+  std::cout << GREEN << "Last line : " << lastLine << RESET << std::endl;
+
+  // lastLine, only for length of Content-Length
+  return (lastLine);
 }
 
-char **getExceveEnvp(ClientInfo &client)
+static void setContentEnvVar(ClientInfo &client)
 {
-	std::vector<std::string> envVars;
+  if (client.req.fields.find("Content-Length") != client.req.fields.end())
+  {
+    std::string contentLength = client.req.fields["Content-Length"];
+    if (setenv("CONTENT_LENGTH", contentLength.c_str(), 1) == -1)
+      throw HttpException(500, "Failed to setenv CONTENT_LENGTH");
+  }
 
-	if (client.req.fields.find("Content-Length") != client.req.fields.end())
-	{
-		std::string contentLength = "CONTENT_LENGTH=" + client.req.fields["Content-Length"];
-		envVars.push_back(contentLength);
-	}
-
-	if (client.req.fields.find("Content-Type") != client.req.fields.end())
-	{
-		std::string contentType = "CONTENT_TYPE=" + client.req.fields["Content-Type"];
-		envVars.push_back(contentType);
-	}
-
-	std::string requestMethod = "REQUEST_METHOD=POST";
-	envVars.push_back(requestMethod);
-	
-	// Convert std::vector<std::string> to char**
-	char **env = new char*[envVars.size() + 1];
-	for (size_t i = 0; i < envVars.size(); ++i)
-	{
-		env[i] = new char[envVars[i].size() + 1];
-		std::strcpy(env[i], envVars[i].c_str());
-		std::cout << GREEN << envVars[i] << RESET << std::endl;
-	}
-	env[envVars.size()] = NULL;
-
-	return (env);
+  if (client.req.fields.find("Content-Type") != client.req.fields.end())
+  {
+    std::string contentType = client.req.fields["Content-Type"];
+    if (setenv("CONTENT_TYPE", contentType.c_str(), 1) == -1)
+      throw HttpException(500, "Failed to setenv CONTENT_TYPE");
+  }
 }
 
-char **getExceveArgs(std::string &filePath)
-{
-	std::vector<std::string> ArgsVars;
-
-	std::string pythonPath = "/usr/bin/python3";
-	ArgsVars.push_back(pythonPath);
-	ArgsVars.push_back(filePath);
-	// Convert std::vector<std::string> to char**
-	char **env = new char*[ArgsVars.size() + 1];//TO FREE!
-	for (size_t i = 0; i < ArgsVars.size(); ++i)
-	{
-		env[i] = new char[ArgsVars[i].size() + 1];
-		std::strcpy(env[i], ArgsVars[i].c_str());
-	}
-	env[ArgsVars.size()] = NULL;
-
-	return (env);
-}
-
-void	deleteCharArray(char **envp)
-{
-	int	i = 0;
-
-	while (envp[i])
-	{
-		delete[] envp[i];
-		i++;
-	}
-	delete[] envp;
-}
 void Webserv::executeScript(std::string &filePath,
-                            std::string const &script,
-														ClientInfo &client)
+                            std::string const &scriptType, ClientInfo &client)
 {
   std::cout << "Executing: " << filePath << std::endl;
 
-		// Arguments for execve
-	char **envp = getExceveEnvp(client);
-	char **argv = getExceveArgs(filePath);
-		// Example POST data
-	std::string	post_data = getPostData(client.req.buffer);
-	size_t post_data_len = strlen(post_data.c_str());
-  checkFileAndScriptExecPaths(filePath, script);
-	std::cout << GREEN << "Valid script" << RESET << std::endl;
+  checkFileAndScriptExecPaths(filePath, scriptType);
+
+  setContentEnvVar(client);
+
+  std::string postData = getPostData(client.req.buffer);
+  size_t postDataLen = strlen(postData.c_str());
+
+  std::cout << GREEN << "Valid script" << RESET << std::endl;
+  std::cout << GREEN << "postData: " << postData << RESET << std::endl;
+  std::cout << GREEN << "postDataLen: " << postDataLen << RESET << std::endl;
 
   int pipefd[2];
-	int output_pipefd[2];
-  if (pipe(pipefd) == -1 || pipe(output_pipefd) == -1)
+  if (pipe(pipefd) == -1)
     throw HttpException(500, "Pipe error when executing " + filePath);
 
   pid_t pid = fork();
@@ -224,40 +178,49 @@ void Webserv::executeScript(std::string &filePath,
 
   if (pid == 0) // Execute script in child process
   {
-    if (close(pipefd[1]) == -1 || dup2(pipefd[0], STDIN_FILENO) == -1
-        || close(pipefd[0]) == -1)
+    if (close(pipefd[0]) == -1 || dup2(pipefd[1], STDOUT_FILENO) == -1
+        || close(pipefd[1]) == -1)
       exit(1);
 
-		// Close the read end of the output pipe
-		// Redirect stdout to the write end of the output pipe
-		if (close(output_pipefd[0]) == -1 || dup2(output_pipefd[1], STDOUT_FILENO) == -1
-			|| close(output_pipefd[1]) == -1)
-			exit(1);
+    setEnvVar(filePath, postData);
 
+    // Execute the script
 
-		// Execute the script
-		execve(filePath.c_str(), argv, envp);
-		dprintf(2, "Failed to execute script\n");
-		//dprintf(2, "failed to exec script...\n");
+    if (scriptType == "py")
+    {
+      char *argv[] = {(char *)"python3", (char *)filePath.c_str(), NULL};
+      execve("/usr/bin/python3", argv, environ);
+    }
+    dprintf(2, "Failed to execute script\n");
     exit(1);
   }
   else // Add read end of the pipe to the pollfd vector in parent process
   {
-    if (close(pipefd[0]) == -1 || write(pipefd[1], post_data.c_str(), post_data_len) == -1
-			|| close(pipefd[1]) == -1 || close(output_pipefd[1]) == -1)
-			throw HttpException(500, "Pipe error when executing " + filePath);
+    close(pipefd[1]);
 
-		// Read the output from the read end of the output pipe
-		std::vector<char> buffer(2048);
-		ssize_t bytes_read;
-		while ((bytes_read = read(output_pipefd[0], buffer.data(), buffer.size())) > 0)
-				client.response.insert(client.response.end(), buffer.data(), buffer.data() + bytes_read);
-		close(output_pipefd[0]);
-		int status;
-		waitpid(pid, &status, 0);
-		//std::cout << "Captured output: " << std::string(client.response) << std::endl;
-		deleteCharArray(envp);
-		deleteCharArray(argv);
-		//make the copy into string result
+    setNonBlocking(pipefd[0]);
+
+    // Store the pid to manage multiple processes
+    pidMap[pipefd[0]] = pid;
+
+    int clientFD = client.socketFD;
+
+    pollfd pfd;
+    pfd.fd = pipefd[0];
+    pfd.events = (POLLIN | POLLHUP);
+    pfd.revents = 0;
+
+    // Associate the pipe FD with the client connection
+    clientScriptMap[pipefd[0]] = clientFD;
+    std::cout << GREEN << "clientScriptMap[" << pipefd[0] << "] = " << clientFD
+              << RESET << std::endl;
+    fds.push_back(pfd);
+    std::cout << "cgi : fds.size() = " << fds.size() << std::endl;
+
+    // Add a dummy client info for the listening socket
+    ClientInfo ci;
+    ci.socketFD = pipefd[0];
+    ci.port = -1;
+    clients.push_back(ci);
   }
 }

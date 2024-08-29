@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/28 17:04:28 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/29 16:29:38 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class Webserv
 {
 private:
   std::string boundary;
-	const std::vector<char> fileContent;//CHECK IF USED
+  const std::vector<char> fileContent; //CHECK IF USED
 
   // map < pipe_fd, client_fd >, to keep track of which pipe belongs to which client when a cgi script is writing in a pipe
   std::map< int, int > clientScriptMap;
@@ -42,7 +42,7 @@ private:
   Webserv(void);
 
 public:
-  std::vector<pollfd> fds;//move to public for test
+  std::vector<pollfd> fds; //move to public for test
   std::vector<ClientInfo> clients;
 
   Webserv(std::vector<ServerConfig> &serverConfigs);
@@ -75,9 +75,8 @@ public:
 
   void executeScript(std::string const &filePath, std::string const &scriptType,
                      std::string const &queryString, int &clientFD);
-	void executeScript(std::string &filePath,
-                            std::string const &script,
-                            ClientInfo &client);
+  void executeScript(std::string &filePath, std::string const &scriptType,
+                     ClientInfo &client);
 
   // Read from pipe and save script output to client.response
   void readAndHandleScriptOutput(size_t &index);
@@ -97,11 +96,6 @@ public:
   void closePipe(size_t &index);
 
   void parseClientRequest(ClientRequest &req, long long int maxBodySize);
-
-  void executeScript(std::string const &filePath, std::string const &scriptType,
-                     int &clientFD);
-	void executeScript(std::string const &filePath,
-                            std::string const &script, int &clientFD, std::string &reponse);
 
   void handleClientResponse(size_t &index);
 

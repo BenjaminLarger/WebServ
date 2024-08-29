@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/28 17:06:16 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/29 15:54:11 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,40 +92,44 @@ void POST::extractFirstLine()
 
 //We extract all the content of a POST request
 POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
-           std::vector<char> &clientInput, const ServerConfig &serverConfig, std::string &_boundary)
-    : clientInputVector(clientInput), clientInputString(clientInput.begin(), clientInput.end()), contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
+           std::vector<char> &clientInput, const ServerConfig &serverConfig,
+           std::string &_boundary)
+    : clientInputVector(clientInput),
+      clientInputString(clientInput.begin(), clientInput.end()),
+      contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
 {
   //std::string response;
   std::string body;
   std::map<std::string, std::string> formValues;
-	std::string path = client.req.pathOnServer;
+  std::string path = client.req.pathOnServer;
 
   this->requestStream.str(clientInputString);
   std::cout << std::endl << "--------POST request---------" << std::endl;
   extractFirstLine();
   extractHeaders();
   // Depending on the content type of the form the body is formatted in a different way
-	std::cout << RED << "PATH = " << path << RESET << std::endl;
-	if (isFile(path))
-	{
-		std::cout << YELLOW << "This is a file\n" << RESET << std::endl;
-		//std::cout << BLUE << client.req.buffer << RESET << std::endl;
-		std::string fileName, extension;
+  std::cout << RED << "PATH = " << path << RESET << std::endl;
+  if (isFile(path))
+  {
+    std::cout << YELLOW << "This is a file\n" << RESET << std::endl;
+    //std::cout << BLUE << client.req.buffer << RESET << std::endl;
+    std::string fileName, extension;
     getFileNameAndExtension(path, fileName, extension);
-		if (extension == "py")
-		{
-
-			webserv.executeScript(path, extension, client);
-		}
-	}
-  else if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded", 33))
+    if (extension == "py")
+    {
+      webserv.executeScript(path, extension, client);
+      return; // don't remove. Shouldn't set response after script execution.
+    }
+  }
+  else if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded",
+                    33))
   {
     body = extractBody();
     formValues = formValuestoMap(body);
     saveInLogFile(formValues);
     client.response = createPostOkResponse(formValues);
-		//client.totalToSend = client.response.size();
-    client.req.buffer.clear();//may have to delete
+    //client.totalToSend = client.response.size();
+    client.req.buffer.clear(); //may have to delete
   }
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
   {
@@ -139,7 +143,7 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
         client.response = createPostOkResponse(_formValues);
       else
         client.response = createPostOkResponseWithFile(_formValues);
-			//client.totalToSend = client.response.size();
+      //client.totalToSend = client.response.size();
     }
   }
   else
@@ -147,11 +151,12 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
     std::cout << RED << "POST method unfound\n" << RESET;
     throw HttpException(415, "Unsupported Media Type.");
   }
-	if (client.response.empty() == false)
-	{
-		client.totalToSend = client.response.size();
-		client.totalBytesSent = 0;
-	}
+
+  if (!client.response.empty())
+  {
+    client.totalToSend = client.response.size();
+    client.totalBytesSent = 0;
+  }
 }
 
 POST::~POST(void) {}
