@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   coreResponse.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:49:50 by demre             #+#    #+#             */
-/*   Updated: 2024/08/28 17:20:01 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/30 16:07:08 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,10 @@ std::string extractHtmlContentFromFile(const std::string &filePath)
 }
 
 std::vector<char> composeOkHtmlResponse(std::string responseBody,
-                                  std::string reqBuffer)
+                                        std::string reqBuffer)
 {
   std::ostringstream response;
-	std::vector<char>	charVecResponse;
+  std::vector<char> charVecResponse;
 
   std::string sessionId;
   size_t findSessionId = reqBuffer.find("sessionId");
@@ -49,6 +49,7 @@ std::vector<char> composeOkHtmlResponse(std::string responseBody,
   }
 
   response << "HTTP/1.1 200 OK\r\n"
+           << "Date: " << getHttpDate() << "\r\n"
            << "Content-Type: text/html\r\n"
            << "Content-Length: " << responseBody.size() << "\r\n"
            << "Cache-Control: no-cache\r\n"
@@ -58,41 +59,47 @@ std::vector<char> composeOkHtmlResponse(std::string responseBody,
            << "\r\n"
            << responseBody;
 
-	std::string responseStr = response.str();
-	std::cout << YELLOW << "before charVecResponse"<< RESET << std::endl;
-	charVecResponse.insert(charVecResponse.begin(), responseStr.begin(), responseStr.end());
+  std::string responseStr = response.str();
+  std::cout << YELLOW << "before charVecResponse" << RESET << std::endl;
+  charVecResponse.insert(charVecResponse.begin(), responseStr.begin(),
+                         responseStr.end());
 
-	std::cout << YELLOW << "after charVecResponse"<< RESET << std::endl;
+  std::cout << YELLOW << "after charVecResponse" << RESET << std::endl;
   return (charVecResponse);
 }
 
 std::vector<char> composeDeleteOkHtmlResponse()
 {
   std::ostringstream response;
-	std::vector<char>	charVecResponse;
+  std::vector<char> charVecResponse;
 
   response << "HTTP/1.1 204 No Content\r\n"
+           << "Date: " << getHttpDate() << "\r\n"
            << "Content-Length: 0\r\n"
            << "Connection: close\r\n\r\n";
 
-	std::string responseStr = response.str();
-	charVecResponse.insert(charVecResponse.begin(), responseStr.begin(), responseStr.end());
+  std::string responseStr = response.str();
+  charVecResponse.insert(charVecResponse.begin(), responseStr.begin(),
+                         responseStr.end());
   return (charVecResponse);
 }
 
-std::vector<char> createRedirectResponse(const int &code, const std::string &location)
+std::vector<char> createRedirectResponse(const int &code,
+                                         const std::string &location)
 {
   // std::cout << BLUE << "Building redirection header : " << location
   //           << std::endl;
-	std::vector<char>	charVecResponse;
+  std::vector<char> charVecResponse;
   std::ostringstream response;
   response << getHeaderStatusLine(code) << "Location: " << location << "\r\n"
+           << "Date: " << getHttpDate() << "\r\n"
            << "Content-Length: 0\r\n"
            << "Cache-Control: no-cache\r\n"
            << "\r\n";
 
-	std::string responseStr = response.str();
-	charVecResponse.insert(charVecResponse.begin(), responseStr.begin(), responseStr.end());
+  std::string responseStr = response.str();
+  charVecResponse.insert(charVecResponse.begin(), responseStr.begin(),
+                         responseStr.end());
   return (charVecResponse);
 }
 
@@ -132,11 +139,12 @@ void	uploadFile(const std::vector<char> &fileContent,
 } */
 
 std::vector<char> composeFileResponse(const std::vector<char> &fileContent,
-                                std::string filepath)
+                                      std::string filepath)
 {
-  std::string 			response;
-	std::vector<char>	charVecResponse;
+  std::string response;
+  std::vector<char> charVecResponse;
   response += "HTTP/1.1 200 OK\r\n";
+  response += "Date: " + getHttpDate() + "\r\n";
   response += "Content-Type: " + getMediaType(filepath) + "\r\n";
   response += "Content-Length: " + toString(fileContent.size()) + "\r\n";
   response += "Cache-Control: no-cache\r\n";
@@ -144,10 +152,12 @@ std::vector<char> composeFileResponse(const std::vector<char> &fileContent,
 
   // Body (binary data)
 
-	//std::cout << YELLOW << "response : " << response << RESET << std::endl;
+  //std::cout << YELLOW << "response : " << response << RESET << std::endl;
   response.append(&fileContent[0], fileContent.size());
-	charVecResponse.insert(charVecResponse.begin(), response.begin(), response.end());
-	charVecResponse.insert(charVecResponse.end(), fileContent.begin(), fileContent.end());
-	//uploadFile(filepath, fileContent);
+  charVecResponse.insert(charVecResponse.begin(), response.begin(),
+                         response.end());
+  charVecResponse.insert(charVecResponse.end(), fileContent.begin(),
+                         fileContent.end());
+  //uploadFile(filepath, fileContent);
   return (charVecResponse);
 }

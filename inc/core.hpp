@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:52:13 by demre             #+#    #+#             */
-/*   Updated: 2024/08/30 15:41:22 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/30 16:01:12 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,3 +73,6 @@ std::string createFileListHtml(const std::string &dirPath);
 
 // Decodes a URL-encoded string
 std::string urlDecode(const std::string &url);
+
+// Returns formatted current date
+std::string getHttpDate();

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ErrorUtils.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:59 by demre             #+#    #+#             */
-/*   Updated: 2024/08/28 15:08:02 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/30 16:10:43 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,7 @@
 #include "dependencies.hpp"
 #include "utils.hpp"
 
-// Sends an error response to the client
-std::string sendErrorResponse(int clientSocket, int statusCode,
-                       const std::string &statusMessage, std::string errorBody);
-
-// Finds and sends a default error page to the client
-std::string sendDefaultErrorPage(int clientSocket, int statusCode,
-                          std::string errorMessage,
-                          std::map<int, std::string> errorPages);
-
-// void sendErrorResponse(int clientSocket, int statusCode,
-//                        const std::string &statusMessage, std::string errorBody);
-
 // Finds and sends a default error page to the client
 std::vector<char> composeErrorHtmlPage(int const &statusCode,
-                                 std::string const &errorMessage,
-                                 std::map<int, std::string> errorPages);
+                                       std::string const &errorMessage,
+                                       std::map<int, std::string> errorPages);

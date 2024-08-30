@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/30 15:44:26 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/30 16:00:22 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,4 +135,17 @@ std::string urlDecode(const std::string &url)
       decoded += url[i]; // Copy other characters unchanged
   }
   return (decoded);
+}
+
+std::string getHttpDate()
+{
+  // Get the current time
+  time_t now = time(0);
+  struct tm *gmt = gmtime(&now);
+
+  // Format the date in RFC 1123 format (e.g., "Fri, 23 Aug 2024 14:00:00 GMT")
+  char buffer[128];
+  strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", gmt);
+
+  return (std::string(buffer));
 }
