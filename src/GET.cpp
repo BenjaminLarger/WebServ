@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/29 15:59:54 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/30 13:24:41 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,6 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
                   << std::endl;
 
         webserv.executeScript(path, extension, req.queryString, clientFD);
-        // response.clear();
-        // response.insert(response.end(), "", "");
       }
       // other files
       else if (extension.size())

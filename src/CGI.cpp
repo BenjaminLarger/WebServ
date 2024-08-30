@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/29 17:32:10 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/30 13:30:02 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void Webserv::executeScript(std::string const &filePath,
     }
     exit(1);
   }
-  else // Add read end
+  else // Add read end of the pipe to the pollfd vector in parent process
   {
     close(pipefd[1]);
 
@@ -120,19 +120,26 @@ void Webserv::executeScript(std::string const &filePath,
   }
 }
 
-std::string getPostData(std::string &clientInput) // also pass Content-Length
+static std::string getPostData(ClientInfo &client, std::string &clientInput)
 {
-  std::string line;
-  std::string lastLine;
-  std::istringstream stream(clientInput);
+  std::string postData;
+  std::string contentLength;
 
-  while (std::getline(stream, line))
-    lastLine = line;
+  if (client.req.fields.find("Content-Length") != client.req.fields.end())
+    contentLength = client.req.fields["Content-Length"];
+  else
+    return (postData);
 
-  std::cout << GREEN << "Last line : " << lastLine << RESET << std::endl;
-
-  // lastLine, only for length of Content-Length
-  return (lastLine);
+  // Find blank line (\r\n\r\n) after the headers and read for contentLength characters
+  size_t bodyPos = clientInput.find("\r\n\r\n");
+  if (bodyPos != std::string::npos)
+  {
+    bodyPos += 4;
+    postData = clientInput.substr(bodyPos, atoi(contentLength.c_str())); //
+  }
+  std::cout << GREEN << "Last line postData: " << postData
+            << ", contentLength: " << contentLength << RESET << std::endl;
+  return (postData);
 }
 
 static void setContentEnvVar(ClientInfo &client)
@@ -159,14 +166,10 @@ void Webserv::executeScript(std::string &filePath,
 
   checkFileAndScriptExecPaths(filePath, scriptType);
 
-  setContentEnvVar(client);
-
-  std::string postData = getPostData(client.req.buffer);
-  size_t postDataLen = strlen(postData.c_str());
+  std::string postData = getPostData(client, client.req.buffer);
 
   std::cout << GREEN << "Valid script" << RESET << std::endl;
   std::cout << GREEN << "postData: " << postData << RESET << std::endl;
-  std::cout << GREEN << "postDataLen: " << postDataLen << RESET << std::endl;
 
   int pipefd[2];
   if (pipe(pipefd) == -1)
@@ -182,15 +185,21 @@ void Webserv::executeScript(std::string &filePath,
         || close(pipefd[1]) == -1)
       exit(1);
 
+    setContentEnvVar(client);
     setEnvVar(filePath, postData);
 
     // Execute the script
-
-    if (scriptType == "py")
+    if (scriptType == "php")
+    {
+      char *argv[] = {(char *)"php", (char *)filePath.c_str(), NULL};
+      execve("/usr/bin/php", argv, environ);
+    }
+    else if (scriptType == "py")
     {
       char *argv[] = {(char *)"python3", (char *)filePath.c_str(), NULL};
       execve("/usr/bin/python3", argv, environ);
     }
+
     dprintf(2, "Failed to execute script\n");
     exit(1);
   }

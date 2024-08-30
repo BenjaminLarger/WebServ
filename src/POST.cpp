@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/29 20:02:40 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/30 13:24:30 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
     std::cout << YELLOW << "This is a file\n" << RESET << std::endl;
     std::string fileName, extension;
     getFileNameAndExtension(path, fileName, extension);
-    if (extension == "py")
+    if (extension == "php" || extension == "py")
     {
       webserv.executeScript(path, extension, client);
       return; // don't remove. Shouldn't set response after script execution.
@@ -149,7 +149,7 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
   else
   {
     std::cout << RED << "POST method unfound\n" << RESET;
-		std::cout << RED << "Content-Type: " << contentType << RESET << std::endl;
+    std::cout << RED << "Content-Type: " << contentType << RESET << std::endl;
     throw HttpException(415, "Unsupported Media Type.");
   }
 
