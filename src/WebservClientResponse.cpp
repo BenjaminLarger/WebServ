@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientResponse.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/28 15:28:22 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/30 12:47:54 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,11 @@ void Webserv::handleClientResponse(size_t &i)
         clients[i].totalBytesSent = 0;
         clients[i].totalToSend = 0;
         clients[i].response.clear();
+        if (clients[i].req.bodyTooLarge == true)
+        {
+          closeConnection(i);
+          --i;
+        }
       }
       else if (bytesSent > 0)
       {
@@ -59,6 +64,11 @@ void Webserv::handleClientResponse(size_t &i)
       clients[i].totalBytesSent = 0;
       clients[i].totalToSend = 0;
       clients[i].response.clear();
+      if (clients[i].req.bodyTooLarge == true)
+      {
+        closeConnection(i);
+        --i;
+      }
     }
   }
   catch (const HttpException &e)

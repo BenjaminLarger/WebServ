@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestHeader.cpp                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/29 19:59:40 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/30 12:45:13 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,8 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize, 
 	if (maxBodySize > 0 && bodyLength > (maxBodySize * 1024 * 1024))
 	{
 		//close(fds[i].fd);
+    fds[i].events &= ~POLLIN;
+    fds[i].events |= POLLOUT;
 		req.bodyTooLarge = true;//may delete bodyTooLarge variable
 		throw (HttpException(413, "Payload too large"));
 	}
