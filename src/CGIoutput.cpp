@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGIoutput.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/29 18:35:04 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/29 19:15:39 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,15 @@ std::string Webserv::generateCgiOutputHtmlPage(std::string const &output,
 
   // std::cout << RED << "output = " << output << RESET << std::endl;
   htmlStream << "<html>\n"
-             << "<head><title>CGI Script Output</title></head>\n"
+             << "<head><title>CGI Script Output</title>\n"
+             << extractHtmlContentFromFile("./var/www/html/date_style.html")
+             << "</head>\n"
              << "<body>\n"
              << "<h1>CGI script correctly executed</h1>\n"
              << "<h2>" << URIpath << "</h2>\n"
              << "<p>Content length is " << output.size() << "</p>\n"
              << "<p>CGI output: " << output << "</p>\n"
+             << "<br>\n"
              << "</body>\n"
              << "</html>";
 

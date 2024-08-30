@@ -15,7 +15,7 @@ $htmlContent = "
     <title>Current Date</title>
 </head>
 <body>
-    <h1>The current date and time is: $currentDate</h1>
+    <h3>The current date and time is: $currentDate</h3>
 </body>
 </html>
 ";
