@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/30 13:24:41 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/30 14:19:00 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,6 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
                 << std::endl;
       std::vector<std::string> contents = listDirectoryContent(path);
 
-      // response = composeOkHtmlResponse(createFileListHtml(path));
       response = composeOkHtmlResponse(generateDirectoryListing(path, contents),
                                        req.buffer);
       return (response);
