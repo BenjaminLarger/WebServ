@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/20 09:35:57 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/30 15:44:26 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ bool findURIstartInLocations(
     std::map<std::string, LocationConfig>::const_iterator &it)
 {
   std::string currentURI = URI;
-	std::cout << "Current URI : " << URI << std::endl;
+  std::cout << "Current URI : " << URI << std::endl;
   while (!currentURI.empty())
   {
     // Check if the current URI segment matches any location
@@ -106,4 +106,33 @@ bool findURIstartInLocations(
     currentURI.erase(lastSlashPos);
   }
   return (false);
+}
+
+std::string urlDecode(const std::string &url)
+{
+  std::string decoded;
+  size_t length = url.length();
+
+  for (size_t i = 0; i < length; ++i)
+  {
+    if (url[i] == '%')
+    {
+      // Check if there are at least two characters following '%'
+      if (i + 2 < length && std::isxdigit(url[i + 1])
+          && std::isxdigit(url[i + 2]))
+      {
+        // Decode the hexadecimal value
+        int value = std::strtol(url.substr(i + 1, 2).c_str(), NULL, 16);
+        decoded += static_cast<char>(value);
+        i += 2; // Skip past the hex digits
+      }
+      else
+        decoded += '%';
+    }
+    else if (url[i] == '+')
+      decoded += ' '; // '+' is used for spaces in query parameters
+    else
+      decoded += url[i]; // Copy other characters unchanged
+  }
+  return (decoded);
 }
