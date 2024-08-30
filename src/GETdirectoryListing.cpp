@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:25:42 by demre             #+#    #+#             */
-/*   Updated: 2024/08/30 14:31:40 by demre            ###   ########.fr       */
+/*   Updated: 2024/08/30 15:16:51 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,19 +52,20 @@ std::string GET::generateDirectoryListing(
   std::ostringstream html;
   html << extractHtmlContentFromFile("./var/www/html/directory_listing.html");
 
-  html << "<body>";
-  html << "<div class=\"container\">";
-  html << "<h1>Directory listing for " << path << "</h1><ul>";
+  html << "<body>\n";
+  html << "<div class=\"container\">\n";
+  html << "<h1>Directory listing for " << path << "</h1>\n";
+  html << "<ul>\n";
 
   // List all files and directories
   for (std::vector<std::string>::const_iterator it = contents.begin();
        it != contents.end(); ++it)
   {
-    html << "<li>" << *it << "</li>";
+    html << "<li>" << *it << "</li>\n";
   }
 
-  html << "</ul></div>";
-  html << "</body></html>";
+  html << "</ul>\n</div>\n";
+  html << "</body>\n</html>\n";
 
   return (html.str());
 }
