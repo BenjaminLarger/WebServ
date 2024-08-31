@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientResponse.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/30 12:47:54 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/30 16:17:25 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ void Webserv::handleClientResponse(size_t &i)
         clients[i].totalBytesSent = 0;
         clients[i].totalToSend = 0;
         clients[i].response.clear();
-        if (clients[i].req.bodyTooLarge == true)
+        if (clients[i].req.bodyTooLarge == true ||
+					clients[i].req.shouldCloseConnection == true)
         {
           closeConnection(i);
           --i;
@@ -64,8 +65,10 @@ void Webserv::handleClientResponse(size_t &i)
       clients[i].totalBytesSent = 0;
       clients[i].totalToSend = 0;
       clients[i].response.clear();
-      if (clients[i].req.bodyTooLarge == true)
+      if (clients[i].req.bodyTooLarge == true
+				|| clients[i].req.shouldCloseConnection == true)
       {
+				std::cout << RED << "shouldCloseConnection == true" << RESET << std::endl;
         closeConnection(i);
         --i;
       }

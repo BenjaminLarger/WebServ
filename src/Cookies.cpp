@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:51:42 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/12 18:42:20 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/30 15:27:25 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ void	Webserv::parseCookies(ClientRequest req)
 		lineStream >> key2;
 		key2 = trimLastChar(key2, ';');
 		cookieMap[key1] = key2;
-		std::cout << key1 << " => " << key2 << std::endl;
 	}
 	
 	std::cout << std::endl << RESET;

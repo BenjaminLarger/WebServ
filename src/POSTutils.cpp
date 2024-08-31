@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/29 15:48:24 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/30 15:26:46 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -357,12 +357,10 @@ void	POST::handleBody(const std::string &line, int index)
 	if (contentMap[index].HasBody == true)
 	contentMap[index].body += '\n';
 	contentMap[index].body += line;
-	std::cout << YELLOW << index << " => " << line << RESET <<std::endl;
 	if (index == 0)
 		_formValues["name"] = line;
 	else if (index == 1)
 		_formValues["age"] = line;
-  std::cout << "filename: " << contentMap[2].filename << std::endl;
   _formValues["ID"] = generateClientID();
 	contentMap[index].HasBody = true;
 }

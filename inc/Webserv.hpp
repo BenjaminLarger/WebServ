@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/29 20:02:32 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/30 15:58:26 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,8 @@ public:
 
   void parseClientRequest(ClientRequest &req, long long int maxBodySize,
                           size_t &i);
+	void	checkBodySize(ClientRequest &req, long long int maxBodySize, size_t &i);
+	void	checkCloseConection(ClientRequest &req);
 
   void handleClientResponse(size_t &index);
 

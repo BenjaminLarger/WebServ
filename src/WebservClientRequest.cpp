@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/29 20:01:33 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/30 16:07:02 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,11 +134,6 @@ int Webserv::recvChunk(int sockfd, std::vector<char> &buffer, size_t totalBytesR
   char tempBuffer[BUFFER_SIZE];
   ssize_t bytesReceived;
 
-	if (isSocketOpen(sockfd) == false)//may delete
-	{
-		clients[i].req.bodyTooLarge = false;
-		return (FAILURE);
-	}
    bytesReceived = recv(sockfd, tempBuffer, BUFFER_SIZE - 1, 0);
     if (bytesReceived == -1)
     {
@@ -169,6 +164,7 @@ int Webserv::recvChunk(int sockfd, std::vector<char> &buffer, size_t totalBytesR
                 << "\n temp buffer = " << tempBuffer << std::endl;
 			std::cout << RED << "Total bytes received : " << totalBytesReceived / (1024.0 * 1024.0) << " MB" << RESET << std::endl;
     }
+		clients[i].req.shouldCloseConnection = false;
   // std::cout << buffer << std::endl;
   return (SUCCESS);
 }
@@ -201,13 +197,7 @@ void Webserv::handleClientRequest(
 
 
       parseClientRequest(client.req, serverConfigs[0].maxBodySize, i);
-			/* if (client.req.buffer.find("favicon.ico HTTP/") != std::string::npos)
-			{
-					clientInput.clear();
-					clientStr.clear();
-					buffer.clear();
-			}
-      else */ if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
+			if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
       {
         std::cout << "Request received on port " << client.port
                   << ", client.socketFD " << client.socketFD

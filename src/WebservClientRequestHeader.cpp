@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestHeader.cpp                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/30 12:45:13 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/30 16:16:51 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,28 @@ static void extractQueryString(ClientRequest &req)
 
   // std::cout << "extractQueryString URIpath: " << req.URIpath
   //           << ", req.queryString: " << req.queryString << std::endl;
+}
+
+void	Webserv::checkBodySize(ClientRequest &req, long long int maxBodySize, size_t &i)
+{
+	long long int	bodyLength = std::strtol(req.fields["Content-Length"].c_str(), NULL, 10);
+	std::cout << RED << "bodyLength = " << bodyLength << ", maxBodySize = " << (maxBodySize) << std::endl;
+	if (maxBodySize > 0 && bodyLength > maxBodySize )
+	{
+		//close(fds[i].fd);
+    fds[i].events &= ~POLLIN;
+    fds[i].events |= POLLOUT;
+		req.bodyTooLarge = true;//may delete bodyTooLarge variable
+		throw (HttpException(413, "Payload too large"));
+	}
+}
+
+void	Webserv::checkCloseConection(ClientRequest &req)
+{
+	if (req.fields["Connection"] == "close")
+	{
+		req.shouldCloseConnection = true;
+	}
 }
 
 void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize, size_t &i)
@@ -107,14 +129,6 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize, 
   }
 //	std::cout << "buffer = " << req.buffer << std::endl;
 //	std::cout << "req.fields[ContentLength] = " << req.fields["Content-Length"] << std::endl;
-	long long int	bodyLength = std::strtol(req.fields["Content-Length"].c_str(), NULL, 10);
-	std::cout << RED << "bodyLength = " << bodyLength << ", maxBodySize = " << (maxBodySize * 1024 * 1024) << std::endl;
-	if (maxBodySize > 0 && bodyLength > (maxBodySize * 1024 * 1024))
-	{
-		//close(fds[i].fd);
-    fds[i].events &= ~POLLIN;
-    fds[i].events |= POLLOUT;
-		req.bodyTooLarge = true;//may delete bodyTooLarge variable
-		throw (HttpException(413, "Payload too large"));
-	}
+	checkBodySize(req, maxBodySize, i);
+	checkCloseConection(req);
 }
