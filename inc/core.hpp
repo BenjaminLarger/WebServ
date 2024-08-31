@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:52:13 by demre             #+#    #+#             */
-/*   Updated: 2024/08/29 11:44:29 by isporras         ###   ########.fr       */
+/*   Updated: 2024/08/30 16:01:12 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,11 @@ std::string extractHtmlContentFromFile(const std::string &filePath);
 
 // Returns a 200 OK header with an HTML response in the given body
 std::vector<char> composeOkHtmlResponse(std::string responseBody,
-                                  std::string reqBuffer);
+                                        std::string reqBuffer);
 
 // Returns a redirection header response (Location + Content-Length: 0)
 std::vector<char> createRedirectResponse(const int &code,
-                                   const std::string &location);
+                                         const std::string &location);
 
 // Returns the header status line
 std::string getHeaderStatusLine(const int &code);
@@ -45,7 +45,7 @@ std::vector<char> readFile(const std::string &filename);
 
 // Returns a 200 OK header with the binary content of a file. File type is determined from the file path
 std::vector<char> composeFileResponse(const std::vector<char> &fileContent,
-                                std::string filepath);
+                                      std::string filepath);
 
 // Returns a 204 No content response
 std::vector<char> composeDeleteOkHtmlResponse();
@@ -68,5 +68,11 @@ bool findURIstartInLocations(
 // Returns a vector with the name of the files inside a directory
 std::vector<std::string> listFilesInDirectory(const std::string &dirPath);
 
-//Returns a html that list the files inside the directory sent as parameter
+// Returns a html that list the files inside the directory sent as parameter
 std::string createFileListHtml(const std::string &dirPath);
+
+// Decodes a URL-encoded string
+std::string urlDecode(const std::string &url);
+
+// Returns formatted current date
+std::string getHttpDate();

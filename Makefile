@@ -18,7 +18,7 @@ HEADER_DIR	= inc/
 
 # Source files and object files
 SRCS_DIR		= src/
-SRC_FILES		= main.cpp ClientProcessMethods.cpp Webserv.cpp \
+SRC_FILES		= main.cpp Webserv.cpp \
 	ErrorUtils.cpp utils.cpp core.cpp \
 	ServerConfig.cpp ServerConfigParsing.cpp ServerConfigParsingLocation.cpp \
 	ClientInfo.cpp \

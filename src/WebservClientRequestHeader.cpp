@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/30 16:16:51 by blarger          ###   ########.fr       */
+/*   Updated: 2024/08/31 13:17:52 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,11 @@ void	Webserv::checkCloseConection(ClientRequest &req)
 	}
 }
 
-void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize, size_t &i)
+void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
+                                 size_t &i)
 {
   reqReset(req);
-	(void)i;
+  (void)i;
   std::istringstream iss(req.buffer);
   std::string line;
 
@@ -89,15 +90,16 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize, 
     if ((req.method != "GET" && req.method != "POST" && req.method != "DELETE")
         /* || req.HTTPversion != "HTTP/1.1" */)
     {
-			std::cout << req.method << std::endl;
+      std::cout << req.method << std::endl;
       req.buffer.erase();
       throw HttpException(400, "Bad request: Method not implemented.");
     }
+    req.URIpath = urlDecode(req.URIpath);
     extractQueryString(req);
   }
   else
   {
-		std::cout << "response : " << req.buffer << std::endl;
+    std::cout << "response : " << req.buffer << std::endl;
     req.buffer.erase();
     throw HttpException(400, "Bad request: There is no first line in header.");
   }
@@ -129,6 +131,14 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize, 
   }
 //	std::cout << "buffer = " << req.buffer << std::endl;
 //	std::cout << "req.fields[ContentLength] = " << req.fields["Content-Length"] << std::endl;
-	checkBodySize(req, maxBodySize, i);
-	checkCloseConection(req);
+	long long int	bodyLength = std::strtol(req.fields["Content-Length"].c_str(), NULL, 10);
+	std::cout << RED << "bodyLength = " << bodyLength << ", maxBodySize = " << (maxBodySize * 1024 * 1024) << std::endl;
+	if (maxBodySize > 0 && bodyLength > (maxBodySize * 1024 * 1024))
+	{
+		//close(fds[i].fd);
+    fds[i].events &= ~POLLIN;
+    fds[i].events |= POLLOUT;
+		req.bodyTooLarge = true;//may delete bodyTooLarge variable
+		throw (HttpException(413, "Payload too large"));
+	}
 }

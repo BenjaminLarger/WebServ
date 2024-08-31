@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   HttpExceptions.hpp                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/30 16:43:48 by demre             #+#    #+#             */
+/*   Updated: 2024/08/30 16:43:50 by demre            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 
 #include <exception>
@@ -17,4 +29,3 @@ public:
   int getStatusCode() const;
   std::string getErrorMessage() const;
 };
-

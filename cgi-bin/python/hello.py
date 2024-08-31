@@ -50,7 +50,7 @@ content_length = len(html_content)
 # Print the HTTP headers to indicate HTML content
 print("HTTP/1.1 200 OK")
 print("Content-Type: text/html")
-print(f"Content-Length: {content_length}")
+print(f"Content-Length: {content_length + 2}")
 print("\r\n")  # End of headers section
 
 # Print the HTML content
