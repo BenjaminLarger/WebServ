@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 14:16:46 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/01 20:01:56 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,36 +27,43 @@ void Webserv::checkTerminatedProcesses()
       std::cerr << "Child process " << pid << " didn't terminate correctly"
                 << std::endl;
 
-      // Find the pipe_fd from the pid, close the pipe and remove the client connection
+      // Find the pipe_fd from the pid, close the pipe and throw error
       for (std::map<int, pid_t>::iterator it = pidMap.begin();
            it != pidMap.end(); ++it)
       {
         if (it->second == pid)
         {
           size_t i = findClientIndexFromFD(it->first);
-          int clientFD = clientScriptMap[it->first];
           pidMap.erase(it);
           closePipe(i);
-          size_t j = findClientIndexFromFD(clientFD);
-          closeConnection(j);
-          break;
+          throw HttpException(500, "Child process didn't terminate correctly");
         }
       }
     }
     // Child process terminated successfully
-    else
+    else if (WIFEXITED(status))
     {
-      // Remove the pid from the pidMap and add it to terminatedPidMap
+      int exitStatus = WEXITSTATUS(status);
       for (std::map<int, pid_t>::iterator it = pidMap.begin();
            it != pidMap.end(); ++it)
       {
-        std::cout << "it->second" << it->second << std::endl;
+        // std::cout << "Child process terminated " << it->second << std::endl;
         if (it->second == pid)
         {
-          std::cout << "it->second == pid\n";
-          terminatedPidMap[it->first] = pid;
-          pidMap.erase(it);
-          break;
+          // Remove the pid from the pidMap and add it to terminatedPidMap
+          if (exitStatus == 0)
+          {
+            terminatedPidMap[it->first] = pid;
+            pidMap.erase(it);
+            break;
+          }
+          // Remove the pid from the pidMap and throw error
+          else
+          {
+            pidMap.erase(it);
+            throw HttpException(500, "Script exited with status: "
+                                         + toString(exitStatus));
+          }
         }
       }
     }

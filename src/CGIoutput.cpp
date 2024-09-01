@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 17:13:05 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/01 20:03:07 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,9 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
     }
     else if (bytesRead == 0)
     {
+      // Check for terminated child processes
       checkTerminatedProcesses();
+
       // Close pipe if child process has terminated
       if (terminatedPidMap.find(fds[i].fd) != terminatedPidMap.end())
       {

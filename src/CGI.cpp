@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGI.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 13:55:26 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 20:02:34 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,6 @@ void Webserv::executeScript(std::string &filePath,
       execve("/usr/bin/python3", argv, environ);
     }
 
-    dprintf(2, "Failed to execute script\n");
     exit(1);
   }
   else // Add read end of the pipe to the pollfd vector in parent process

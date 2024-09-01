@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 17:29:34 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/01 20:03:04 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,6 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
       throw(std::runtime_error("Failed to poll."));
     if (pollCount == 0)
       continue;
-
-    // Check for terminated child processes
-    checkTerminatedProcesses();
 
     for (size_t i = 0; i < fds.size(); ++i)
     {
