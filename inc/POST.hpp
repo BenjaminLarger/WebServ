@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 16:56:41 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 18:59:58 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ private:
   bool saveInLogFile(std::map<std::string, std::string> formValues);
   std::map<std::string, std::string>	formValuestoMap(std::string body);
   std::vector<char> createPostOkResponse(std::map<std::string, std::string> formValues);
+	std::vector<char> createPostOkResponsePlainText(const std::string &str);
 	std::vector<char> createPostOkResponseWithFile(std::map<std::string, std::string> formValues);
 	std::vector<char> createPostOkResponseWithFilename(std::map<std::string, std::string> formValues);
 
