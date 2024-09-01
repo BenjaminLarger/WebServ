@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 18:00:40 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 18:43:25 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,14 +130,11 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
   long long int bodyLength
       = std::strtol(req.fields["Content-Length"].c_str(), NULL, 10);
   std::cout << RED << "bodyLength = " << bodyLength
-            << ", maxBodySize = " << (maxBodySize * 1024 * 1024) << std::endl;
-  if (maxBodySize > 0 && bodyLength > (maxBodySize ))
+            << ", maxBodySize = " << maxBodySize << std::endl;
+  if (maxBodySize > 0 && bodyLength > maxBodySize)
   {
-    //close(fds[i].fd);
     fds[i].events &= ~POLLIN;
     fds[i].events |= POLLOUT;
-    req.bodyTooLarge = true; //may delete bodyTooLarge variable
-/*     throw(HttpException
-			(413, "Payload too large")); */
+    req.bodyTooLarge = true;
   }
 }

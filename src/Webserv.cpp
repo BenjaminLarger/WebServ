@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 14:05:57 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/01 17:29:34 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
 
   instance = this;
   signal(SIGINT, Webserv::sigInt);
-  std::cout << "fds size = " << fds.size() << std::endl;
+  // std::cout << "fds size = " << fds.size() << std::endl;
 
   // Server's main listening loop to handle incoming connections
   while (true)
