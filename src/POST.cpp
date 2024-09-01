@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/09/01 13:55:37 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 15:55:56 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,10 +117,8 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
     if (extension == "php" || extension == "py")
     {
 			if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
-			{
-			 if (extractMultipartFormData(_boundary) == SUCCESS)
- 	     	webserv.executeScript(path, extension, client);
-			}
+			 extractMultipartFormData(_boundary);
+			webserv.executeScript(path, extension, client);
 			
       return; // don't remove. Shouldn't set response after script execution.
     }
