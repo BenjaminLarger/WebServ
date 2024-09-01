@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientInfo.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 20:29:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/30 15:34:37 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 15:04:43 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,13 @@
 struct ClientRequest
 {
   std::string buffer; // Appended whole request sent by client
-	bool				bodyTooLarge;
-	bool				shouldCloseConnection;
+  bool bodyTooLarge;  // True if body size exceeds maxBodySize
 
   // HTTP request line, ex: GET /new/new.png?query=string HTTP/1.1
   std::string method;      // GET
   std::string URIpath;     // /new/new.png           /new/test
   std::string queryString; // query=string
   std::string HTTPversion; // HTTP/1.1
-
 
   // Every other header field
   std::map< std::string, std::string > fields;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservCleanUp.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/24 18:32:46 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 14:16:46 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void Webserv::checkTerminatedProcesses()
   // Use a non-blocking wait to clean up all finished child processes
   while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
   {
-		std::cout << "Wait done\n";
     // Handle the case when a child process didn't terminate correctly
     if (!WIFEXITED(status) && !WIFSIGNALED(status))
     {
@@ -44,17 +43,17 @@ void Webserv::checkTerminatedProcesses()
         }
       }
     }
+    // Child process terminated successfully
     else
     {
       // Remove the pid from the pidMap and add it to terminatedPidMap
-			std::cout << "wait else\n" << std::endl;
       for (std::map<int, pid_t>::iterator it = pidMap.begin();
            it != pidMap.end(); ++it)
       {
-				std::cout << "it->second" << it->second << std::endl;
+        std::cout << "it->second" << it->second << std::endl;
         if (it->second == pid)
         {
-					std::cout << "it->second == pid\n";
+          std::cout << "it->second == pid\n";
           terminatedPidMap[it->first] = pid;
           pidMap.erase(it);
           break;

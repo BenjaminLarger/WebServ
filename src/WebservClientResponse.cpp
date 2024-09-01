@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientResponse.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/30 16:17:25 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 15:32:03 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,45 +16,68 @@
 #include "Webserv.hpp"
 #include "core.hpp"
 
+bool Webserv::checkCloseConnectionReq(ClientRequest &req)
+{
+  if (req.fields["Connection"] == "close")
+    return (true);
+  return (false);
+}
+
+bool Webserv::checkCloseConnectionResp(std::vector<char> response)
+{
+  // Check if the header of the response contains "Connection: close"
+  std::string responseStr(response.begin(), response.end());
+  size_t bodyPos = responseStr.find("\r\n\r\n");
+  std::string headers = responseStr.substr(0, bodyPos);
+
+  if (headers.find("Connection: close") != std::string::npos)
+    return (true);
+  return (false);
+}
+
 void Webserv::handleClientResponse(size_t &i)
 {
   try
   {
     if (clients[i].totalBytesSent < clients[i].totalToSend)
     {
-      // size_t bytesToSend
-      //     = std::min(250, clients[i].totalToSend - clients[i].totalBytesSent);
-			//std::cout << GREEN << "response to client : " << clients[i].response << RESET << std::endl;
-			//std::cout << "clients[i].totalBytesSent = " << clients[i].totalBytesSent << ", clients[i].totalToSend = " << clients[i].totalToSend << std::endl;
       int bytesSent
           = send(clients[i].socketFD,
                  clients[i].response.data() + clients[i].totalBytesSent,
-                 clients[i].totalToSend - clients[i].totalBytesSent,
-                 0);
+                 clients[i].totalToSend - clients[i].totalBytesSent, 0);
       if (bytesSent == -1)
       {
-        std::cout << "bytesSent == -1 " << std::endl;
+        std::cerr << "Send error: bytesSent == -1 " << std::endl;
         closeConnection(i);
         i--;
-        throw HttpException(500, "Internal Server Error: Failed to send response.");
       }
       else if (bytesSent == 0)
       {
         std::cout << "bytesSent == 0 " << bytesSent << std::endl;
         clients[i].totalBytesSent = 0;
         clients[i].totalToSend = 0;
-        clients[i].response.clear();
-        if (clients[i].req.bodyTooLarge == true ||
-					clients[i].req.shouldCloseConnection == true)
+        if (clients[i].req.bodyTooLarge == true
+            || checkCloseConnectionReq(clients[i].req)
+            || checkCloseConnectionResp(clients[i].response))
         {
           closeConnection(i);
           --i;
         }
+        clients[i].response.clear();
       }
       else if (bytesSent > 0)
       {
         std::cout << "Bytes sent: " << bytesSent << std::endl;
+
         clients[i].totalBytesSent += bytesSent;
+        if (clients[i].totalBytesSent >= clients[i].totalToSend
+            && (clients[i].req.bodyTooLarge == true
+                || checkCloseConnectionReq(clients[i].req)
+                || checkCloseConnectionResp(clients[i].response)))
+        {
+          closeConnection(i);
+          --i;
+        }
       }
     }
     else
@@ -66,9 +89,8 @@ void Webserv::handleClientResponse(size_t &i)
       clients[i].totalToSend = 0;
       clients[i].response.clear();
       if (clients[i].req.bodyTooLarge == true
-				|| clients[i].req.shouldCloseConnection == true)
+          || checkCloseConnectionReq(clients[i].req))
       {
-				std::cout << RED << "shouldCloseConnection == true" << RESET << std::endl;
         closeConnection(i);
         --i;
       }

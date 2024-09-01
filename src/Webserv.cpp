@@ -3,18 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/08/29 11:55:28 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 14:05:57 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 #include "core.hpp"
-/* --------------CONSTRUCTORS */
-//The socket() function shall create an unbound socket in a communications domain,
-//and return a file descriptor that can be used in later function calls that operate on sockets.
 
 Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
 {
@@ -27,7 +24,6 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
   // Server's main listening loop to handle incoming connections
   while (true)
   {
-		//std::cout << "polling. fds.size() = " << fds.size() << std::endl;
     int pollCount = poll(fds.data(), fds.size(), -1);
     if (pollCount < 0)
       throw(std::runtime_error("Failed to poll."));
@@ -35,13 +31,11 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
       continue;
 
     // Check for terminated child processes
-    checkTerminatedProcesses(); //=> Benjamin : I have commented it, I could not perform CGI POST operation (infinite wait)
+    checkTerminatedProcesses();
 
-    // add try / catch around each incoming connection?
     for (size_t i = 0; i < fds.size(); ++i)
     {
-      //withdrawWriteCapability(i, clients[i].buffer);
-      if (fds[i].revents & (POLLIN | POLLHUP)) // the problem is that POLLIN is not triggered after pfd.events = (POLLIN | POLLHUP);
+      if (fds[i].revents & (POLLIN | POLLHUP))
       {
         if (i < serverConfigs.size())
         {
@@ -76,13 +70,12 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
       }
       else if (fds[i].revents & POLLOUT)
       {
-         /* std::cout << CYAN << "New " << RED << POLLOUT << CYAN
+        /* std::cout << CYAN << "New " << RED << POLLOUT << CYAN
                    << " event detected" << RESET << std::endl; */
         try
         {
           if (clients[i].response.size())
             handleClientResponse(i);
-          // clean clients[i].response after send
         }
         catch (const HttpException &e)
         {
@@ -90,8 +83,6 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
                     << RESET << std::endl;
         }
       }
-			/* 	else
-					std::cout << RED << "GET : fds[3].revents & POLLIN = false !"<< RESET << std::endl; */
     }
   }
 }
