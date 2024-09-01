@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:49:50 by demre             #+#    #+#             */
-/*   Updated: 2024/08/30 16:07:08 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/01 15:12:36 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,8 @@ std::vector<char> composeDeleteOkHtmlResponse()
   response << "HTTP/1.1 204 No Content\r\n"
            << "Date: " << getHttpDate() << "\r\n"
            << "Content-Length: 0\r\n"
-           << "Connection: close\r\n\r\n";
+           << "Connection: close\r\n"
+           << "\r\n";
 
   std::string responseStr = response.str();
   charVecResponse.insert(charVecResponse.begin(), responseStr.begin(),
@@ -126,17 +127,6 @@ std::vector<char> readFile(const std::string &filename)
 
   return (buffer);
 }
-/* 
-void	uploadFile(const std::vector<char> &fileContent,
-                                std::string filepath)
-{
-	std::string	filePath = "./var/www/uploads/files/test.mp4";
-	std::cout << GREEN << "filepath = " << filePath << RESET << std::endl;
-	std::ofstream outFile(filePath.c_str(), std::ios::binary);
-			if (!outFile)
-				throw HttpException(400, strerror(errno));
-	
-} */
 
 std::vector<char> composeFileResponse(const std::vector<char> &fileContent,
                                       std::string filepath)
@@ -158,6 +148,6 @@ std::vector<char> composeFileResponse(const std::vector<char> &fileContent,
                          response.end());
   charVecResponse.insert(charVecResponse.end(), fileContent.begin(),
                          fileContent.end());
-  //uploadFile(filepath, fileContent);
+
   return (charVecResponse);
 }

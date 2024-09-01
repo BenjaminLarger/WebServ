@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:54:52 by demre             #+#    #+#             */
-/*   Updated: 2024/08/30 16:12:25 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/01 15:12:56 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,15 @@ std::vector<char> composeErrorHtmlPage(int const &statusCode,
     errorBody = extractHtmlContentFromFile(errorPages[statusCode]);
   else //
     errorBody = "<html><body><h1>" + toString(statusCode) + " " + errorMessage
-                + "</h1></body></html>";
+                + "</h1></body></html>\r\n\r\n";
 
   std::ostringstream response;
   response << "HTTP/1.1 " << statusCode << " " << errorMessage + "\r\n"
            << "Date: " << getHttpDate() << "\r\n"
            << "Content-Type: text/html\r\n"
            << "Content-Length: " << errorBody.size() << "\r\n"
-           << "Connection: close\r\n\r\n"
+           << "Connection: close\r\n"
+           << "\r\n"
            << errorBody;
 
   std::string responseStr = response.str();

@@ -1,11 +1,8 @@
 <?php
-// Set the default timezone
 date_default_timezone_set('Europe/Madrid');
 
-// Get the current date
 $currentDate = date('Y-m-d H:i:s');
 
-// HTML content with the current date
 $htmlContent = "
 <!DOCTYPE html>
 <html lang=\"en\">
@@ -20,6 +17,5 @@ $htmlContent = "
 </html>
 ";
 
-// Print the HTML content
 echo $htmlContent;
 ?>

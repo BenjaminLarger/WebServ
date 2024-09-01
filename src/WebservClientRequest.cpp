@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/30 16:07:02 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 15:04:28 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,87 +124,67 @@ const ServerConfig &findClientServerConfig(
   throw HttpException(404, "No server found for the request host");
 }
 
-bool isSocketOpen(int fd)
-{
-    return fcntl(fd, F_GETFL) != -1 || errno != EBADF;
-}
+bool isSocketOpen(int fd) { return fcntl(fd, F_GETFL) != -1 || errno != EBADF; }
 
-int Webserv::recvChunk(int sockfd, std::vector<char> &buffer, size_t totalBytesReceived, size_t &i)
+int Webserv::recvChunk(int sockfd, std::vector<char> &buffer,
+                       size_t totalBytesReceived, size_t &i)
 {
   char tempBuffer[BUFFER_SIZE];
-  ssize_t bytesReceived;
+  ssize_t bytesReceived = recv(sockfd, tempBuffer, BUFFER_SIZE - 1, 0);
+  if (bytesReceived <= 0)
+  {
+    closeConnection(i);
+    --i;
+    return (FAILURE);
+  }
+  else
+  {
+    tempBuffer[bytesReceived] = '\0';
+    buffer.insert(buffer.end(), tempBuffer, tempBuffer + bytesReceived);
+    totalBytesReceived += bytesReceived;
+    // std::cout << "bytes received = " << bytesReceived
+    //           << "\n temp buffer = " << tempBuffer << std::endl;
+  }
 
-   bytesReceived = recv(sockfd, tempBuffer, BUFFER_SIZE - 1, 0);
-    if (bytesReceived == -1)
-    {
-			/* if (clients[i].req.bodyTooLarge == true)
-			{
-				std::cout << "clients[i].req.bodyTooLarge == true\n";
-				clients[i].req.bodyTooLarge = false;
-				return (FAILURE);
-			}
-			*/
-        closeConnection(i);
-        --i;
-				std::cout << "---------------\n";
-        throw HttpException(500, strerror(errno));
-     }
-	  else if (bytesReceived == 0)
-    {
-      closeConnection(i);
-       --i;
-			 return (FAILURE);
-    }
-    else
-    {
-      tempBuffer[bytesReceived] = '\0';
-      buffer.insert(buffer.end(), tempBuffer, tempBuffer + bytesReceived);
-      totalBytesReceived += bytesReceived;
-      std::cout << "bytes received = " << bytesReceived
-                << "\n temp buffer = " << tempBuffer << std::endl;
-			std::cout << RED << "Total bytes received : " << totalBytesReceived / (1024.0 * 1024.0) << " MB" << RESET << std::endl;
-    }
-		clients[i].req.shouldCloseConnection = false;
-  // std::cout << buffer << std::endl;
   return (SUCCESS);
 }
 void readClientInput(const std::vector<char> &clientInput)
 {
   std::string str(clientInput.begin(), clientInput.end());
-	//std::cout << ORANGE << "str = " << str << RESET << std::endl;
+  //std::cout << ORANGE << "str = " << str << RESET << std::endl;
 }
 
 void Webserv::handleClientRequest(
     size_t &i, const std::vector<ServerConfig> &serverConfigs)
 {
   std::vector<char> buffer;
-
   ClientInfo &client = clients[i];
+
   try
   {
-     if (recvChunk(fds[i].fd, buffer, clients[i].req.buffer.size(), i) == SUCCESS)
-			{
-				
+    if (recvChunk(fds[i].fd, buffer, clients[i].req.buffer.size(), i)
+        == SUCCESS)
+    {
       int clientFD = client.socketFD; // required in case CGI script
 
       std::vector<char> clientInput(client.req.buffer.begin(),
                                     client.req.buffer.end());
-      //std::cout << GREEN << client.req.buffer << RESET << std::endl;
+
       readClientInput(clientInput);
       clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
       std::string clientStr(clientInput.begin(), clientInput.end());
       client.req.buffer = clientStr;
 
-
       parseClientRequest(client.req, serverConfigs[0].maxBodySize, i);
-			if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
+
+      if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
       {
         std::cout << "Request received on port " << client.port
                   << ", client.socketFD " << client.socketFD
                   << ", root: " << client.client_serverConfig.serverRoot
                   << std::endl;
         displayParsedHeaderRequest(client);
-				
+
         // Looks for the serverConfig that matches the Host value of the request
         client.client_serverConfig
             = findClientServerConfig(client, serverConfigs);
@@ -219,12 +199,10 @@ void Webserv::handleClientRequest(
           if (client.req.method == "GET")
             GET method(*this, client, client.client_serverConfig);
           else if (client.req.method == "POST")
-							POST method(*this, client, fds[i].fd, clientInput,
-													client.client_serverConfig, boundary);
+            POST method(*this, client, fds[i].fd, clientInput,
+                        client.client_serverConfig, boundary);
           else if (client.req.method == "DELETE")
             DELETE method(client, client.client_serverConfig);
-					
-          std::cout << RED << "Clearing request buffers. Method well proceeded" << RESET << std::endl;
 
           // if the method is a CGI script, we are adding the pipe to pollfd and clients vectors, so we need to get the index again to have the correct client.
 
@@ -236,7 +214,6 @@ void Webserv::handleClientRequest(
         }
         else
         {
-          std::cerr << RED << "Clearing request buffers" << RESET << std::endl;
           size_t j = findClientIndexFromFD(clientFD);
           clients[j].req.buffer.clear();
           clientInput.clear();
@@ -253,8 +230,8 @@ void Webserv::handleClientRequest(
               << RESET << '\n';
 
     clients[i].response = composeErrorHtmlPage(
-		e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
-		clients[i].client_serverConfig.errorPages);
+        e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
+        clients[i].client_serverConfig.errorPages);
     clients[i].totalToSend = clients[i].response.size();
     clients[i].totalBytesSent = 0;
   }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 09:46:47 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/13 13:10:23 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 14:00:21 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,5 @@ int main(int argc, const char **argv)
     exit(EXIT_FAILURE);
   }
 
-  return (0); // eventually replace with exit(EXIT_SUCCESS);
+  exit(EXIT_SUCCESS);
 }
