@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GETdirectoryListing.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:25:42 by demre             #+#    #+#             */
-/*   Updated: 2024/08/30 15:16:51 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/01 19:43:28 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,23 +49,28 @@ std::vector<std::string> GET::listDirectoryContent(const std::string &path)
 std::string GET::generateDirectoryListing(
     const std::string &path, const std::vector<std::string> &contents)
 {
-  std::ostringstream html;
-  html << extractHtmlContentFromFile("./var/www/html/directory_listing.html");
+    std::ostringstream html;
+    html << extractHtmlContentFromFile("./var/www/html/directory_listing.html");
 
-  html << "<body>\n";
-  html << "<div class=\"container\">\n";
-  html << "<h1>Directory listing for " << path << "</h1>\n";
-  html << "<ul>\n";
+    // Add a style block to adjust the font size of the header
+    html << "<style>\n";
+    html << "h1 { font-size: 1.2em; }\n"; // Adjust the font size as needed
+    html << "</style>\n";
 
-  // List all files and directories
-  for (std::vector<std::string>::const_iterator it = contents.begin();
-       it != contents.end(); ++it)
-  {
-    html << "<li>" << *it << "</li>\n";
-  }
+    html << "<body>\n";
+    html << "<div class=\"container\">\n";
+    html << "<h1>Directory listing for " << path << "</h1>\n";
+    html << "<ul>\n";
 
-  html << "</ul>\n</div>\n";
-  html << "</body>\n</html>\n";
+    // List all files and directories
+    for (std::vector<std::string>::const_iterator it = contents.begin();
+         it != contents.end(); ++it)
+    {
+        html << "<li>" << *it << "</li>\n";
+    }
 
-  return (html.str());
+    html << "</ul>\n</div>\n";
+    html << "</body>\n</html>\n";
+
+    return (html.str());
 }
