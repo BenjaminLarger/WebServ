@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   dependencies.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/28 17:02:02 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 17:29:58 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@
 #define FAILURE -1
 
 // ---------------------MESSAGES
-#define DEFAULT_CONFIG_PATH "config/simple.conf"
+#define DEFAULT_CONFIG_PATH "config/default.conf"
 
 // ---------------------UPLOAD DIRECTORY
 #define UPLOAD_FILE_DIR "./var/www/uploads/files/"

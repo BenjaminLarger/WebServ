@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservCreateServers.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 11:06:41 by demre             #+#    #+#             */
-/*   Updated: 2024/08/29 15:48:29 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 17:25:28 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,12 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
     {
       // If the host and port are the same as a previous server,
       pollfd pfd;
-      printf("Same host and port as server %d\n", fd_pos);
+      // printf("Same host and port as server %d\n", fd_pos);
       pfd.fd = fds[fd_pos].fd;
       pfd.events = (POLLIN | POLLOUT);
       pfd.revents = 0;
       fds.push_back(pfd);
-			std::cout << "createServers : fds.size() = " << fds.size() << std::endl;
+      // std::cout << "createServers : fds.size() = " << fds.size() << std::endl;
 
       // Add a dummy client info for the listening socket
       ClientInfo ci;
@@ -113,7 +113,7 @@ void Webserv::createServers(std::vector<ServerConfig> &serverConfigs)
     pfd.events = (POLLIN | POLLOUT);
     pfd.revents = 0;
     fds.push_back(pfd);
-		std::cout << "createServers2 : fds.size() = " << fds.size() << std::endl;
+    // std::cout << "createServers2 : fds.size() = " << fds.size() << std::endl;
 
     // Add a dummy client info for the listening socket
     ClientInfo ci;
