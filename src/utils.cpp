@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/26 13:17:20 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 15:18:53 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ bool streamHasRemainingContent(std::stringstream &ss)
   ss >> remaining;
   if (!remaining.empty() && remaining[remaining.size() - 1] == ';')
     remaining.erase(remaining.size() - 1); // Remove trailing semicolon
-  // std::cout << "remaining: '" << remaining << "'" << std::endl;
   if (!remaining.empty())
     return (true);
   return (false);
@@ -143,8 +142,6 @@ bool lineIsEmpty(std::string line)
 std::string trimQuotes(std::string &str)
 {
   trimBothEnds(str);
-  std::cout << RED << "len = " << str.length() << ", [0] = " << str[0]
-            << ", [end] = " << str[str.length() - 1] << RESET << std::endl;
   if (str.length() >= 2 && str[0] == '"' && str[str.length() - 1] == '"')
   {
     str = str.substr(1, str.length() - 2);
@@ -223,7 +220,6 @@ std::string extractBoundary(const std::string& input, std::string &boundary)
     if (pos != std::string::npos)
     {
         boundary = input.substr(pos + 1);
-				std::cout << GREEN << "Boundary found : " << boundary << RESET << std::endl;
         std::size_t endPos = boundary.find('\r');
         if (endPos != std::string::npos)
         {
@@ -262,26 +258,17 @@ bool	hasNoInputFields(std::string &clientInput)
 		lastLine = line;
 
 	if (lastLine.find('=') != std::string::npos)
-	{
-		std::cout << GREEN << "Post CGI has input fields!\n" << RESET;
         return (false);
-	}
     else
-		{
-			std::cout << RED << "Post CGI has not input fields!\n" << RESET;
 			return (true);
-		}
 }
 bool	hasBlankLineInput(std::string &clientInput, std::string &boundary, ClientInfo &client)
 {
   //Find if it is a POST submit-form request
-  size_t isPost = clientInput.rfind("POST /submit-form HTTP/1.1");
-  if (isPost != std::string::npos)
+  if (!strncmp(clientInput.c_str(), "POST /", 6))
   {
-    std::cout << YELLOW << "Is a post request\n" << RESET << std::endl;
     if (extractBoundary(client.req.fields["Content-Type"], boundary).size())
 		{
-			std::cout << boundary << std::endl;
 			size_t isFinalBoundary = clientInput.rfind(boundary + "--");
 			if (isFinalBoundary != std::string::npos)
 				return (true);
@@ -299,28 +286,15 @@ bool	hasBlankLineInput(std::string &clientInput, std::string &boundary, ClientIn
 
   // If there is no newline character, return false
   if (lastNewlinePos == std::string::npos || clientInput.size() <= 3)
-  {
-    std::cout << YELLOW << "No newline character found." << RESET << std::endl;
     return (false);
-  }
 
   // If the last newline character is at the beginning, return false
   if (lastNewlinePos == 0)
-  {
-    std::cout << YELLOW << "The last newline character is at the beginning."
-              << RESET << std::endl;
     return (false);
-  }
 
   if (lastNewlinePos > 2 && ((clientInput[lastNewlinePos - 2] == '\r'
       && clientInput[lastNewlinePos - 1] == '\n') || (clientInput[lastNewlinePos - 2] == '\n' && clientInput[lastNewlinePos - 1] == '\r')))
-  {
-    std::cout << YELLOW
-              << "The last newline character is preceded by another newline "
-                 "character."
-              << RESET << std::endl;
-    return true;
-  }
+	    return true;
   if (clientInput[clientInput.size() - 1] == '\n'
       && clientInput[clientInput.size() - 2] == '\r'
       && clientInput[clientInput.size() - 3] == '\n')
