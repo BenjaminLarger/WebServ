@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/01 13:48:42 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 16:48:43 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,6 +153,8 @@ int POST::handleFileUpload(int index)
 			fileContentBinary = extractBinaryContent(clientInputVector);
 			
 			outFile.write(fileContentBinary.data(), fileContentBinary.size());
+			if (!outFile)
+        throw (HttpException(500, "Failed to write in outfile"));
 			std::cout << GREEN << "File successfully uploaded !" << RESET << std::endl;
 			outFile.close();
 		}

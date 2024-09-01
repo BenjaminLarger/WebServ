@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 18:50:59 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/01 19:05:18 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
                                  size_t &i, bool &isError)
 {
   reqReset(req);
-  (void)i;
   std::istringstream iss(req.buffer);
   std::string line;
 

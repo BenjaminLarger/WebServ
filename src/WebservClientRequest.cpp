@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 18:59:53 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/01 19:05:13 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,18 +142,10 @@ int Webserv::recvChunk(int sockfd, std::vector<char> &buffer,
     tempBuffer[bytesReceived] = '\0';
     buffer.insert(buffer.end(), tempBuffer, tempBuffer + bytesReceived);
     totalBytesReceived += bytesReceived;
-    // std::cout << "bytes received = " << bytesReceived
-    //           << "\n temp buffer = " << tempBuffer << std::endl;
   }
 
   return (SUCCESS);
 }
-void readClientInput(const std::vector<char> &clientInput)
-{
-  std::string str(clientInput.begin(), clientInput.end());
-  //std::cout << ORANGE << "str = " << str << RESET << std::endl;
-}
-
 void Webserv::handleClientRequest(
     size_t &i, const std::vector<ServerConfig> &serverConfigs)
 {
@@ -170,7 +162,6 @@ void Webserv::handleClientRequest(
       std::vector<char> clientInput(client.req.buffer.begin(),
                                     client.req.buffer.end());
 
-      readClientInput(clientInput);
       clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
       std::string clientStr(clientInput.begin(), clientInput.end());
       client.req.buffer = clientStr;
@@ -242,7 +233,7 @@ void Webserv::handleClientRequest(
   {
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
-
+    //	std::cout << ORANGE << "erorr 413 " << errorPages[413] << RESET << std::endl;
     clients[i].response = composeErrorHtmlPage(
         e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
         clients[i].client_serverConfig.errorPages);
