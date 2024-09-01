@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 15:04:28 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/01 18:12:13 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +176,16 @@ void Webserv::handleClientRequest(
       client.req.buffer = clientStr;
 
       parseClientRequest(client.req, serverConfigs[0].maxBodySize, i);
+
+      // throw exception if the request is too large
+      if (client.req.bodyTooLarge == true)
+      {
+        client.client_serverConfig
+            = findClientServerConfig(client, serverConfigs);
+        resolveRequestedPathFromLocations(client.req,
+                                          client.client_serverConfig);
+        throw(HttpException(413, "Payload too large"));
+      }
 
       if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
       {
