@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestLocation.cpp                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/28 16:49:49 by isporras         ###   ########.fr       */
+/*   Updated: 2024/09/01 19:02:25 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,30 +34,24 @@ void Webserv::resolveRequestedPathFromLocations(
   std::map<std::string, LocationConfig>::const_iterator it;
 
   // Looks for a direct match in locations or a match of any parent folder
-  // if (!findURIorParentFolderInLocations(req.URIpath, locations, it))
   findURIstartInLocations(req.URIpath, locations, it);
   // if URI or parent folder found
   if (it != locations.end())
   {
     if (it->second.alias.size())
     {
-      std::cout << "replacing with alias" << std::endl;
       req.pathFolder = it->first == "/" ? "/" : formatPath(it->first);
       req.pathOnServer
           = replaceUriPrefix(req.URIpath, it->first, it->second.serverPath);
       req.pathFolderOnServer = it->second.serverPath;
-			std::cout << RED << "req.pathOnServer = " << req.pathOnServer << RESET << std::endl;
     }
     else if (it->second.root.size())
     {
-      std::cout << "replacing with root" << std::endl;
-
       req.pathFolder = it->first == "/" ? "/" : formatPath(it->first);
       req.pathOnServer
           = "." + formatPath(it->second.root) + formatPath(req.URIpath);
       req.pathFolderOnServer
           = "." + formatPath(it->second.root) + formatPath(it->first);
-				std::cout << RED << "req.pathOnServer = " << req.pathOnServer << RESET << std::endl;
     }
     else
     {
@@ -65,6 +59,8 @@ void Webserv::resolveRequestedPathFromLocations(
       req.pathOnServer = "." + formatPath(req.URIpath);
       req.pathFolderOnServer = "." + formatPath(it->first);
     }
+    std::cout << "req.pathOnServer = " << req.pathOnServer << RESET
+              << std::endl;
   }
   else
   {
@@ -75,7 +71,7 @@ void Webserv::resolveRequestedPathFromLocations(
 bool Webserv::isMethodAllowedAtLoc(ClientRequest &req,
                                    const ServerConfig &serverConfig)
 {
-  std::cout << "req.pathFolder:  " << req.pathFolder << std::endl;
+  // std::cout << "req.pathFolder:  " << req.pathFolder << std::endl;
   if (serverConfig.locations.find(req.pathFolder)
       != serverConfig.locations.end())
   {

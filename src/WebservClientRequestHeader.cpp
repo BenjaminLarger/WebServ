@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 18:11:02 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/01 18:50:59 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void Webserv::checkBodySize(ClientRequest &req, long long int maxBodySize,
 }
 
 void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
-                                 size_t &i)
+                                 size_t &i, bool &isError)
 {
   reqReset(req);
   (void)i;
@@ -88,8 +88,7 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
         /* || req.HTTPversion != "HTTP/1.1" */)
     {
       std::cout << req.method << std::endl;
-      req.buffer.erase();
-      throw HttpException(400, "Bad request: Method not implemented.");
+      isError = true;
     }
     req.URIpath = urlDecode(req.URIpath);
     extractQueryString(req);
@@ -97,8 +96,7 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
   else
   {
     std::cout << "response : " << req.buffer << std::endl;
-    req.buffer.erase();
-    throw HttpException(400, "Bad request: There is no first line in header.");
+    isError = true;
   }
 
   // Parse the remaining header fields
@@ -122,8 +120,8 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
     }
     else
     {
-      req.buffer.erase();
-      throw HttpException(400, "Bad request: Malformed header line");
+      isError = true;
+      break;
     }
   }
   //	std::cout << "buffer = " << req.buffer << std::endl;

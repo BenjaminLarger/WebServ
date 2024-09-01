@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 15:35:43 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/01 18:51:13 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ public:
   void closePipe(size_t &index);
 
   void parseClientRequest(ClientRequest &req, long long int maxBodySize,
-                          size_t &i);
+                          size_t &i, bool &isError);
   void checkBodySize(ClientRequest &req, long long int maxBodySize, size_t &i);
 
   // Checks if the connection should be closed because of the request
