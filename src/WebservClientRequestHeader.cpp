@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/08/31 13:17:52 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 14:51:27 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,4 +141,5 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
 		req.bodyTooLarge = true;//may delete bodyTooLarge variable
 		throw (HttpException(413, "Payload too large"));
 	}
+	checkCloseConection(req);
 }
