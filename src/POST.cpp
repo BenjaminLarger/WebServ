@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/08/30 13:24:30 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/01 13:55:37 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,12 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
     getFileNameAndExtension(path, fileName, extension);
     if (extension == "php" || extension == "py")
     {
-      webserv.executeScript(path, extension, client);
+			if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
+			{
+			 if (extractMultipartFormData(_boundary) == SUCCESS)
+ 	     	webserv.executeScript(path, extension, client);
+			}
+			
       return; // don't remove. Shouldn't set response after script execution.
     }
   }

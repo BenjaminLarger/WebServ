@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POSTupload.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/29 13:03:44 by isporras         ###   ########.fr       */
+/*   Updated: 2024/09/01 13:48:42 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,7 @@ int	POST::parseContent(int index)
 	for (int i = 0; i <= index; i++)
 	{
 		if (contentMap[i].HasContentDisposition == false)
-		{
-			std::cout << RED << "Has not content disposition! " << i << RESET << std::endl;
-			return (FAILURE);
-		}
+			throw HttpException(400, "Bad request: Client request has not content disposition");
 		key = extractFirstWord(contentMap[i].contentDisposition);
 		if (key != "form-data;" && key != "form-data;")
 		{
@@ -152,7 +149,7 @@ int POST::handleFileUpload(int index)
 			std::string	filePath = UPLOAD_FILE_DIR + contentMap[i].filename;
 			std::ofstream outFile(filePath.c_str(), std::ios::binary);
 			if (!outFile)
-				throw HttpException(400, strerror(errno));
+				throw HttpException(500, strerror(errno));
 			fileContentBinary = extractBinaryContent(clientInputVector);
 			
 			outFile.write(fileContentBinary.data(), fileContentBinary.size());

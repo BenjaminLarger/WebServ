@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 15:15:21 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/01 15:37:56 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
 
   /* std::cout << GREEN << "Client request buffer: " << std::endl
             << req.buffer << RESET << std::endl; */
+
   // Parse the first line (request line)
   if (std::getline(iss, line))
   {
