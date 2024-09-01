@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 15:04:28 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/01 18:25:23 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,18 +142,10 @@ int Webserv::recvChunk(int sockfd, std::vector<char> &buffer,
     tempBuffer[bytesReceived] = '\0';
     buffer.insert(buffer.end(), tempBuffer, tempBuffer + bytesReceived);
     totalBytesReceived += bytesReceived;
-    // std::cout << "bytes received = " << bytesReceived
-    //           << "\n temp buffer = " << tempBuffer << std::endl;
   }
 
   return (SUCCESS);
 }
-void readClientInput(const std::vector<char> &clientInput)
-{
-  std::string str(clientInput.begin(), clientInput.end());
-  //std::cout << ORANGE << "str = " << str << RESET << std::endl;
-}
-
 void Webserv::handleClientRequest(
     size_t &i, const std::vector<ServerConfig> &serverConfigs)
 {
@@ -170,13 +162,11 @@ void Webserv::handleClientRequest(
       std::vector<char> clientInput(client.req.buffer.begin(),
                                     client.req.buffer.end());
 
-      readClientInput(clientInput);
       clientInput.insert(clientInput.end(), buffer.begin(), buffer.end());
       std::string clientStr(clientInput.begin(), clientInput.end());
       client.req.buffer = clientStr;
 
       parseClientRequest(client.req, serverConfigs[0].maxBodySize, i);
-
       if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
       {
         std::cout << "Request received on port " << client.port
@@ -193,6 +183,7 @@ void Webserv::handleClientRequest(
                                           client.client_serverConfig);
 
         displayClientRequestLocationData(client);
+
 
         if (isMethodAllowedAtLoc(client.req, client.client_serverConfig))
         {
@@ -228,7 +219,7 @@ void Webserv::handleClientRequest(
   {
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
-
+	//	std::cout << ORANGE << "erorr 413 " << errorPages[413] << RESET << std::endl;
     clients[i].response = composeErrorHtmlPage(
         e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
         clients[i].client_serverConfig.errorPages);

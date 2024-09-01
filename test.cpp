@@ -5,57 +5,7 @@
 #include <sys/wait.h>
 #include <poll.h>
 
-/* int main() {
-    int pipe_fds[2];  // Array to hold file descriptors for the pipe
 
-    // Create the pipe
-    if (pipe(pipe_fds) == -1) {
-        std::cerr << "Failed to create pipe\n";
-        return 1;
-    }
-
-    // pipe_fds[0] is the read end, pipe_fds[1] is the write end
-    int read_fd = pipe_fds[0];
-    int write_fd = pipe_fds[1];
-
-    // Set up polling on the read end of the pipe
-    struct pollfd pfd;
-    pfd.fd = read_fd;
-    pfd.events = POLLIN | POLLHUP;  // Monitor for input and hang-up events
-
-    // Write some data to the pipe
-    const char *msg = "Hello, pipe!";
-    write(write_fd, msg, strlen(msg));
-
-    // Close the writing end to simulate a disconnection
-    close(write_fd);
-
-    // Poll the read end to detect POLLHUP
-    int ret = poll(&pfd, 1, 5000);  // 5-second timeout
-
-    if (ret > 0) {
-        if (pfd.revents & POLLHUP) {
-            std::cout << "POLLHUP detected: Writing end of the pipe closed.\n";
-        }
-        if (pfd.revents & POLLIN) {
-            char buffer[1024];
-            ssize_t bytes_read = read(read_fd, buffer, sizeof(buffer) - 1);
-            if (bytes_read > 0) {
-                buffer[bytes_read] = '\0';
-                std::cout << "Read from pipe: " << buffer << std::endl;
-            }
-        }
-    } else if (ret == 0) {
-        std::cout << "No events detected within the timeout period.\n";
-    } else {
-        std::cerr << "poll() error\n";
-    }
-
-    // Close the reading end of the pipe
-    close(read_fd);
-
-    return 0;
-} */
 
 #include <iostream>
 #include <unistd.h>

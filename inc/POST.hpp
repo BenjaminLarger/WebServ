@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/08/28 17:01:34 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 16:56:41 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,10 +99,7 @@ private:
 	void	trimImageBody(std::string &binaryFileContent);
 	std::vector<char> extractBinaryContent(const std::vector<char>& content);
 	
-	std::vector<char> extractPng(const std::vector<char>& content);
 	std::vector<char> extractFile(const std::vector<char>& content, std::vector<char> finalBoundary);
-	void savePngFile(const std::vector<char>& content, const std::string& filename);
-	bool isValidPNG(const std::string& filename);//can delete before submit
 
   POST(const POST &);
   POST &operator=(const POST &);
