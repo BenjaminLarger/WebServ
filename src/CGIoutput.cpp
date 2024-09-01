@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGIoutput.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/08/29 19:15:39 by isporras         ###   ########.fr       */
+/*   Updated: 2024/09/01 17:13:05 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ std::string Webserv::generateCgiOutputHtmlPage(std::string const &output,
              << "<p>CGI output: " << output << "</p>\n"
              << "<br>\n"
              << "</body>\n"
-             << "</html>";
+             << "</html>\n";
 
   return (htmlStream.str());
 }
@@ -65,10 +65,11 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
 
       clients[j].responseBuffer += buffer;
 
-      std::cout << "readAndHandleScriptOutput (bytesRead: " << bytesRead
-                << ". Read from pipe: \n'\n"
-                << buffer << "\n'\n"
-                << std::endl;
+      // std::cout << "pipe (bytesRead > 0)" << std::endl;
+      // std::cout << "readAndHandleScriptOutput (bytesRead: " << bytesRead
+      //           << ". Read from pipe: \n'\n"
+      //           << buffer << "\n'\n"
+      //           << std::endl;
     }
     else if (bytesRead < 0)
     {
@@ -77,35 +78,38 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
       j = findClientIndexFromFD(clientFD);
       clients[j].responseBuffer.clear();
       closeConnection(j);
-      throw HttpException(500, "Error reading from pipe");
     }
     else if (bytesRead == 0)
     {
-      std::string contentType = getContentType(clients[j].responseBuffer);
-      // If not html, build html page and add headers
-      if (contentType != "text/html")
-      {
-        std::string responseBody = generateCgiOutputHtmlPage(
-            clients[j].responseBuffer, clients[j].req.URIpath);
-
-        clients[j].response
-            = composeOkHtmlResponse(responseBody, clients[j].req.buffer);
-      }
-      // If cgi output is already html, insert the output string responseBuffer into response char vector
-      else
-      {
-        clients[j].response.insert(clients[j].response.begin(),
-                                   clients[j].responseBuffer.begin(),
-                                   clients[j].responseBuffer.end());
-      }
-
-      clients[j].totalToSend = clients[j].response.size();
-      clients[j].totalBytesSent = 0;
-      clients[j].responseBuffer.clear();
-
+      checkTerminatedProcesses();
       // Close pipe if child process has terminated
       if (terminatedPidMap.find(fds[i].fd) != terminatedPidMap.end())
       {
+        std::cout << "child process has terminated" << std::endl;
+        {
+          std::string contentType = getContentType(clients[j].responseBuffer);
+          // If not html, build html page and add headers
+          if (contentType != "text/html")
+          {
+            std::string responseBody = generateCgiOutputHtmlPage(
+                clients[j].responseBuffer, clients[j].req.URIpath);
+
+            clients[j].response
+                = composeOkHtmlResponse(responseBody, clients[j].req.buffer);
+          }
+          // If cgi output is already html, insert the output string responseBuffer into response char vector
+          else
+          {
+            clients[j].response.insert(clients[j].response.begin(),
+                                       clients[j].responseBuffer.begin(),
+                                       clients[j].responseBuffer.end());
+          }
+
+          clients[j].totalToSend = clients[j].response.size();
+          clients[j].totalBytesSent = 0;
+          clients[j].responseBuffer.clear();
+        }
+
         terminatedPidMap.erase(fds[i].fd);
         closePipe(i);
         --i;
