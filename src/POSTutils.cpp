@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/30 15:26:46 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 18:59:22 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,24 @@ std::vector<char> POST::createPostOkResponse(std::map<std::string, std::string> 
 	std::string responseStr = httpResponse.str();
 	charVecResponse.insert(charVecResponse.begin(), responseStr.begin(), responseStr.end());
   return (charVecResponse);
+}
+
+std::vector<char> POST::createPostOkResponsePlainText(const std::string &str)
+{
+    std::stringstream httpResponse;
+    std::vector<char> charVecResponse;
+
+    // Headers
+    httpResponse << "HTTP/1.1 201 Created\r\n";
+    httpResponse << "Content-Type: text/plain\r\n";
+    httpResponse << "Content-Length: " << str.size() << "\r\n";
+    httpResponse << "Date: " << getCurrentTimeHttpFormat() << "\r\n";
+    httpResponse << "\r\n";
+    httpResponse << str;
+
+    std::string responseStr = httpResponse.str();
+    charVecResponse.insert(charVecResponse.begin(), responseStr.begin(), responseStr.end());
+    return (charVecResponse);
 }
 
 /*

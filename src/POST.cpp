@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/09/01 15:55:56 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/01 19:03:06 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,8 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
   extractFirstLine();
   extractHeaders();
   // Depending on the content type of the form the body is formatted in a different way
-  std::cout << RED << "PATH = " << path << RESET << std::endl;
+  std::cout << ORANGE << "buffer = " <<client.req.buffer << RESET << std::endl;
+	std::cout << ORANGE << "ct = " <<contentType << RESET << std::endl;
   if (isFile(path))
   {
     std::cout << YELLOW << "This is a file\n" << RESET << std::endl;
@@ -133,6 +134,11 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
     //client.totalToSend = client.response.size();
     client.req.buffer.clear(); //may have to delete
   }
+	else if (!strncmp(contentType.c_str(), "plain/text", 9))
+	{
+		body = extractBody();
+		client.response = createPostOkResponsePlainText(body);
+	}
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
   {
     if (extractMultipartFormData(_boundary) == SUCCESS)
