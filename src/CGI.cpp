@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGI.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 20:02:34 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 13:15:13 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,7 @@ void Webserv::executeScript(std::string const &filePath,
 
     // Associate the pipe FD with the client connection
     clientScriptMap[pipefd[0]] = clientFD;
-    std::cout << GREEN << "clientScriptMap[" << pipefd[0] << "] = " << clientFD
-              << RESET << std::endl;
     fds.push_back(pfd);
-    std::cout << "cgi : fds.size() = " << fds.size() << std::endl;
 
     // Add a dummy client info for the listening socket
     ClientInfo ci;
@@ -137,8 +134,6 @@ static std::string getPostData(ClientInfo &client, std::string &clientInput)
     bodyPos += 4;
     postData = clientInput.substr(bodyPos, atoi(contentLength.c_str())); //
   }
-  std::cout << GREEN << "Last line postData: " << postData
-            << ", contentLength: " << contentLength << RESET << std::endl;
   return (postData);
 }
 
@@ -167,9 +162,6 @@ void Webserv::executeScript(std::string &filePath,
   checkFileAndScriptExecPaths(filePath, scriptType);
 
   std::string postData = getPostData(client, client.req.buffer);
-
-  std::cout << GREEN << "Valid script" << RESET << std::endl;
-  std::cout << GREEN << "postData: " << postData << RESET << std::endl;
 
   int pipefd[2];
   if (pipe(pipefd) == -1)
@@ -220,10 +212,7 @@ void Webserv::executeScript(std::string &filePath,
 
     // Associate the pipe FD with the client connection
     clientScriptMap[pipefd[0]] = clientFD;
-    std::cout << GREEN << "clientScriptMap[" << pipefd[0] << "] = " << clientFD
-              << RESET << std::endl;
     fds.push_back(pfd);
-    std::cout << "cgi : fds.size() = " << fds.size() << std::endl;
 
     // Add a dummy client info for the listening socket
     ClientInfo ci;

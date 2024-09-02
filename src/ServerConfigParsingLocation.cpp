@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 18:23:26 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 12:50:02 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 13:25:58 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ void ServerConfig::parseLocationBlock(std::ifstream &file,
   while (std::getline(file, line))
   {
     trimTrailingWS(line);
-    // std::cout << "line: '" << line << "'" << std::endl;
     std::stringstream ss(line);
     std::string key, valueStr;
     ss >> key;
@@ -31,9 +30,7 @@ void ServerConfig::parseLocationBlock(std::ifstream &file,
     if (key == "location")
       file.close(), throw(std::runtime_error(
                         "Invalid location block in config file: " + line));
-
     validateAndSanitizeLocationLine(line, ss, key, file);
-
     if (key.size() && key[0] == '#')
       continue;
     else if (key == "allow_methods") // list of accepted HTTP methods

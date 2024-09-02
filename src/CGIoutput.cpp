@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGIoutput.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 20:03:07 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 13:15:46 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ std::string Webserv::generateCgiOutputHtmlPage(std::string const &output,
 {
   std::ostringstream htmlStream;
 
-  // std::cout << RED << "output = " << output << RESET << std::endl;
   htmlStream << "<html>\n"
              << "<head><title>CGI Script Output</title>\n"
              << extractHtmlContentFromFile("./var/www/html/date_style.html")
@@ -58,18 +57,10 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
   {
     char buffer[4096];
     ssize_t bytesRead = read(fds[i].fd, buffer, sizeof(buffer) - 1);
-    // std::cout << "A bytesRead: " << bytesRead << std::endl;
     if (bytesRead > 0)
     {
       buffer[bytesRead] = '\0';
-
       clients[j].responseBuffer += buffer;
-
-      // std::cout << "pipe (bytesRead > 0)" << std::endl;
-      // std::cout << "readAndHandleScriptOutput (bytesRead: " << bytesRead
-      //           << ". Read from pipe: \n'\n"
-      //           << buffer << "\n'\n"
-      //           << std::endl;
     }
     else if (bytesRead < 0)
     {
@@ -87,7 +78,6 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
       // Close pipe if child process has terminated
       if (terminatedPidMap.find(fds[i].fd) != terminatedPidMap.end())
       {
-        std::cout << "child process has terminated" << std::endl;
         {
           std::string contentType = getContentType(clients[j].responseBuffer);
           // If not html, build html page and add headers

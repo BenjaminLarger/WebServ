@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/30 14:19:00 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 13:24:18 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,69 +26,40 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
   if (it != locations.end())
   {
     std::string path = req.pathOnServer;
-    std::cout << RED << "PATH = " << path << RESET << std::endl;
 
     if (it->first == "/delete")
       return (composeOkHtmlResponse(manageDeleteEndPoint(), req.buffer));
     // Check if the location has a redirection
     else if (it->second.redirection.first)
     {
-      std::cout << "redirection: " << it->second.redirection.first << " "
-                << it->second.redirection.second << std::endl;
-
       response = createRedirectResponse(it->second.redirection.first,
                                         it->second.redirection.second);
       return (response);
     }
     // if doesn't exist as a file or folder on the server
     else if (!isDirectory(path) && !isFile(path))
-    {
       throw HttpException(404, "pathOnServer not a file or folder on server");
-    }
     else if (isFile(path))
     {
-      std::cout << RED << "IS FILE" << RESET << std::endl;
       std::string fileName, extension;
       getFileNameAndExtension(path, fileName, extension);
 
-      std::cout << RED << "fileName: " << fileName
-                << ", extension: " << extension << RESET << std::endl;
-
-      // if (!hasQuestionMarkOrEqual(path) && !hasPunctuation(extension))
       // if file is html
       if (extension == "html")
       {
-        std::cout << RED << "file is html" << RESET << std::endl;
         response = composeOkHtmlResponse(extractHtmlContentFromFile(path),
                                          req.buffer);
       }
       // if file is a script in php or python
       else if (extension == "php" || extension == "py")
-      {
-        std::cout << RED << "file is a script in " << extension << RESET
-                  << std::endl;
-
         webserv.executeScript(path, extension, req.queryString, clientFD);
-      }
       // other files
       else if (extension.size())
       {
-        std::cout << RED << "file has other type: " << extension << RESET
-                  << std::endl;
         std::vector<char> fileContent = readFile(path);
-        std::cout << RED << "File has been readen" << RESET << std::endl;
         if (fileContent.empty())
-        {
-          std::cout << RED << extension << "File is empty" << RESET
-                    << std::endl;
           throw HttpException(404, "File to read not found.");
-        }
-        std::cout << RED << "File is not empty" << RESET << std::endl;
         response = composeFileResponse(fileContent, URI);
-      }
-      // has query string /...?...=...
-      else
-      {
       }
       return (response);
     }
@@ -96,8 +67,6 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
     else if (!it->second.index.empty())
     {
       path += "/" + it->second.index;
-      std::cout << RED << "file at: " << path << RESET << std::endl;
-
       response
           = composeOkHtmlResponse(extractHtmlContentFromFile(path), req.buffer);
       return (response);
@@ -106,12 +75,9 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
     else if (it->second.index.empty() && isDirectory(path)
              && it->second.autoIndexOn)
     {
-      std::cout << RED << "listDirectoryContent: " << path << RESET
-                << std::endl;
       std::vector<std::string> contents = listDirectoryContent(path);
-
       response = composeOkHtmlResponse(generateDirectoryListing(path, contents),
-                                       req.buffer);
+	                                      req.buffer);
       return (response);
     }
     else
