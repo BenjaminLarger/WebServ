@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 18:51:13 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 13:08:39 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,7 @@ public:
 
   void createServers(std::vector<ServerConfig> &serverConfigs);
 
-  void handleNewConnection(size_t &index,
-                           const std::vector<ServerConfig> &serverConfigs);
+  void handleNewConnection(size_t &index);
 
   /* REQUEST */
 

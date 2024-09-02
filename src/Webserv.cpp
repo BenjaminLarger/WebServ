@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 12:50:33 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 13:22:18 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,19 @@
 Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
 {
   createServers(serverConfigs);
+
   instance = this;
   signal(SIGINT, Webserv::sigInt);
+
   // Server's main listening loop to handle incoming connections
   while (true)
   {
     int pollCount = poll(fds.data(), fds.size(), -1);
     if (pollCount < 0)
-      throw(std::runtime_error("Failed to poll."));
+    {
+      std::cerr << "Failed to poll." << std::endl;
+      continue;
+    }
     if (pollCount == 0)
       continue;
 
@@ -36,7 +41,7 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
           // New connection request on listening socket
           std::cout << GREEN << "New connection detected " << RESET << fds[i].fd
                     << std::endl;
-          handleNewConnection(i, serverConfigs);
+          handleNewConnection(i);
         }
         else
         {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientResponse.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 13:07:46 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 13:20:24 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,12 @@ void Webserv::handleClientResponse(size_t &i)
             || checkCloseConnectionReq(clients[i].req)
             || checkCloseConnectionResp(clients[i].response))
         {
+          clients[i].response.clear();
           closeConnection(i);
           --i;
         }
-        clients[i].response.clear();
+        else
+          clients[i].response.clear();
       }
       else if (bytesSent > 0)
       {
