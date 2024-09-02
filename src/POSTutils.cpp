@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/02 13:13:16 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 13:13:38 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -412,7 +412,6 @@ std::string	POST::skipBoundaryPart(void)
 {
 	std::string line;
 
-	//readAllRequest();
 	requestStream.clear();
 	requestStream.seekg(0);
 	 while (std::getline(requestStream, line))

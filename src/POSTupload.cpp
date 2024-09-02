@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/01 16:48:43 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 13:25:35 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,8 @@ void	POST::parseContentDisposition(int index, const std::string &content)
 		}
 		else if (!strncmp(key.c_str(), " filename", 9))
 		{
-			std::cout << "KEY: " << key << std::endl;
 			std::getline(stream, contentMap[index].filename, ';');
 			trimQuotes(contentMap[index].filename);
-			std::cout << "FILENAME: " << contentMap[index].filename << "INDEX:" << index << std::endl;
 		}
 		else if (key.empty() == true || lineIsEmpty(key) == true || lastWorld == key)
 			break ;
@@ -155,10 +153,9 @@ int POST::handleFileUpload(int index)
 			outFile.write(fileContentBinary.data(), fileContentBinary.size());
 			if (!outFile)
         throw (HttpException(500, "Failed to write in outfile"));
-			std::cout << GREEN << "File successfully uploaded !" << RESET << std::endl;
+			std::cout << GREEN << "File" << contentMap[i].filename <<" successfully uploaded !" << RESET << std::endl;
 			outFile.close();
 		}
 	}
-	std::cout << GREEN << "Multiform data return success !" << RESET << std::endl;
 	return (SUCCESS);
 }

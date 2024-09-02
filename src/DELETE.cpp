@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DELETE.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:35 by isporras          #+#    #+#             */
-/*   Updated: 2024/08/16 14:18:05 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 13:21:58 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ DELETE::DELETE(ClientInfo &client, const ServerConfig &serverConfig)
   try
   {
     std::string pathOnServer = client.req.pathOnServer;
-    // std::cout << "pathOnServer:: " << pathOnServer << ", isFile(pathOnServer) "
-    //           << isFile(pathOnServer) << std::endl;
 
     if (!isFile(pathOnServer))
       throw HttpException(404, "File not found");
@@ -33,10 +31,6 @@ DELETE::DELETE(ClientInfo &client, const ServerConfig &serverConfig)
       client.totalToSend = client.response.size();
       client.totalBytesSent = 0;
     }
-
-    std::cout << GREEN
-              << "Deleted file and response 204 No Content sent: " << RESET
-              << pathOnServer << std::endl;
   }
   catch (const HttpException &e)
   {

@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 13:22:18 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 13:40:28 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
             if (!(fds[i].revents & POLLHUP)
                 && clientScriptMap.find(fds[i].fd) == clientScriptMap.end())
             {
-              std::cout << GREEN << "New client request detected " << RESET
-                        << fds[i].fd << std::endl;
+              std::cout << GREEN << "New client chunk request detected "
+                        << RESET << fds[i].fd << std::endl;
               handleClientRequest(i, serverConfigs);
             }
             // Check if script output pipe
