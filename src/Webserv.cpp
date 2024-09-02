@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 13:40:28 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 17:40:47 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,8 @@ Webserv::~Webserv(void)
     std::cout << "Closing: " << fds[i].fd << std::endl;
     close(fds[i].fd);
   }
+	deleteLogContentFile(std::string(LOG_DIR_PATH) + "form.log");
+	deleteLogContentFile(std::string(LOG_DIR_PATH) + "cookies.log");
 }
 
 // --------------MEMBER

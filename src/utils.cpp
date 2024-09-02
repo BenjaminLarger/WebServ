@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/09/01 15:18:53 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 17:11:09 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,4 +300,20 @@ bool	hasBlankLineInput(std::string &clientInput, std::string &boundary, ClientIn
       && clientInput[clientInput.size() - 3] == '\n')
     return (true);
   return (false);
+}
+
+void	deleteLogContentFile(const std::string &filePath)
+{
+
+	// Open the file in write mode to truncate it
+	std::fstream ofs(filePath.c_str(), std::ofstream::out | std::ofstream::trunc);
+	if (!ofs)
+	{
+			std::cerr << "Error opening file to erase content: " << filePath << std::endl;
+	}
+	else
+	{
+			std::cout << RED << "Erasing the content of " << filePath << RESET << std::endl;
+			ofs.close();
+	}
 }

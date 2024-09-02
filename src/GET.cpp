@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/02 13:24:18 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 19:32:33 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
     std::string path = req.pathOnServer;
 
     if (it->first == "/delete")
-      return (composeOkHtmlResponse(manageDeleteEndPoint(), req.buffer));
+      return (composeOkHtmlResponse(manageDeleteEndPoint(), req.buffer, webserv.sessions, req));
     // Check if the location has a redirection
     else if (it->second.redirection.first)
     {
@@ -48,7 +48,7 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
       if (extension == "html")
       {
         response = composeOkHtmlResponse(extractHtmlContentFromFile(path),
-                                         req.buffer);
+                                         req.buffer, webserv.sessions, req);
       }
       // if file is a script in php or python
       else if (extension == "php" || extension == "py")
@@ -68,7 +68,7 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
     {
       path += "/" + it->second.index;
       response
-          = composeOkHtmlResponse(extractHtmlContentFromFile(path), req.buffer);
+          = composeOkHtmlResponse(extractHtmlContentFromFile(path), req.buffer, webserv.sessions, req);
       return (response);
     }
     // If location doesn't have a file, is a folder, and autoindex on
@@ -77,7 +77,7 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
     {
       std::vector<std::string> contents = listDirectoryContent(path);
       response = composeOkHtmlResponse(generateDirectoryListing(path, contents),
-	                                      req.buffer);
+	                                      req.buffer, webserv.sessions, req);
       return (response);
     }
     else

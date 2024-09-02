@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientResponse.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 14:05:53 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 19:36:11 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void Webserv::handleClientResponse(size_t &i)
       if (bytesSent == -1)
       {
         std::cerr << "Send error: bytesSent == -1 " << std::endl;
-        closeConnection(i);
+        closeConnection(i, this->clients[i].req.sessionId);
         i--;
       }
       else if (bytesSent == 0)
@@ -60,7 +60,7 @@ void Webserv::handleClientResponse(size_t &i)
             || checkCloseConnectionResp(clients[i].response))
         {
           clients[i].response.clear();
-          closeConnection(i);
+          closeConnection(i, this->clients[i].req.sessionId);
           --i;
         }
         else
@@ -76,7 +76,7 @@ void Webserv::handleClientResponse(size_t &i)
                 || checkCloseConnectionReq(clients[i].req)
                 || checkCloseConnectionResp(clients[i].response)))
         {
-          closeConnection(i);
+           closeConnection(i, this->clients[i].req.sessionId);
           --i;
         }
       }
@@ -89,7 +89,7 @@ void Webserv::handleClientResponse(size_t &i)
       if (clients[i].req.bodyTooLarge == true
           || checkCloseConnectionReq(clients[i].req))
       {
-        closeConnection(i);
+         closeConnection(i, this->clients[i].req.sessionId);
         --i;
       }
     }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 14:10:27 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 19:35:53 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ int Webserv::recvChunk(int sockfd, std::vector<char> &buffer,
   ssize_t bytesReceived = recv(sockfd, tempBuffer, BUFFER_SIZE - 1, 0);
   if (bytesReceived <= 0)
   {
-    closeConnection(i);
+    closeConnection(i, this->clients[i].req.sessionId);
     --i;
     return (FAILURE);
   }

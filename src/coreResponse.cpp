@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:49:50 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 13:21:44 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 19:31:12 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,27 +26,14 @@ std::string extractHtmlContentFromFile(const std::string &filePath)
 }
 
 std::vector<char> composeOkHtmlResponse(std::string responseBody,
-                                        std::string reqBuffer)
+                                        std::string reqBuffer,
+																				std::map<std::string, SessionData> &sessions,
+																				ClientRequest &clientReq)
 {
   std::ostringstream response;
   std::vector<char> charVecResponse;
 
-  std::string sessionId;
-  size_t findSessionId = reqBuffer.find("sessionId");
-  if (findSessionId == std::string::npos)
-  {
-    std::cout << GREEN
-              << "session ID not found in request => generating new one !\n"
-              << RESET << std::endl;
-    sessionId
-        = "Set-Cookie: sessionId=" + generateSessionID() + "; HttpOnly\r\n";
-  }
-  else
-  {
-    std::cout << RED << "Session ID not found\n" << RESET << std::endl;
-    sessionId = "Set-Cookie: sessionId=" + findSessionID(reqBuffer)
-                + "; HttpOnly\r\n";
-  }
+  std::string sessionId = handleCookiesSessions(sessions, reqBuffer, clientReq);
 
   response << "HTTP/1.1 200 OK\r\n"
            << "Date: " << getHttpDate() << "\r\n"

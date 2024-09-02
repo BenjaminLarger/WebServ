@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   dependencies.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/02 14:05:35 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 17:29:25 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <vector>
+#include <ctime>
 
 // ---------------------BUFFER
 #define BUFFER_SIZE 4096
@@ -67,8 +68,7 @@
 #define SUCCESS 1
 #define FAILURE -1
 
-// ---------------------MESSAGES
-#define DEFAULT_CONFIG_PATH "config/default.conf"
-
 // ---------------------UPLOAD DIRECTORY
+#define DEFAULT_CONFIG_PATH "config/default.conf"
 #define UPLOAD_FILE_DIR "./var/www/uploads/files/"
+#define LOG_DIR_PATH "./var/www/uploads/form_logs/"

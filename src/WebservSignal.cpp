@@ -6,11 +6,12 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 11:37:18 by blarger           #+#    #+#             */
-/*   Updated: 2024/08/29 11:32:21 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 17:40:01 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
+#include "utils.hpp"
 
 Webserv *Webserv::instance = NULL;
 
@@ -28,5 +29,7 @@ void Webserv::handleSigInt(int code)
       close(fds[i].fd);
     }
   }
+	deleteLogContentFile(std::string(LOG_DIR_PATH) + "form.log");
+	deleteLogContentFile(std::string(LOG_DIR_PATH) + "cookies.log");
   exit(EXIT_SUCCESS);
 }

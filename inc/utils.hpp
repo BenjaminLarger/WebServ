@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/08/16 08:56:02 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 17:11:37 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,3 +68,6 @@ void getFileNameAndExtension(const std::string &path, std::string &fileName,
 
 //Check if request is complete
 bool hasBlankLineInput(std::string &clientInput, std::string &boundary, ClientInfo &client);
+
+//Delete the content of log file
+void	deleteLogContentFile(const std::string &filePath);

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 13:15:46 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 19:37:07 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
       --i;
       j = findClientIndexFromFD(clientFD);
       clients[j].responseBuffer.clear();
-      closeConnection(j);
+      closeConnection(j, clients[i].req.sessionId);
     }
     else if (bytesRead == 0)
     {
@@ -87,7 +87,7 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
                 clients[j].responseBuffer, clients[j].req.URIpath);
 
             clients[j].response
-                = composeOkHtmlResponse(responseBody, clients[j].req.buffer);
+                = composeOkHtmlResponse(responseBody, clients[j].req.buffer, sessions, clients[i].req);
           }
           // If cgi output is already html, insert the output string responseBuffer into response char vector
           else

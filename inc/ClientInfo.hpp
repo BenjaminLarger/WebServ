@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientInfo.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 20:29:41 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 15:04:43 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 19:27:00 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ struct ClientRequest
   std::string pathFolder;         // /new                   /new
   std::string pathOnServer;       // ./var/www/new/new.png  ./var/www/new/test/
   std::string pathFolderOnServer; //./var/www/new/          ./var/www/new/
+	std::string	sessionId;
 };
 
 class ClientInfo

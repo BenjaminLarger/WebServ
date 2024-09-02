@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 13:08:39 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 19:35:15 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,17 @@
 #include "HttpExceptions.hpp"
 #include "ServerConfig.hpp"
 #include "dependencies.hpp"
+#include "Cookies.hpp"
 
 // ************************************************************************** //
 //                               Class //
 // ************************************************************************** //
-
-struct Cookies
-{
-};
-
+struct SessionData;
 class Webserv
 {
 private:
   std::string boundary;
-  const std::vector<char> fileContent; //CHECK IF USED
+
 
   // map < pipe_fd, client_fd >, to keep track of which pipe belongs to which client when a cgi script is writing in a pipe
   std::map< int, int > clientScriptMap;
@@ -43,6 +40,7 @@ private:
 public:
   std::vector<pollfd> fds;
   std::vector<ClientInfo> clients;
+	std::map<std::string, SessionData> sessions;
 
   Webserv(std::vector<ServerConfig> &serverConfigs);
   ~Webserv(void);
@@ -89,7 +87,7 @@ public:
   void checkTerminatedProcesses();
 
   // Close client connection and remove from pollfd and clients array, and remove any pending script pipes for that connection
-  void closeConnection(size_t &index);
+  void closeConnection(size_t &index, const std::string &sessionId);
 
   // Close pipe and remove from pollfd, clients and clientScriptMap array
   void closePipe(size_t &index);
@@ -112,7 +110,6 @@ public:
   static Webserv *instance;
 
   //COOKIES
-  std::map<std::string, Cookies> sessionIdMap;
   std::vector<std::string> sessionID;
   void parseCookies(ClientRequest req);
   std::string getCookieLine(const std::string &clientInput) const;

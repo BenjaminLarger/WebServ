@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:52:13 by demre             #+#    #+#             */
-/*   Updated: 2024/08/30 16:01:12 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 19:30:17 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ std::string extractHtmlContentFromFile(const std::string &filePath);
 
 // Returns a 200 OK header with an HTML response in the given body
 std::vector<char> composeOkHtmlResponse(std::string responseBody,
-                                        std::string reqBuffer);
+                                        std::string reqBuffer,
+																				std::map<std::string, SessionData> &sessions,
+																				ClientRequest &clientReq);
 
 // Returns a redirection header response (Location + Content-Length: 0)
 std::vector<char> createRedirectResponse(const int &code,
