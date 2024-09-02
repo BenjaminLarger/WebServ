@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 13:20:24 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 14:05:53 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ void Webserv::handleClientResponse(size_t &i)
       else if (bytesSent > 0)
       {
         clients[i].totalBytesSent += bytesSent;
+        std::cout << BOLD_BLUE << "Response sent: " << RESET << bytesSent
+                  << " bytes to client " << clients[i].socketFD << std::endl;
         if (clients[i].totalBytesSent >= clients[i].totalToSend
             && (clients[i].req.bodyTooLarge == true
                 || checkCloseConnectionReq(clients[i].req)

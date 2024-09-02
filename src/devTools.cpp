@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   devTools.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 12:32:49 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 13:37:19 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 13:53:02 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,9 @@ void displayClientRequestLocationData(ClientInfo const &client)
 // Display parsed header request in the terminal
 void displayParsedHeaderRequest(ClientInfo const &client)
 {
+  std::cout << std::endl
+            << MAGENTA << client.req.method << " " << client.req.URIpath << " "
+            << client.req.HTTPversion << std::endl;
   for (std::map<std::string, std::string>::const_iterator it
        = client.req.fields.begin();
        it != client.req.fields.end(); it++)

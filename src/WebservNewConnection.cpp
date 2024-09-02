@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:01 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 13:14:20 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 13:53:59 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void Webserv::handleNewConnection(size_t &i)
       std::cerr << "Failed to set new connection as non-blocking." << std::endl;
     }
 
-    std::cout << "New connection accepted: " << newSocket
+    std::cout << GREEN << "New connection accepted: " << RESET << newSocket
               << ", on port: " << clients[i].port << std::endl;
 
     // Add the new socket to the pollfd vector

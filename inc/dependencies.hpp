@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/01 17:29:58 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 14:05:35 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@
 #define YELLOW "\033[33m"
 #define ORANGE "\033[38;5;214m"
 #define BLUE "\033[34m"
+#define BOLD_BLUE "\033[1;34m"
 #define MAGENTA "\033[35m"
 #define CYAN "\033[36m"
 #define WHITE "\033[1; 37m"

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 13:00:30 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 14:10:27 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "POST.hpp"
 #include "Webserv.hpp"
 
-//Check if reqHost is inside the serverNames vector of the serverConfig
+// Check if reqHost is inside the serverNames vector of the serverConfig
 bool checkReqHostInServerNames(std::string reqHost,
                                std::vector<std::string> serverNames, int port)
 {
@@ -75,7 +75,6 @@ const ServerConfig &findClientServerConfigByLoc(
       return (serverConfigs[i]);
   }
 
-  // If no server name matches the request host, return the first server config that has that ip and port
   throw HttpException(404, "No server found for the request host");
 }
 
@@ -92,15 +91,14 @@ const ServerConfig &findClientServerConfig(
     std::ostringstream oss;
     oss << ":";
     oss << serverConfigs[i].getPort();
+
     for (size_t j = 0; j < serverConfigs[i].serverNames.size(); j++)
     {
       serverName = serverConfigs[i].serverNames[j] + oss.str();
-      std::cout << "reqHost = '" << reqHost << "'" << std::endl;
-      std::cout << "serverName = '" << serverName << "'" << std::endl;
       if (serverName == reqHost
           && checkIdenticalHostPort(serverConfigs, i, reqHost))
       {
-        //In case any location match the request URI we return the first serverConfig that has the same host and port
+        // In case any location match the request URI we return the first serverConfig that has the same host and port
         client.client_serverConfig = serverConfigs[i];
         return (findClientServerConfigByLoc(client, serverConfigs));
       }
@@ -111,7 +109,7 @@ const ServerConfig &findClientServerConfig(
     //Reset oss
     oss.str("");
   }
-  // If no server name matches the request host, return the first server config by default
+
   throw HttpException(404, "No server found for the request host");
 }
 
@@ -175,10 +173,8 @@ void Webserv::handleClientRequest(
 
       if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
       {
-        std::cout << "Request received on port " << client.port
-                  << ", client.socketFD " << client.socketFD
-                  << ", root: " << client.client_serverConfig.serverRoot
-                  << std::endl;
+        std::cout << "Request being processed: " << client.socketFD
+                  << ", on port " << client.port << std::endl;
         displayParsedHeaderRequest(client);
 
         // Looks for the serverConfig that matches the Host value of the request
