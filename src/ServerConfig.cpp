@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:15:10 by demre             #+#    #+#             */
-/*   Updated: 2024/08/05 19:56:01 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 12:48:31 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,8 @@ ServerConfig::~ServerConfig(void) {}
 
 std::string ServerConfig::getServerNames(void) const
 {
-  std::cout << ".size(" << serverNames.size() << "): ";
-
   std::string serverNamesStr;
+
   for (size_t i = 0; i < this->serverNames.size(); i++)
   {
     if (i > 0)

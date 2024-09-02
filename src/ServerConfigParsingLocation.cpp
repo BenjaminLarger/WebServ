@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfigParsingLocation.cpp                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 18:23:26 by demre             #+#    #+#             */
-/*   Updated: 2024/08/10 13:30:43 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 12:50:02 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,7 @@ void ServerConfig::parseLocationBlock(std::ifstream &file,
                                       std::string urlPattern)
 {
   std::string line;
-  this->locations[urlPattern].autoIndexOn = false; // set default
-
-  // std::cout << "urlPattern: '" << urlPattern << "'" << std::endl;
+  this->locations[urlPattern].autoIndexOn = false;
 
   while (std::getline(file, line))
   {

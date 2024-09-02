@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 18:59:58 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 12:47:38 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ private:
 
   //Util uplaod file
   int extractMultipartFormData(std::string &_boundary);
-  void readAllRequest(void); //can delete before submit project
   std::map<int, std::string> headerUpload;
 	//Parsing
   int extractValues(std::string line, std::map<int, Content> &myMap, int index,

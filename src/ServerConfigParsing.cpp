@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 14:33:15 by demre             #+#    #+#             */
-/*   Updated: 2024/08/30 15:23:19 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 12:49:23 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
     std::stringstream ss(line);
     std::string key;
 
-    // std::cout << "line: '" << line << "'" << std::endl;
     if (line.size() == 8 && line.find("server {") != std::string::npos)
     {
       if (insideServerBlock)
@@ -73,10 +72,6 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
     {
       std::string valueStr;
       long long valueLong;
-
-      // std::cout << "line: '" << line << "'" << std::endl;
-      // std::cout << "key: '" << key << "'" << std::endl;
-
       validateAndSanitizeServerLine(line, ss, key, file);
 
       if (key.size() && key[0] == '#')
@@ -97,7 +92,6 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
             || streamHasRemainingContent(ss))
           file.close(), throw(std::runtime_error(
                             "Incorrect port in config file: " + line));
-
         tempPorts.push_back(valueLong);
         if (hasDuplicates(tempPorts))
           file.close(),
@@ -124,7 +118,6 @@ std::vector<ServerConfig> ServerConfig::parseConfigs(const char *filename)
                   "Incorrect client_max_body_size in config file: " + line));
 
         config.maxBodySize = valueLong;
-				std::cout << GREEN << "maxBodySize = " << config.maxBodySize << RESET << std::endl;
       }
       else if (key == "location")
       {
@@ -244,7 +237,6 @@ void ServerConfig::endServerBlock(bool &insideServerBlock,
                                   std::vector<int> &tempPorts,
                                   std::ifstream &file)
 {
-  // std::cout << "tempPorts.size(): " << tempPorts.size() << std::endl;
   if (checkConfig(tempPorts) && insideServerBlock)
   {
     // Add default values
@@ -341,7 +333,5 @@ void ServerConfig::resolveServerPathForErrorPages()
   {
     if (serverPath.size())
       it->second = serverPath + formatPath(it->second);
-    // std::cout << "errorPages path on server: " << it->first << " " << it->second
-    //           << std::endl;
   }
 }

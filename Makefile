@@ -23,7 +23,7 @@ SRC_FILES		= main.cpp Webserv.cpp \
 	ServerConfig.cpp ServerConfigParsing.cpp ServerConfigParsingLocation.cpp \
 	ClientInfo.cpp \
 	GET.cpp GETdirectoryListing.cpp CGI.cpp CGIoutput.cpp \
-	POST.cpp POSTupload.cpp POSTutils.cpp POSTpng.cpp \
+	POST.cpp POSTupload.cpp POSTutils.cpp \
 	WebservCreateServers.cpp WebservClientRequest.cpp WebservNewConnection.cpp \
 	WebservSignal.cpp WebservClientRequestHeader.cpp WebservCleanUp.cpp \
 	WebservClientRequestLocation.cpp WebservClientResponse.cpp \

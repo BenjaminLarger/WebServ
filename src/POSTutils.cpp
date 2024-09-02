@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/01 18:59:22 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 12:48:09 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,7 +276,6 @@ std::string POST::makeCopy(const std::string &original)
     copy += original[i];
   }
 	trimBothEnds(copy);
- // std::cout << RED << copy << RESET << std::endl;
   return (copy);
 }
 
@@ -341,35 +340,6 @@ std::string POST::extractBoundary(const std::string& input)
     return "";
 }
 
-void	POST::readAllRequest()//delete
-{
-	std::string line;
-
-	requestStream.clear();
-	requestStream.seekg(0);
-	std::cout << "\n--------------READING ALL CONTENT--------------";
-	while (std::getline(requestStream, line))
-	{
-	std::cout << "\n" << /* RESET << */ line /* << RESET */;
-	}
-	 std::cout << std::endl;
-}
-std::string	POST::skipBoundaryPart(void)
-{
-	std::string line;
-
-	//readAllRequest();
-	requestStream.clear();
-	requestStream.seekg(0);
-	 while (std::getline(requestStream, line))
-	 {
-		if (!strncmp(line.c_str(), "--", 2))
-			break;		
-	 }
-	 std::cout << "------------------------------------__\n";
-	return (extractBoundary(contentType));
-}
-
 void	POST::handleBody(const std::string &line, int index)
 {
 	if (contentMap[index].HasBody == true)
@@ -385,9 +355,55 @@ void	POST::handleBody(const std::string &line, int index)
 
 void	POST::handleNewPart(int &index)
 {
-	std::cout << "Index increase\n";
 	index++;
-		contentMap[index].HasContentType = false;
-		contentMap[index].HasContentDisposition = false;
-		contentMap[index].HasBody = false;
+	contentMap[index].HasContentType = false;
+	contentMap[index].HasContentDisposition = false;
+	contentMap[index].HasBody = false;
+}
+
+std::vector<char> POST::extractBinaryContent(const std::vector<char>& content)
+{
+	trimBothEnds(boundary);
+		std::vector<char> finalBoundary = getBoundaryEnd();
+		
+    std::vector<char>::const_iterator it = content.begin();
+    std::vector<char>::const_iterator end = content.end();
+
+    // Find the position of the first blank line (end of headers)
+		std::string searchPattern = contentMap[2].name + "\r\n\r\n";
+		std::vector<char>::const_iterator blankLinePos = std::search(it, end, searchPattern.begin(), searchPattern.end());
+    if (blankLinePos == end)
+    {
+        // No blank line found, return an empty vector
+        return std::vector<char>();
+    }
+
+    // Move iterator to the start of the binary content (after the blank line)
+    it = blankLinePos + contentMap[2].name.size() + 4;
+
+    // Find the position of the final boundary
+    std::vector<char>::const_iterator boundaryPos = std::search(it, end, finalBoundary.begin(), finalBoundary.end());
+    if (boundaryPos == end)
+    {
+        // No final boundary found, return an empty vector
+        return std::vector<char>();
+    }
+
+    // Extract the binary content
+    std::vector<char> binaryContent(it, boundaryPos);
+    return (binaryContent);
+}
+
+std::vector<char>	POST::getBoundaryEnd()
+{
+    // Convert the boundary string to a vector of chars
+    std::vector<char> boundaryVec(boundary.begin(), boundary.end());
+
+		boundaryVec.insert(boundaryVec.begin(), '-');
+		boundaryVec.insert(boundaryVec.begin(), '-');
+    // Append the final boundary marker "--"
+    boundaryVec.push_back('-');
+    boundaryVec.push_back('-');
+
+    return (boundaryVec);
 }

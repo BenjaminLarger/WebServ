@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 20:03:04 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 12:50:33 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,8 @@
 Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
 {
   createServers(serverConfigs);
-
   instance = this;
   signal(SIGINT, Webserv::sigInt);
-  // std::cout << "fds size = " << fds.size() << std::endl;
-
   // Server's main listening loop to handle incoming connections
   while (true)
   {
@@ -67,8 +64,6 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
       }
       else if (fds[i].revents & POLLOUT)
       {
-        /* std::cout << CYAN << "New " << RED << POLLOUT << CYAN
-                   << " event detected" << RESET << std::endl; */
         try
         {
           if (clients[i].response.size())
@@ -88,7 +83,6 @@ Webserv::Webserv(std::vector<ServerConfig> &serverConfigs)
 
 Webserv::~Webserv(void)
 {
-  std::cout << "Webserv Destructor called" << std::endl;
   for (size_t i = 0; i < fds.size(); ++i) // server + incoming
   {
     std::cout << "Closing: " << fds[i].fd << std::endl;
