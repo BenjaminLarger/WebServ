@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestLocation.cpp                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/09/01 19:02:25 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 12:43:03 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ bool Webserv::isMethodAllowedAtLoc(ClientRequest &req,
   if (serverConfig.locations.find(req.pathFolder)
       != serverConfig.locations.end())
   {
-    std::cout << "Client request method: " << req.method << std::endl;
     LocationConfig loc = serverConfig.locations.find(req.pathFolder)->second;
     if (std::find(loc.allowedMethods.begin(), loc.allowedMethods.end(),
                   req.method)
