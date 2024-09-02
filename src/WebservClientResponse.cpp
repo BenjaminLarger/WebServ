@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientResponse.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 15:32:03 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 13:07:46 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void Webserv::handleClientResponse(size_t &i)
       }
       else if (bytesSent == 0)
       {
-        std::cout << "bytesSent == 0 " << bytesSent << std::endl;
         clients[i].totalBytesSent = 0;
         clients[i].totalToSend = 0;
         if (clients[i].req.bodyTooLarge == true
@@ -67,8 +66,6 @@ void Webserv::handleClientResponse(size_t &i)
       }
       else if (bytesSent > 0)
       {
-        std::cout << "Bytes sent: " << bytesSent << std::endl;
-
         clients[i].totalBytesSent += bytesSent;
         if (clients[i].totalBytesSent >= clients[i].totalToSend
             && (clients[i].req.bodyTooLarge == true
@@ -82,9 +79,6 @@ void Webserv::handleClientResponse(size_t &i)
     }
     else
     {
-      std::cout << "(totalBytesSent >= totalToSend) "
-                << clients[i].totalBytesSent << " " << clients[i].totalToSend
-                << std::endl;
       clients[i].totalBytesSent = 0;
       clients[i].totalToSend = 0;
       clients[i].response.clear();

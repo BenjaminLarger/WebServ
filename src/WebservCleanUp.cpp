@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservCleanUp.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 20:01:56 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 12:58:16 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ void Webserv::checkTerminatedProcesses()
       for (std::map<int, pid_t>::iterator it = pidMap.begin();
            it != pidMap.end(); ++it)
       {
-        // std::cout << "Child process terminated " << it->second << std::endl;
         if (it->second == pid)
         {
           // Remove the pid from the pidMap and add it to terminatedPidMap
@@ -75,9 +74,6 @@ void Webserv::closeConnection(size_t &i)
 {
   std::cout << "Connection closed: " << fds[i].fd << std::endl;
 
-  std::cout << "size() fds: " << fds.size() << ", clients: " << clients.size()
-            << ", clientScriptMap: " << clientScriptMap.size() << std::endl;
-
   for (std::map<int, int>::const_iterator it = clientScriptMap.begin();
        it != clientScriptMap.end(); ++it)
   {
@@ -87,24 +83,13 @@ void Webserv::closeConnection(size_t &i)
   close(fds[i].fd);
   fds.erase(fds.begin() + i);
   clients.erase(clients.begin() + i);
-
-  std::cout << "size() fds: " << fds.size() << ", clients: " << clients.size()
-            << ", clientScriptMap: " << clientScriptMap.size() << std::endl;
 }
 
 // Close pipe and remove from pollfd, clients and clientScriptMap array
 void Webserv::closePipe(size_t &i)
 {
-  std::cout << "Pipe closed: " << fds[i].fd << std::endl;
-
-  std::cout << "size() fds: " << fds.size() << ", clients: " << clients.size()
-            << ", clientScriptMap: " << clientScriptMap.size() << std::endl;
-
   close(fds[i].fd);
   clientScriptMap.erase(fds[i].fd);
   fds.erase(fds.begin() + i);
   clients.erase(clients.begin() + i);
-
-  std::cout << "size() fds: " << fds.size() << ", clients: " << clients.size()
-            << ", clientScriptMap: " << clientScriptMap.size() << std::endl;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 19:05:13 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 13:00:30 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,14 +72,7 @@ const ServerConfig &findClientServerConfigByLoc(
     std::map<std::string, LocationConfig>::const_iterator it
         = serverConfigs[i].locations.find(baseLoc);
     if (it != serverConfigs[i].locations.end())
-    {
-      std::cout << "The key '" << baseLoc
-                << "' exist in the map with value: " << std::endl;
       return (serverConfigs[i]);
-    }
-    else
-      std::cout << "The key '" << baseLoc << "' don't exist in the map."
-                << std::endl;
   }
 
   // If no server name matches the request host, return the first server config that has that ip and port
@@ -109,8 +102,6 @@ const ServerConfig &findClientServerConfig(
       {
         //In case any location match the request URI we return the first serverConfig that has the same host and port
         client.client_serverConfig = serverConfigs[i];
-        std::cout << "Looking for location to set serverConfig " << i
-                  << std::endl;
         return (findClientServerConfigByLoc(client, serverConfigs));
       }
       else if (serverName == reqHost
@@ -233,7 +224,6 @@ void Webserv::handleClientRequest(
   {
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
-    //	std::cout << ORANGE << "erorr 413 " << errorPages[413] << RESET << std::endl;
     clients[i].response = composeErrorHtmlPage(
         e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
         clients[i].client_serverConfig.errorPages);

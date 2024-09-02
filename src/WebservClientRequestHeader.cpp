@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestHeader.cpp                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/01 19:05:18 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/02 13:06:54 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,6 @@ static void extractQueryString(ClientRequest &req)
   }
   else
     req.queryString.erase();
-
-  // std::cout << "extractQueryString URIpath: " << req.URIpath
-  //           << ", req.queryString: " << req.queryString << std::endl;
 }
 
 void Webserv::checkBodySize(ClientRequest &req, long long int maxBodySize,
@@ -54,14 +51,11 @@ void Webserv::checkBodySize(ClientRequest &req, long long int maxBodySize,
 {
   long long int bodyLength
       = std::strtol(req.fields["Content-Length"].c_str(), NULL, 10);
-  std::cout << RED << "bodyLength = " << bodyLength
-            << ", maxBodySize = " << (maxBodySize) << std::endl;
   if (maxBodySize > 0 && bodyLength > maxBodySize)
   {
-    //close(fds[i].fd);
     fds[i].events &= ~POLLIN;
     fds[i].events |= POLLOUT;
-    req.bodyTooLarge = true; //may delete bodyTooLarge variable
+    req.bodyTooLarge = true;
     throw(HttpException(413, "Payload too large"));
   }
 }
@@ -73,9 +67,6 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
   std::istringstream iss(req.buffer);
   std::string line;
 
-  /* std::cout << GREEN << "Client request buffer: " << std::endl
-            << req.buffer << RESET << std::endl; */
-
   // Parse the first line (request line)
   if (std::getline(iss, line))
   {
@@ -84,19 +75,13 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
     lineStream >> req.URIpath;
     lineStream >> req.HTTPversion;
     if ((req.method != "GET" && req.method != "POST" && req.method != "DELETE")
-        /* || req.HTTPversion != "HTTP/1.1" */)
-    {
-      std::cout << req.method << std::endl;
-      isError = true;
-    }
+        || req.HTTPversion != "HTTP/1.1")
+	      isError = true;
     req.URIpath = urlDecode(req.URIpath);
     extractQueryString(req);
   }
   else
-  {
-    std::cout << "response : " << req.buffer << std::endl;
-    isError = true;
-  }
+	   isError = true;
 
   // Parse the remaining header fields
   while (std::getline(iss, line))
@@ -114,7 +99,6 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
       trimTrailingWS(fieldValue);
       // Trim any leading whitespace from the field value
       fieldValue.erase(0, fieldValue.find_first_not_of(" \t"));
-
       req.fields[fieldName] = fieldValue;
     }
     else
@@ -123,12 +107,8 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
       break;
     }
   }
-  //	std::cout << "buffer = " << req.buffer << std::endl;
-  //	std::cout << "req.fields[ContentLength] = " << req.fields["Content-Length"] << std::endl;
   long long int bodyLength
       = std::strtol(req.fields["Content-Length"].c_str(), NULL, 10);
-  std::cout << RED << "bodyLength = " << bodyLength
-            << ", maxBodySize = " << maxBodySize << std::endl;
   if (maxBodySize > 0 && bodyLength > maxBodySize)
   {
     fds[i].events &= ~POLLIN;

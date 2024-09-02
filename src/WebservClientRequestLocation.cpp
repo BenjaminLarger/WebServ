@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/09/02 12:43:03 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/02 13:07:20 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,6 @@ void Webserv::resolveRequestedPathFromLocations(
       req.pathOnServer = "." + formatPath(req.URIpath);
       req.pathFolderOnServer = "." + formatPath(it->first);
     }
-    std::cout << "req.pathOnServer = " << req.pathOnServer << RESET
-              << std::endl;
   }
   else
   {
@@ -71,7 +69,6 @@ void Webserv::resolveRequestedPathFromLocations(
 bool Webserv::isMethodAllowedAtLoc(ClientRequest &req,
                                    const ServerConfig &serverConfig)
 {
-  // std::cout << "req.pathFolder:  " << req.pathFolder << std::endl;
   if (serverConfig.locations.find(req.pathFolder)
       != serverConfig.locations.end())
   {
