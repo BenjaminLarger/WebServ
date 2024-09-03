@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:51:42 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/03 18:18:14 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 18:47:43 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,17 +156,15 @@ static void logConnectionStartTime(const std::string &sessionId)
   }
 }
 
-void checkSessionIdClient(std::map<std::string, SessionData> &sessions,
+void saveSessionIdClient(std::map<std::string, SessionData> &sessions,
                           const std::string &reqBuffer,
                           ClientRequest &clientReq)
 {
   std::string _sessionId = findSessionID(reqBuffer);
 
-  if (_sessionId.empty() /* && clientReq.sessionId.empty() */)
+  if (_sessionId.empty())
   {
     clientReq.sessionId = generateSessionID();
-    std::cout << GREEN << "Generating new session ID : " << clientReq.sessionId
-              << RESET << std::endl;
     SessionData _session;
     _session.connectionStart = std::time(NULL);
     sessions[_sessionId] = _session;
@@ -174,26 +172,15 @@ void checkSessionIdClient(std::map<std::string, SessionData> &sessions,
   }
   else if (clientReq.sessionId != _sessionId)
   {
-    std::cout << GREEN << "Attributing : " << clientReq.sessionId
-              << " to clientReq.sessionId" << RESET << std::endl;
     clientReq.sessionId = _sessionId;
     SessionData _session;
     _session.connectionStart = std::time(NULL);
     sessions[_sessionId] = _session;
     logConnectionStartTime(_sessionId);
   }
-  else
-    std::cout << ORANGE
-              << "Client has already a sessionId: " << clientReq.sessionId
-              << RESET << std::endl;
 }
 
 std::string getCookieRequestLine(ClientRequest &clientReq)
 {
-  std::string sessionIdLine;
-
-  sessionIdLine
-      = "Set-Cookie: sessionId=" + clientReq.sessionId + "; HttpOnly\r\n";
-
-  return (sessionIdLine);
+  return ("Set-Cookie: sessionId=" + clientReq.sessionId + "; HttpOnly\r\n");
 }
