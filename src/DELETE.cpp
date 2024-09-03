@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:35 by isporras          #+#    #+#             */
-/*   Updated: 2024/09/03 11:33:46 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 18:08:47 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "HttpExceptions.hpp"
 #include "core.hpp"
 
-DELETE::DELETE(ClientInfo &client, const ServerConfig &serverConfig, Webserv webserv)
+DELETE::DELETE(ClientInfo &client, const ServerConfig &serverConfig)
 {
   try
   {
@@ -27,7 +27,7 @@ DELETE::DELETE(ClientInfo &client, const ServerConfig &serverConfig, Webserv web
       throw HttpException(500, "Internal Server Error");
     else
     {
-      client.response = composeDeleteOkHtmlResponse(client.req.buffer, webserv.sessions, client.req);
+      client.response = composeDeleteOkHtmlResponse(client.req);
       client.totalToSend = client.response.size();
       client.totalBytesSent = 0;
     }

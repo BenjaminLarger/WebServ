@@ -9,7 +9,7 @@ clientScriptMap, pidMap and terminatedPidMap need to be purged on closeConnectio
 - getPostData() udring POST CGI should only read up to Content-Length
 
 Benjamin:
-- Each send request must call handleCookiesSessions
+- Each send request must call getCookieRequestLine
 
 
 Bugs:

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/03 16:14:08 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 18:09:36 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,7 +196,7 @@ void Webserv::handleClientRequest(
             POST method(*this, client, fds[i].fd, clientInput,
                         client.client_serverConfig, boundary);
           else if (client.req.method == "DELETE")
-            DELETE method(client, client.client_serverConfig, *this);
+            DELETE method(client, client.client_serverConfig);
 
           // if the method is a CGI script, we are adding the pipe to pollfd and clients vectors, so we need to get the index again to have the correct client.
 

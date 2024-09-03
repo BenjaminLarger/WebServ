@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POSTutils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/03 17:11:14 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/03 18:02:36 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,13 @@
 #include "Webserv.hpp"
 
 std::vector<char> POST::createPostOkResponse(
-    std::map<std::string, std::string> formValues, std::string &reqBuffer,
-    std::map<std::string, SessionData> &sessions, ClientRequest &clientReq)
+    std::map<std::string, std::string> formValues, ClientRequest &clientReq)
 {
   std::stringstream httpResponse;
   std::string responseBody;
   std::vector<char> charVecResponse;
   std::string sessionIdLine
-      = handleCookiesSessions(sessions, reqBuffer, clientReq);
+      = getCookieRequestLine(clientReq);
 
   responseBody
       = extractHtmlContentFromFile("./var/www/form/form_response.html");
@@ -62,14 +61,13 @@ std::vector<char> POST::createPostOkResponse(
   return (charVecResponse);
 }
 
-std::vector<char> POST::createPostOkResponsePlainText(
-    const std::string &str, std::string reqBuffer,
-    std::map<std::string, SessionData> &sessions, ClientRequest &clientReq)
+std::vector<char> POST::createPostOkResponsePlainText(const std::string &str,
+																											ClientRequest &clientReq)
 {
   std::stringstream httpResponse;
   std::vector<char> charVecResponse;
   std::string sessionIdLine
-      = handleCookiesSessions(sessions, reqBuffer, clientReq);
+      = getCookieRequestLine(clientReq);
 
   // Headers
   httpResponse << "HTTP/1.1 201 Created\r\n";
@@ -87,8 +85,7 @@ std::vector<char> POST::createPostOkResponsePlainText(
 }
 
 std::vector<char> POST::createPostOkResponseWithFile(
-    std::map<std::string, std::string> formValues, std::string reqBuffer,
-    std::map<std::string, SessionData> &sessions, ClientRequest &clientReq)
+    std::map<std::string, std::string> formValues, ClientRequest &clientReq)
 {
   std::stringstream httpResponse;
   std::string responseBody;
@@ -96,7 +93,7 @@ std::vector<char> POST::createPostOkResponseWithFile(
   std::string reqPath = "/upload/" + contentMap[2].filename;
   std::vector<char> charVecResponse;
   std::string sessionIdLine
-      = handleCookiesSessions(sessions, reqBuffer, clientReq);
+      = getCookieRequestLine(clientReq);
 
   // Check if the file exists
   std::ifstream file(filePath.c_str());

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cookies.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:51:42 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/03 17:43:34 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/03 18:17:19 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void logClientSessionRequest(ClientRequest &req)
   }
 }
 
-std::string Webserv::getCookieLine(const std::string &clientInput) const
+std::string Webserv::getCookieRequestLine(const std::string &clientInput) const
 {
   std::istringstream stream(clientInput);
   std::string line;
@@ -62,7 +62,7 @@ void Webserv::parseCookies(ClientRequest req)
   std::string key2;
   std::map<std::string, std::string> cookieMap;
 
-  std::istringstream stream(getCookieLine(req.buffer));
+  std::istringstream stream(getCookieRequestLine(req.buffer));
   std::getline(stream, line, ' '); //skip cookie
   std::cout << line;
   while (std::getline(stream, line, ';'))
@@ -102,7 +102,6 @@ std::string findSessionID(std::string request)
   {
     if (line.find("Cookie: ") == 0)
     {
-      std::cout << YELLOW << "line : " << line << RESET << std::endl;
       size_t pos = line.find("sessionId=");
       if (pos != std::string::npos)
       {
@@ -110,8 +109,6 @@ std::string findSessionID(std::string request)
         std::istringstream _stream(sessionId);
         _stream >> sessionId;
         sessionId = trimLastChar(sessionId, ';');
-        std::cout << ORANGE << "sessionId = " << sessionId << RESET
-                  << std::endl;
         return (sessionId);
       }
       return ("");
@@ -210,13 +207,9 @@ void checkSessionIdClient(std::map<std::string, SessionData> &sessions,
               << RESET << std::endl;
 }
 
-std::string handleCookiesSessions(std::map<std::string, SessionData> &sessions,
-                                  const std::string &reqBuffer,
-                                  ClientRequest &clientReq)
+std::string getCookieRequestLine(ClientRequest &clientReq)
 {
   std::string sessionIdLine;
-  (void)sessions;
-  (void)reqBuffer;
 
   sessionIdLine
       = "Set-Cookie: sessionId=" + clientReq.sessionId + "; HttpOnly\r\n";

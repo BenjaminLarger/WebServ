@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/03 11:45:47 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 18:08:02 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,12 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
     std::string path = req.pathOnServer;
 
     if (it->first == "/delete")
-      return (composeOkHtmlResponse(manageDeleteEndPoint(), req.buffer, webserv.sessions, req));
+      return (composeOkHtmlResponse(manageDeleteEndPoint(), req));
     // Check if the location has a redirection
     else if (it->second.redirection.first)
     {
       response = createRedirectResponse(it->second.redirection.first,
                                         it->second.redirection.second,
-																				req.buffer, webserv.sessions,
 																				req);
       return (response);
     }
@@ -50,7 +49,7 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
       if (extension == "html")
       {
         response = composeOkHtmlResponse(extractHtmlContentFromFile(path),
-                                         req.buffer, webserv.sessions, req);
+                                         req);
       }
       // if file is a script in php or python
       else if (extension == "php" || extension == "py")
@@ -61,8 +60,7 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
         std::vector<char> fileContent = readFile(path);
         if (fileContent.empty())
           throw HttpException(404, "File to read not found.");
-        response = composeFileResponse(fileContent, URI, req.buffer, webserv.sessions,
-																				req);
+        response = composeFileResponse(fileContent, URI, req);
       }
       return (response);
     }
@@ -71,7 +69,7 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
     {
       path += "/" + it->second.index;
       response
-          = composeOkHtmlResponse(extractHtmlContentFromFile(path), req.buffer, webserv.sessions, req);
+          = composeOkHtmlResponse(extractHtmlContentFromFile(path), req);
       return (response);
     }
     // If location doesn't have a file, is a folder, and autoindex on
@@ -80,7 +78,7 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
     {
       std::vector<std::string> contents = listDirectoryContent(path);
       response = composeOkHtmlResponse(generateDirectoryListing(path, contents),
-	                                      req.buffer, webserv.sessions, req);
+	                                      req);
       return (response);
     }
     else

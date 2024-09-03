@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 11:25:14 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/02 17:29:25 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 18:15:17 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,6 @@
 #define FAILURE -1
 
 // ---------------------UPLOAD DIRECTORY
-#define DEFAULT_CONFIG_PATH "config/default.conf"
+#define DEFAULT_CONFIG_PATH "config/simple.conf"
 #define UPLOAD_FILE_DIR "./var/www/uploads/files/"
 #define LOG_DIR_PATH "./var/www/uploads/form_logs/"

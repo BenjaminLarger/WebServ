@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:57:51 by isporras          #+#    #+#             */
-/*   Updated: 2024/09/03 11:33:11 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 18:08:58 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,6 @@
 class DELETE
 {
 public:
-  DELETE(ClientInfo &client, const ServerConfig &serverConfig, Webserv webserv);
+  DELETE(ClientInfo &client, const ServerConfig &serverConfig);
   ~DELETE(void);
 };

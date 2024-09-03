@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:38:48 by demre             #+#    #+#             */
-/*   Updated: 2024/09/03 12:38:21 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 18:04:15 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void Webserv::readAndHandleScriptOutput(size_t &i)
             std::string responseBody = generateCgiOutputHtmlPage(
                 clients[j].responseBuffer, clients[j].req.URIpath);
             clients[j].response
-                = composeOkHtmlResponse(responseBody, clients[j].req.buffer, sessions, clients[j].req);
+                = composeOkHtmlResponse(responseBody, clients[j].req);
           }
           // If cgi output is already html, insert the output string responseBuffer into response char vector
           else

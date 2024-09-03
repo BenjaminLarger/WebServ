@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   coreResponse.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:49:50 by demre             #+#    #+#             */
-/*   Updated: 2024/09/03 17:36:05 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/03 18:07:09 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,12 @@ std::string extractHtmlContentFromFile(const std::string &filePath)
 }
 
 std::vector<char> composeOkHtmlResponse(
-    std::string responseBody, std::string reqBuffer,
-    std::map<std::string, SessionData> &sessions, ClientRequest &clientReq)
+    std::string responseBody, ClientRequest &clientReq)
 {
   std::ostringstream response;
   std::vector<char> charVecResponse;
 
-  std::string sessionId = handleCookiesSessions(sessions, reqBuffer, clientReq);
+  std::string sessionId = getCookieRequestLine(clientReq);
 
   response << "HTTP/1.1 200 OK\r\n"
            << "Date: " << getHttpDate() << "\r\n"
@@ -49,13 +48,11 @@ std::vector<char> composeOkHtmlResponse(
   return (charVecResponse);
 }
 
-std::vector<char> composeDeleteOkHtmlResponse(
-    std::string reqBuffer, std::map<std::string, SessionData> &sessions,
-    ClientRequest &clientReq)
+std::vector<char> composeDeleteOkHtmlResponse(ClientRequest &clientReq)
 {
   std::ostringstream response;
   std::vector<char> charVecResponse;
-  std::string sessionId = handleCookiesSessions(sessions, reqBuffer, clientReq);
+  std::string sessionId = getCookieRequestLine(clientReq);
 
   response << "HTTP/1.1 204 No Content\r\n"
            << "Date: " << getHttpDate() << "\r\n"
@@ -70,12 +67,11 @@ std::vector<char> composeDeleteOkHtmlResponse(
 }
 
 std::vector<char> createRedirectResponse(
-    const int &code, const std::string &location, std::string reqBuffer,
-    std::map<std::string, SessionData> &sessions, ClientRequest &clientReq)
+    const int &code, const std::string &location, ClientRequest &clientReq)
 {
   std::vector<char> charVecResponse;
   std::ostringstream response;
-  std::string sessionId = handleCookiesSessions(sessions, reqBuffer, clientReq);
+  std::string sessionId = getCookieRequestLine(clientReq);
 
   response << getHeaderStatusLine(code) << "Location: " << location << "\r\n"
            << "Date: " << getHttpDate() << "\r\n"
@@ -115,12 +111,11 @@ std::vector<char> readFile(const std::string &filename)
 
 std::vector<char> composeFileResponse(
     const std::vector<char> &fileContent, std::string filepath,
-    std::string reqBuffer, std::map<std::string, SessionData> &sessions,
     ClientRequest &clientReq)
 {
   std::string response;
   std::vector<char> charVecResponse;
-  std::string sessionId = handleCookiesSessions(sessions, reqBuffer, clientReq);
+  std::string sessionId = getCookieRequestLine(clientReq);
 
   response += "HTTP/1.1 200 OK\r\n";
   response += "Date: " + getHttpDate() + "\r\n";

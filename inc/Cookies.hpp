@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cookies.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:52:51 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/03 17:45:18 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/03 17:51:27 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,7 @@ std::string generateSessionID();
 
 std::string findSessionID(std::string request);
 
-std::string handleCookiesSessions(std::map<std::string, SessionData> &sessions,
-                                  const std::string &reqBuffer,
-                                  ClientRequest &req);
+std::string getCookieRequestLine(ClientRequest &req);
 
 void logConnectionCloseTime(const std::string &sessionId);
 

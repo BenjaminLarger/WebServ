@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 19:35:15 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 17:49:40 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,5 +112,5 @@ public:
   //COOKIES
   std::vector<std::string> sessionID;
   void parseCookies(ClientRequest req);
-  std::string getCookieLine(const std::string &clientInput) const;
+  std::string getCookieRequestLine(const std::string &clientInput) const;
 };
