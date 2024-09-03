@@ -118,6 +118,7 @@ bool isSocketOpen(int fd) { return fcntl(fd, F_GETFL) != -1 || errno != EBADF; }
 int Webserv::recvChunk(int sockfd, std::vector<char> &buffer,
                        size_t totalBytesReceived, size_t &i)
 {
+  (void)totalBytesReceived;
   char tempBuffer[BUFFER_SIZE];
   ssize_t bytesReceived = recv(sockfd, tempBuffer, BUFFER_SIZE - 1, 0);
   if (bytesReceived <= 0)
