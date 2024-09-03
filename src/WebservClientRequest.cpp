@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/03 18:09:36 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 18:38:22 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ void Webserv::handleClientRequest(
 
       if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
       {
-				checkSessionIdClient(sessions, client.req.buffer, client.req);
+        checkSessionIdClient(sessions, client.req.buffer, client.req);
         std::cout << "Request being processed: " << client.socketFD
                   << ", on port " << client.port << std::endl;
         displayParsedHeaderRequest(client);
@@ -200,8 +200,8 @@ void Webserv::handleClientRequest(
 
           // if the method is a CGI script, we are adding the pipe to pollfd and clients vectors, so we need to get the index again to have the correct client.
 
-					logClientSessionRequest(client.req);
           size_t j = findClientIndexFromFD(clientFD);
+          logClientSessionRequest(clients[j].req);
           clients[j].req.buffer.clear();
           clientInput.clear();
           clientStr.clear();
@@ -224,7 +224,7 @@ void Webserv::handleClientRequest(
     std::cerr << RED << "Error: " << e.getStatusCode() << " " << e.what()
               << RESET << '\n';
 
-		logClientSessionRequest(client.req);
+    logClientSessionRequest(clients[i].req);
     clients[i].response = composeErrorHtmlPage(
         e.getStatusCode(), getReasonPhrase(e.getStatusCode()),
         clients[i].client_serverConfig.errorPages);
