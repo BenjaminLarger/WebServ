@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:51:42 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/03 17:43:34 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/03 17:58:53 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,9 @@ void logClientSessionRequest(ClientRequest &req)
   }
   else
   {
-    outputFile << req.sessionId << ", " << req.method << " " << req.URIpath
-               << " " << getLogDate() << std::endl;
+    outputFile << req.sessionId << ", " << getLogDate() << ", " << req.method
+               << " " << req.URIpath << std::endl;
+    outputFile.close();
   }
 }
 
@@ -117,28 +118,7 @@ std::string findSessionID(std::string request)
       return ("");
     }
   }
-  return "";
-}
-
-bool isSessionIdPresent(const std::string &filePath,
-                        const std::string &sessionId)
-{
-  std::ifstream ifs(filePath.c_str());
-  if (!ifs)
-  {
-    std::cerr << "Error opening file to read session data: " << filePath
-              << std::endl;
-    return (false);
-  }
-
-  std::string line;
-  while (std::getline(ifs, line))
-  {
-    if (line.find("Session ID: " + sessionId) != std::string::npos)
-      return (true);
-  }
-
-  return (false);
+  return ("");
 }
 
 void logConnectionCloseTime(const std::string &sessionId)
@@ -154,7 +134,8 @@ void logConnectionCloseTime(const std::string &sessionId)
   }
   else
   {
-    outputFile << sessionId << ", end: " << time << std::endl;
+    outputFile << sessionId << ", " << time << ", endConnection" << std::endl;
+    outputFile.close();
   }
 }
 
@@ -173,7 +154,7 @@ static void logConnectionStartTime(const std::string &sessionId)
   else
   {
     std::string time = getLogDate();
-    outputFile << sessionId << ", start: " << time << std::endl;
+    outputFile << sessionId << ", " << time << ", startConnection" << std::endl;
     outputFile.close();
   }
 }
