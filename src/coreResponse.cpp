@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   coreResponse.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:49:50 by demre             #+#    #+#             */
-/*   Updated: 2024/09/03 11:44:29 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 17:36:05 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,9 @@ std::string extractHtmlContentFromFile(const std::string &filePath)
   return (buffer.str());
 }
 
-std::vector<char> composeOkHtmlResponse(std::string responseBody,
-                                        std::string reqBuffer,
-																				std::map<std::string, SessionData> &sessions,
-																				ClientRequest &clientReq)
+std::vector<char> composeOkHtmlResponse(
+    std::string responseBody, std::string reqBuffer,
+    std::map<std::string, SessionData> &sessions, ClientRequest &clientReq)
 {
   std::ostringstream response;
   std::vector<char> charVecResponse;
@@ -40,9 +39,7 @@ std::vector<char> composeOkHtmlResponse(std::string responseBody,
            << "Content-Type: text/html\r\n"
            << "Content-Length: " << responseBody.size() << "\r\n"
            << "Cache-Control: no-cache\r\n"
-           << sessionId                        //Testing cookies
-           << "Set-Cookie: theme=light\r\n"    //Testing cookies
-           << "Set-Cookie: rememberMe=yes\r\n" //Testing cookies
+           << sessionId << "\r\n"
            << "\r\n"
            << responseBody;
 
@@ -52,9 +49,9 @@ std::vector<char> composeOkHtmlResponse(std::string responseBody,
   return (charVecResponse);
 }
 
-std::vector<char> composeDeleteOkHtmlResponse(std::string reqBuffer,
-																				std::map<std::string, SessionData> &sessions,
-																				ClientRequest &clientReq)
+std::vector<char> composeDeleteOkHtmlResponse(
+    std::string reqBuffer, std::map<std::string, SessionData> &sessions,
+    ClientRequest &clientReq)
 {
   std::ostringstream response;
   std::vector<char> charVecResponse;
@@ -63,8 +60,7 @@ std::vector<char> composeDeleteOkHtmlResponse(std::string reqBuffer,
   response << "HTTP/1.1 204 No Content\r\n"
            << "Date: " << getHttpDate() << "\r\n"
            << "Content-Length: 0\r\n"
-					 << sessionId
-           << "Connection: close\r\n"
+           << sessionId << "Connection: close\r\n"
            << "\r\n";
 
   std::string responseStr = response.str();
@@ -73,11 +69,9 @@ std::vector<char> composeDeleteOkHtmlResponse(std::string reqBuffer,
   return (charVecResponse);
 }
 
-std::vector<char> createRedirectResponse(const int &code,
-                                         const std::string &location,
-                                        std::string reqBuffer,
-																				std::map<std::string, SessionData> &sessions,
-																				ClientRequest &clientReq)
+std::vector<char> createRedirectResponse(
+    const int &code, const std::string &location, std::string reqBuffer,
+    std::map<std::string, SessionData> &sessions, ClientRequest &clientReq)
 {
   std::vector<char> charVecResponse;
   std::ostringstream response;
@@ -86,8 +80,7 @@ std::vector<char> createRedirectResponse(const int &code,
   response << getHeaderStatusLine(code) << "Location: " << location << "\r\n"
            << "Date: " << getHttpDate() << "\r\n"
            << "Content-Length: 0\r\n"
-					  << sessionId    
-           << "Cache-Control: no-cache\r\n"
+           << sessionId << "Cache-Control: no-cache\r\n"
            << "\r\n";
 
   std::string responseStr = response.str();
@@ -120,21 +113,20 @@ std::vector<char> readFile(const std::string &filename)
   return (buffer);
 }
 
-std::vector<char> composeFileResponse(const std::vector<char> &fileContent,
-                                      std::string filepath, std::string reqBuffer,
-																				std::map<std::string, SessionData> &sessions,
-																				ClientRequest &clientReq)
+std::vector<char> composeFileResponse(
+    const std::vector<char> &fileContent, std::string filepath,
+    std::string reqBuffer, std::map<std::string, SessionData> &sessions,
+    ClientRequest &clientReq)
 {
   std::string response;
   std::vector<char> charVecResponse;
   std::string sessionId = handleCookiesSessions(sessions, reqBuffer, clientReq);
 
-
   response += "HTTP/1.1 200 OK\r\n";
   response += "Date: " + getHttpDate() + "\r\n";
   response += "Content-Type: " + getMediaType(filepath) + "\r\n";
   response += "Content-Length: " + toString(fileContent.size()) + "\r\n";
-	response += sessionId;
+  response += sessionId;
   response += "Cache-Control: no-cache\r\n";
   response += "\r\n";
 

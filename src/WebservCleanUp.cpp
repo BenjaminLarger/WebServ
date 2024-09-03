@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservCleanUp.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:06:23 by demre             #+#    #+#             */
-/*   Updated: 2024/09/03 16:43:44 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 17:42:04 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,9 @@ void Webserv::checkTerminatedProcesses()
 // Close client connection and remove from pollfd and clients array, and remove any pending script pipes for that connection
 void Webserv::closeConnection(size_t &i, const std::string &sessionId)
 {
-	(void)sessionId;
   std::cout << "Connection closed: " << fds[i].fd << std::endl;
-	addLogoutTimeCookies(std::string(LOG_DIR_PATH) + "cookies.log", sessions, sessionId);
+  logConnectionCloseTime(sessionId);
+
   for (std::map<int, int>::const_iterator it = clientScriptMap.begin();
        it != clientScriptMap.end(); ++it)
   {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/09/02 17:11:09 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 17:32:53 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,20 +161,6 @@ int countJumpLine(std::string str)
   return (count);
 }
 
-std::string getCurrentTimeHttpFormat()
-{
-  std::time_t now = std::time(NULL);
-
-  // Convert it to UTC
-  std::tm *gmt = std::gmtime(&now);
-
-  char buffer[100];
-  std::strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", gmt);
-
-  // Devolver el string resultante
-  return std::string(buffer);
-}
-
 std::string formatPath(const std::string &str)
 {
   std::string path = str;
@@ -214,73 +200,75 @@ void getFileNameAndExtension(const std::string &path, std::string &fileName,
   fileName = fileName.substr(0, lastDot);
 }
 
-std::string extractBoundary(const std::string& input, std::string &boundary)
+std::string extractBoundary(const std::string &input, std::string &boundary)
 {
-    std::size_t pos = input.find('=');
-    if (pos != std::string::npos)
+  std::size_t pos = input.find('=');
+  if (pos != std::string::npos)
+  {
+    boundary = input.substr(pos + 1);
+    std::size_t endPos = boundary.find('\r');
+    if (endPos != std::string::npos)
     {
-        boundary = input.substr(pos + 1);
-        std::size_t endPos = boundary.find('\r');
-        if (endPos != std::string::npos)
-        {
-					trimBothEnds(boundary);
-            return ("--" + boundary.substr(0, endPos));
-        }
-				trimBothEnds(boundary);
-        return ("--" + boundary);
+      trimBothEnds(boundary);
+      return ("--" + boundary.substr(0, endPos));
     }
-    return ("");
+    trimBothEnds(boundary);
+    return ("--" + boundary);
+  }
+  return ("");
 }
 
-bool	isPostCGIrequest(std::string &clientInput)
+bool isPostCGIrequest(std::string &clientInput)
 {
-	std::istringstream stream(clientInput);
-	std::string	firstLine;
+  std::istringstream stream(clientInput);
+  std::string firstLine;
 
-	std::getline(stream, firstLine);
-	size_t isPost = firstLine.rfind("POST");
-	if (isPost != std::string::npos)
-	{
-		size_t isCGI = firstLine.rfind(".py HTTP/");
-		if (isCGI != std::string::npos)
-			return (true);
-	}
-	return (false);
+  std::getline(stream, firstLine);
+  size_t isPost = firstLine.rfind("POST");
+  if (isPost != std::string::npos)
+  {
+    size_t isCGI = firstLine.rfind(".py HTTP/");
+    if (isCGI != std::string::npos)
+      return (true);
+  }
+  return (false);
 }
 
-bool	hasNoInputFields(std::string &clientInput)
+bool hasNoInputFields(std::string &clientInput)
 {
-	std::istringstream stream(clientInput);
-	std::string line;
-	std::string lastLine;
+  std::istringstream stream(clientInput);
+  std::string line;
+  std::string lastLine;
 
-	while (std::getline(stream, line))
-		lastLine = line;
+  while (std::getline(stream, line))
+    lastLine = line;
 
-	if (lastLine.find('=') != std::string::npos)
-        return (false);
-    else
-			return (true);
+  if (lastLine.find('=') != std::string::npos)
+    return (false);
+  else
+    return (true);
 }
-bool	hasBlankLineInput(std::string &clientInput, std::string &boundary, ClientInfo &client)
+bool hasBlankLineInput(std::string &clientInput, std::string &boundary,
+                       ClientInfo &client)
 {
   //Find if it is a POST submit-form request
   if (!strncmp(clientInput.c_str(), "POST /", 6))
   {
     if (extractBoundary(client.req.fields["Content-Type"], boundary).size())
-		{
-			size_t isFinalBoundary = clientInput.rfind(boundary + "--");
-			if (isFinalBoundary != std::string::npos)
-				return (true);
-			else
-				return (false);
-		}
+    {
+      size_t isFinalBoundary = clientInput.rfind(boundary + "--");
+      if (isFinalBoundary != std::string::npos)
+        return (true);
+      else
+        return (false);
+    }
   }
 
-	//Find if it is a POST request
-  if (isPostCGIrequest(clientInput) == true && hasNoInputFields(clientInput) == true)
-		return (false);
-	
+  //Find if it is a POST request
+  if (isPostCGIrequest(clientInput) == true
+      && hasNoInputFields(clientInput) == true)
+    return (false);
+
   // Find the position of the last newline character
   size_t lastNewlinePos = clientInput.rfind('\n');
 
@@ -292,9 +280,12 @@ bool	hasBlankLineInput(std::string &clientInput, std::string &boundary, ClientIn
   if (lastNewlinePos == 0)
     return (false);
 
-  if (lastNewlinePos > 2 && ((clientInput[lastNewlinePos - 2] == '\r'
-      && clientInput[lastNewlinePos - 1] == '\n') || (clientInput[lastNewlinePos - 2] == '\n' && clientInput[lastNewlinePos - 1] == '\r')))
-	    return true;
+  if (lastNewlinePos > 2
+      && ((clientInput[lastNewlinePos - 2] == '\r'
+           && clientInput[lastNewlinePos - 1] == '\n')
+          || (clientInput[lastNewlinePos - 2] == '\n'
+              && clientInput[lastNewlinePos - 1] == '\r')))
+    return true;
   if (clientInput[clientInput.size() - 1] == '\n'
       && clientInput[clientInput.size() - 2] == '\r'
       && clientInput[clientInput.size() - 3] == '\n')
@@ -302,18 +293,46 @@ bool	hasBlankLineInput(std::string &clientInput, std::string &boundary, ClientIn
   return (false);
 }
 
-void	deleteLogContentFile(const std::string &filePath)
+void deleteLogContentFile(const std::string &filePath)
 {
 
-	// Open the file in write mode to truncate it
-	std::fstream ofs(filePath.c_str(), std::ofstream::out | std::ofstream::trunc);
-	if (!ofs)
-	{
-			std::cerr << "Error opening file to erase content: " << filePath << std::endl;
-	}
-	else
-	{
-			std::cout << RED << "Erasing the content of " << filePath << RESET << std::endl;
-			ofs.close();
-	}
+  // Open the file in write mode to truncate it
+  std::fstream ofs(filePath.c_str(), std::ofstream::out | std::ofstream::trunc);
+  if (!ofs)
+  {
+    std::cerr << "Error opening file to erase content: " << filePath
+              << std::endl;
+  }
+  else
+  {
+    std::cout << RED << "Erasing the content of " << filePath << RESET
+              << std::endl;
+    ofs.close();
+  }
+}
+
+std::string getHttpDate()
+{
+  // Get the current time and convert to GMT
+  std::time_t now = std::time(NULL);
+  std::tm *gmt = std::gmtime(&now);
+
+  // Format the date in RFC 1123 format (e.g., "Fri, 23 Aug 2024 14:00:00 GMT")
+  char buffer[128];
+  std::strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", gmt);
+
+  return (std::string(buffer));
+}
+
+std::string getLogDate()
+{
+  // Get the current time and convert to GMT
+  std::time_t now = std::time(NULL);
+  std::tm *gmt = std::gmtime(&now);
+
+  // Format the date (e.g., "2024-09-03 15:32:11 GMT")
+  char buffer[128];
+  std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S GMT", gmt);
+
+  return (std::string(buffer));
 }

@@ -18,6 +18,6 @@ Sec-Fetch-Dest: document
 Referer: http://localhost:8080/formCGI
 Accept-Encoding: gzip, deflate, br, zstd
 Accept-Language: en-US,en;q=0.9,fr;q=0.8
-Cookie: theme=light; rememberMe=yes; sessionId=
+Cookie: sessionId=
 
 name=ben&age=18

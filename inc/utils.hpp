@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 17:11:37 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 17:14:10 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,6 @@ std::string trimQuotes(std::string &str);
 
 int countJumpLine(std::string str);
 
-std::string getCurrentTimeHttpFormat();
-
 // Ensures there is a leading "/" and no trailing "/"
 std::string formatPath(const std::string &path);
 
@@ -67,7 +65,14 @@ void getFileNameAndExtension(const std::string &path, std::string &fileName,
                              std::string &extension);
 
 //Check if request is complete
-bool hasBlankLineInput(std::string &clientInput, std::string &boundary, ClientInfo &client);
+bool hasBlankLineInput(std::string &clientInput, std::string &boundary,
+                       ClientInfo &client);
 
 //Delete the content of log file
-void	deleteLogContentFile(const std::string &filePath);
+void deleteLogContentFile(const std::string &filePath);
+
+// Returns current date formatted for HTTP header
+std::string getHttpDate();
+
+// Returns current date formatted for logs
+std::string getLogDate();
