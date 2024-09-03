@@ -6,7 +6,7 @@
 /*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/03 18:38:22 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/03 18:57:02 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ void Webserv::handleClientRequest(
 
       if (hasBlankLineInput(client.req.buffer, boundary, client) == true)
       {
-        checkSessionIdClient(sessions, client.req.buffer, client.req);
+        saveSessionIdClient(sessions, client.req.buffer, client.req);
         std::cout << "Request being processed: " << client.socketFD
                   << ", on port " << client.port << std::endl;
         displayParsedHeaderRequest(client);

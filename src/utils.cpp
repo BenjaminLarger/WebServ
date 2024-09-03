@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/09/03 17:32:53 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/03 18:37:40 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,11 +304,7 @@ void deleteLogContentFile(const std::string &filePath)
               << std::endl;
   }
   else
-  {
-    std::cout << RED << "Erasing the content of " << filePath << RESET
-              << std::endl;
     ofs.close();
-  }
 }
 
 std::string getHttpDate()
