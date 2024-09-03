@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:51:42 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/02 20:00:27 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 12:36:51 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,11 +217,24 @@ std::string	handleCookiesSessions(std::map<std::string, SessionData> &sessions,
 				sessions[sessionId] = _session;
 		}
   }
+	else if (clientReq.sessionId.size())
+	{
+		sessionId = clientReq.sessionId;
+		sessionIdLine = "Set-Cookie: sessionId=" + sessionId
+                + "; HttpOnly\r\n";
+		if (isSessionIdPresent(std::string(LOG_DIR_PATH) + "cookies.log", sessionId) == false)
+		{
+				SessionData _session;
+				_session.connectionStart = std::time(NULL);
+				sessions[sessionId] = _session;
+		}
+	}
   else
   {
 		sessionId = generateSessionID();
     sessionIdLine
         = "Set-Cookie: sessionId=" + sessionId + "; HttpOnly\r\n";
+		std::cout << YELLOW << "reqBuffer : " << reqBuffer << RESET << std::endl;
     std::cout << GREEN
               << "session ID not found in request => generating new one : "
 							<< sessionIdLine

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 12:47:38 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 10:53:18 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,18 @@ private:
   std::string extractBody();
   bool saveInLogFile(std::map<std::string, std::string> formValues);
   std::map<std::string, std::string>	formValuestoMap(std::string body);
-  std::vector<char> createPostOkResponse(std::map<std::string, std::string> formValues);
-	std::vector<char> createPostOkResponsePlainText(const std::string &str);
-	std::vector<char> createPostOkResponseWithFile(std::map<std::string, std::string> formValues);
-	std::vector<char> createPostOkResponseWithFilename(std::map<std::string, std::string> formValues);
+  std::vector<char> createPostOkResponse(std::map<std::string, std::string> formValues,
+																				std::string &reqBuffer,
+																				std::map<std::string, SessionData> &sessions,
+																				ClientRequest &clientReq);
+	std::vector<char> createPostOkResponsePlainText(const std::string &str,
+                                        std::string reqBuffer,
+																				std::map<std::string, SessionData> &sessions,
+																				ClientRequest &clientReq);
+	std::vector<char> createPostOkResponseWithFile(std::map<std::string, std::string> formValues,
+                                        std::string reqBuffer,
+																				std::map<std::string, SessionData> &sessions,
+																				ClientRequest &clientReq);
 
   //Util uplaod file
   int extractMultipartFormData(std::string &_boundary);

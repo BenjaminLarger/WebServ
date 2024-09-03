@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:51:10 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 13:20:43 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 12:16:29 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,6 @@ bool findURIstartInLocations(
       it = locations.find(currentURI);
     if (it != locations.end())
       return (true);
-
     // Find the last '/' in the current URI
     size_t lastSlashPos = currentURI.find_last_of('/');
     if (lastSlashPos == std::string::npos) // nothing left to trim

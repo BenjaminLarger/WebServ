@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 11:49:01 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/02 19:32:33 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 11:45:47 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,9 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
     else if (it->second.redirection.first)
     {
       response = createRedirectResponse(it->second.redirection.first,
-                                        it->second.redirection.second);
+                                        it->second.redirection.second,
+																				req.buffer, webserv.sessions,
+																				req);
       return (response);
     }
     // if doesn't exist as a file or folder on the server
@@ -59,7 +61,8 @@ std::vector<char> GET::getResponseAtLocation(Webserv &webserv,
         std::vector<char> fileContent = readFile(path);
         if (fileContent.empty())
           throw HttpException(404, "File to read not found.");
-        response = composeFileResponse(fileContent, URI);
+        response = composeFileResponse(fileContent, URI, req.buffer, webserv.sessions,
+																				req);
       }
       return (response);
     }
