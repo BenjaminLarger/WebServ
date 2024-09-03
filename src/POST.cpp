@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/09/02 12:45:01 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 10:55:33 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,12 +110,12 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
     body = extractBody();
     formValues = formValuestoMap(body);
     saveInLogFile(formValues);
-    client.response = createPostOkResponse(formValues);
+    client.response = createPostOkResponse(formValues, client.req.buffer, webserv.sessions, client.req);
   }
 	else if (!strncmp(contentType.c_str(), "plain/text", 9))
 	{
 		body = extractBody();
-		client.response = createPostOkResponsePlainText(body);
+		client.response = createPostOkResponsePlainText(body, client.req.buffer, webserv.sessions, client.req);
 	}
   else if (!strncmp(contentType.c_str(), "multipart/form-data", 19))
   {
@@ -125,9 +125,9 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
       saveInLogFile(_formValues);
       if (lineIsEmpty(contentMap[2].filename)
           == true)
-        client.response = createPostOkResponse(_formValues);
+        client.response = createPostOkResponse(_formValues, client.req.buffer, webserv.sessions, client.req);
       else
-        client.response = createPostOkResponseWithFile(_formValues);
+        client.response = createPostOkResponseWithFile(_formValues, client.req.buffer, webserv.sessions, client.req);
     }
   }
   else

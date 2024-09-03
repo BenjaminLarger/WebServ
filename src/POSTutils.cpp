@@ -6,18 +6,22 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/02 13:13:38 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 11:06:54 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "POST.hpp"
 #include "Webserv.hpp"
 
-std::vector<char> POST::createPostOkResponse(std::map<std::string, std::string> formValues)
+std::vector<char> POST::createPostOkResponse(std::map<std::string, std::string> formValues,
+																				std::string &reqBuffer,
+																				std::map<std::string, SessionData> &sessions,
+																				ClientRequest &clientReq)
 {
   std::stringstream	httpResponse;
   std::string				responseBody;
 	std::vector<char>	charVecResponse;
+	  std::string sessionIdLine = handleCookiesSessions(sessions, reqBuffer, clientReq);
 
   responseBody = extractHtmlContentFromFile("./var/www/form/form_response.html");
   responseBody += "            <tbody>\n";
@@ -45,6 +49,7 @@ std::vector<char> POST::createPostOkResponse(std::map<std::string, std::string> 
   httpResponse << "HTTP/1.1 201 Created\r\n";
   httpResponse << "Content-Type: text/html\r\n";
   httpResponse << "Content-Length: " << responseBody.size() << "\r\n";
+	httpResponse << sessionIdLine;
   httpResponse << "Date: " << getCurrentTimeHttpFormat() << "\r\n";
   httpResponse << "\r\n";
   httpResponse << responseBody;
@@ -54,15 +59,21 @@ std::vector<char> POST::createPostOkResponse(std::map<std::string, std::string> 
   return (charVecResponse);
 }
 
-std::vector<char> POST::createPostOkResponsePlainText(const std::string &str)
+std::vector<char> POST::createPostOkResponsePlainText(const std::string &str,
+                                        std::string reqBuffer,
+																				std::map<std::string, SessionData> &sessions,
+																				ClientRequest &clientReq)
 {
     std::stringstream httpResponse;
     std::vector<char> charVecResponse;
+	  std::string sessionIdLine = handleCookiesSessions(sessions, reqBuffer, clientReq);
+
 
     // Headers
     httpResponse << "HTTP/1.1 201 Created\r\n";
     httpResponse << "Content-Type: text/plain\r\n";
     httpResponse << "Content-Length: " << str.size() << "\r\n";
+		httpResponse << sessionIdLine;
     httpResponse << "Date: " << getCurrentTimeHttpFormat() << "\r\n";
     httpResponse << "\r\n";
     httpResponse << str;
@@ -72,21 +83,17 @@ std::vector<char> POST::createPostOkResponsePlainText(const std::string &str)
     return (charVecResponse);
 }
 
-/*
-	When you include an image in the HTML body, the browser will
-	automatically send a GET request to fetch the image from the
-	specified URL. This is standard behavior for web browsers:
-	they parse the HTML, identify resources like images,
-	stylesheets, and scripts, and then send additional GET
-	requests to retrieve those resources.
-*/
-std::vector<char> POST::createPostOkResponseWithFile(std::map<std::string, std::string> formValues)//might delete
+std::vector<char> POST::createPostOkResponseWithFile(std::map<std::string, std::string> formValues,
+                                        std::string reqBuffer,
+																				std::map<std::string, SessionData> &sessions,
+																				ClientRequest &clientReq)
 {
   std::stringstream httpResponse;
   std::string responseBody;
   std::string filePath = UPLOAD_FILE_DIR + contentMap[2].filename;
   std::string reqPath = "/upload/" + contentMap[2].filename;
 	std::vector<char>	charVecResponse;
+  std::string sessionIdLine = handleCookiesSessions(sessions, reqBuffer, clientReq);
 
   // Check if the file exists
   std::ifstream file(filePath.c_str());
@@ -152,6 +159,7 @@ std::vector<char> POST::createPostOkResponseWithFile(std::map<std::string, std::
   httpResponse << "HTTP/1.1 201 Created\r\n";
   httpResponse << "Content-Type: text/html\r\n";
   httpResponse << "Content-Length: " << responseBody.size() << "\r\n";
+	httpResponse << sessionIdLine;
   httpResponse << "Date: " << getCurrentTimeHttpFormat() << "\r\n";
   httpResponse << "\r\n";
   httpResponse << responseBody;
@@ -178,48 +186,6 @@ bool POST::saveInLogFile(std::map<std::string, std::string> formValues)
 	
 	return (true);
 }
-
-std::vector<char> POST::createPostOkResponseWithFilename(std::map<std::string, std::string> formValues)//might delete
-{
-  std::stringstream httpResponse;
-  std::string responseBody;
-	std::vector<char>	charVecResponse;
-
-  responseBody = extractHtmlContentFromFile("./var/www/form/form_response.html");
-  responseBody += "            <tbody>\n";
-  responseBody += "                <tr>\n";
-  responseBody += "                    <td>Name</td>\n";
-  responseBody += "                    <td>" + formValues["name"] + "</td>\n";
-  responseBody += "                </tr>\n";
-  responseBody += "                <tr>\n";
-  responseBody += "                    <td>Age</td>\n";
-  responseBody += "                    <td>" + formValues["age"] + "</td>\n";
-  responseBody += "                </tr>\n";
-  responseBody += "                <tr>\n";
-  responseBody += "                    <td>Filename</td>\n";
-  responseBody += "                    <td>" + contentMap[2].filename + "</td>\n";
-  responseBody += "                </tr>\n";
-  responseBody += "            </tbody>\n";
-  responseBody += "        </table>\n";
-  responseBody += "    </div>\n";
-  responseBody += "    <div>\n";
-  responseBody += "    </div>\n";
-  responseBody += "</body>\n";
-  responseBody += "</html>\n";
-
-  // Headers
-  httpResponse << "HTTP/1.1 201 Created\r\n";
-  httpResponse << "Content-Type: text/html\r\n";
-  httpResponse << "Content-Length: " << responseBody.size() << "\r\n";
-  httpResponse << "Date: " << getCurrentTimeHttpFormat() << "\r\n";
-  httpResponse << "\r\n";
-  httpResponse << responseBody;
-
-	std::string responseStr = httpResponse.str();
-	charVecResponse.insert(charVecResponse.begin(), responseStr.begin(), responseStr.end());
-  return (charVecResponse);
-}
-
 
 std::string generateClientID() {
     // Obtener la fecha y hora actual
