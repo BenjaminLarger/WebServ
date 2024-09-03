@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/09/03 10:55:33 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 15:04:32 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,11 +107,30 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
   else if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded",
                     33))
   {
-    body = extractBody();
-    formValues = formValuestoMap(body);
-    saveInLogFile(formValues);
-    client.response = createPostOkResponse(formValues, client.req.buffer, webserv.sessions, client.req);
-  }
+		if(client.req.URIpath == "/signup-form")
+		{
+			body = extractBody();
+			// if (!name.empty() && !password.empty())
+			// check if name already in db, if yes return error
+			// save in db
+			// return page sign up successful or not			
+		}
+		if(client.req.URIpath == "/login-form")
+		{
+			body = extractBody();
+			// if (!name.empty() && !password.empty())
+			// check if name already in db, if no return error
+			// add sessionid of client to container of logged in users
+			// return page sign up successful or not			
+		}
+		else 
+		{
+			body = extractBody();
+			formValues = formValuestoMap(body);
+			saveInLogFile(formValues);
+			client.response = createPostOkResponse(formValues, client.req.buffer, webserv.sessions, client.req);
+  	}
+    }
 	else if (!strncmp(contentType.c_str(), "plain/text", 9))
 	{
 		body = extractBody();

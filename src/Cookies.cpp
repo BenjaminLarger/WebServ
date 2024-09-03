@@ -6,13 +6,32 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:51:42 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/03 12:36:51 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/03 16:17:24 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 #include "Cookies.hpp"
 
+
+void	logClientSessionRequest(ClientRequest &req)
+{
+	std::string	filePath = std::string(LOG_DIR_PATH) + "cookies.log";
+
+	std::ofstream outputFile(filePath.c_str(), std::ios::app);
+	if (!outputFile)
+	{
+			std::cerr << "Error opening file to erase content: " << filePath << std::endl;
+	}
+	else
+	{
+			 outputFile << "sessionId: " << req.sessionId
+			 << ", URI consulted: " << req.URIpath
+			 << std::endl;
+	}
+}
+
+					
 std::string Webserv::getCookieLine(const std::string &clientInput) const
 {
     std::istringstream stream(clientInput);
@@ -197,53 +216,51 @@ void logSessionData(const SessionData& session, const std::string &sessionId)
     ofs.close();
 }
 
+void	checkSessionIdClient(std::map<std::string, SessionData> &sessions,
+																	const std::string &reqBuffer,
+																	ClientRequest &clientReq)
+{
+	std::string	_sessionId = findSessionID(reqBuffer);
+
+	if (_sessionId.empty() /* && clientReq.sessionId.empty() */)
+	{
+		clientReq.sessionId = generateSessionID();
+		std::cout << GREEN
+              << "Generating new session ID : "
+							<< clientReq.sessionId
+              << RESET << std::endl;
+		SessionData _session;
+		_session.connectionStart = std::time(NULL);
+		sessions[_sessionId] = _session;
+		logSessionData(sessions[_sessionId], _sessionId);
+	}
+	else if (clientReq.sessionId.empty())
+	{
+		std::cout << GREEN
+              << "Attributing : "
+							<< clientReq.sessionId
+							<< " to clientReq.sessionId"
+              << RESET << std::endl;
+		clientReq.sessionId = _sessionId;
+		SessionData _session;
+		_session.connectionStart = std::time(NULL);
+		sessions[_sessionId] = _session;
+		logSessionData(sessions[_sessionId], _sessionId);
+	}
+	else
+		std::cout << ORANGE << "Client has already a sessionId: " << clientReq.sessionId << RESET << std::endl;
+}
+
 std::string	handleCookiesSessions(std::map<std::string, SessionData> &sessions,
 																	const std::string &reqBuffer,
 																	ClientRequest &clientReq)
 {
 	std::string sessionIdLine;
-	std::string sessionId = findSessionID(reqBuffer);
-  size_t findSessionId = reqBuffer.find("sessionId");
+	(void)sessions;
+	(void)reqBuffer;
 
-  if (findSessionId != std::string::npos && reqBuffer[findSessionId + 10] != 13)
-  {
-    sessionIdLine = "Set-Cookie: sessionId=" + sessionId
-                + "; HttpOnly\r\n";
-		std::cout << GREEN << "Session ID found: " << sessionId << RESET << std::endl;
-		if (isSessionIdPresent(std::string(LOG_DIR_PATH) + "cookies.log", sessionId) == false)
-		{
-				SessionData _session;
-				_session.connectionStart = std::time(NULL);
-				sessions[sessionId] = _session;
-		}
-  }
-	else if (clientReq.sessionId.size())
-	{
-		sessionId = clientReq.sessionId;
-		sessionIdLine = "Set-Cookie: sessionId=" + sessionId
-                + "; HttpOnly\r\n";
-		if (isSessionIdPresent(std::string(LOG_DIR_PATH) + "cookies.log", sessionId) == false)
-		{
-				SessionData _session;
-				_session.connectionStart = std::time(NULL);
-				sessions[sessionId] = _session;
-		}
-	}
-  else
-  {
-		sessionId = generateSessionID();
-    sessionIdLine
-        = "Set-Cookie: sessionId=" + sessionId + "; HttpOnly\r\n";
-		std::cout << YELLOW << "reqBuffer : " << reqBuffer << RESET << std::endl;
-    std::cout << GREEN
-              << "session ID not found in request => generating new one : "
-							<< sessionIdLine
-              << RESET << std::endl;
-				SessionData session;
-				session.connectionStart = std::time(NULL);
-				sessions[sessionId] = session;
-  }
-	clientReq.sessionId = sessionId;
-	logSessionData(sessions[sessionId], sessionId);
+  sessionIdLine
+        = "Set-Cookie: sessionId=" + clientReq.sessionId + "; HttpOnly\r\n";
+
 	return (sessionIdLine);
 }
