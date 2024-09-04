@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientResponse.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 19:36:11 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/04 11:15:33 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
