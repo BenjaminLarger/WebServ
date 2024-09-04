@@ -27,3 +27,14 @@
      -H "Upgrade-Insecure-Requests: 1" \
      -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" \
      -d "name=JohnDoe"
+
+## SIEGE
+
+siege -c 50 -t 1M -b http://127.0.0.1:8080
+-c 50: Simula 50 usuarios concurrentes.
+-t 1M: La prueba se ejecutará durante 1 minuto.
+-b: Activa el modo sin piedad (benchmark), enviando solicitudes tan rápido como sea posible.
+
+
+Hacer siege configurando una petición en un archivo txt
+-    siege -c 50 -t 10m -f siege_requests.txt
