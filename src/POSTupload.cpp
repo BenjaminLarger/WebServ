@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POSTupload.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:13:50 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/02 13:25:35 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/04 13:09:13 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ int	POST::parseContent(int index)
 		}
 		parseContentType(i, contentMap[i].contentType);
 	}
+	_formValues["ID"] = clientID;
 	return (handleFileUpload(index));
 }
 
@@ -92,7 +93,10 @@ int	POST::extractMultipartFormData(std::string &_boundary)
 	hasClosingBoundary = false;
 	contentMap[0].HasContentType = false;
 	contentMap[0].HasContentDisposition = false;
-
+	_formValues["Name"] = "";
+	_formValues["Age"] = "";
+	_formValues["File"] = "";
+	
 	requestStream.clear();
 	requestStream.seekg(0);
 	_boundary = boundary;

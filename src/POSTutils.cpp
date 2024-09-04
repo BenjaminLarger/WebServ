@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/04 11:58:03 by isporras         ###   ########.fr       */
+/*   Updated: 2024/09/04 13:10:29 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@ std::vector<char> POST::createPostOkResponse(
   responseBody += "            <tbody>\n";
   responseBody += "                <tr>\n";
   responseBody += "                    <td>Name</td>\n";
-  responseBody += "                    <td>" + formValues["name"] + "</td>\n";
+  responseBody += "                    <td>" + formValues["Name"] + "</td>\n";
   responseBody += "                </tr>\n";
   responseBody += "                <tr>\n";
   responseBody += "                    <td>Age</td>\n";
-  responseBody += "                    <td>" + formValues["age"] + "</td>\n";
+  responseBody += "                    <td>" + formValues["Age"] + "</td>\n";
   responseBody += "                </tr>\n";
   responseBody += "                <tr>\n";
   responseBody += "                    <td>Filename</td>\n";
@@ -106,11 +106,11 @@ std::vector<char> POST::createPostOkResponseWithFile(
   responseBody += "            <tbody>\n";
   responseBody += "                <tr>\n";
   responseBody += "                    <td>Name</td>\n";
-  responseBody += "                    <td>" + formValues["name"] + "</td>\n";
+  responseBody += "                    <td>" + formValues["Name"] + "</td>\n";
   responseBody += "                </tr>\n";
   responseBody += "                <tr>\n";
   responseBody += "                    <td>Age</td>\n";
-  responseBody += "                    <td>" + formValues["age"] + "</td>\n";
+  responseBody += "                    <td>" + formValues["Age"] + "</td>\n";
   responseBody += "                </tr>\n";
   responseBody += "                <tr>\n";
   responseBody += "                    <td>Filename</td>\n";
@@ -347,10 +347,9 @@ void POST::handleBody(const std::string &line, int index)
     contentMap[index].body += '\n';
   contentMap[index].body += line;
   if (index == 0)
-    _formValues["name"] = line;
+    _formValues["Name"] = line;
   else if (index == 1)
-    _formValues["age"] = line;
-  _formValues["ID"] = clientID;
+    _formValues["Age"] = line;
   contentMap[index].HasBody = true;
 }
 

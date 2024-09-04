@@ -6,7 +6,7 @@
 /*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/09/04 11:57:08 by isporras         ###   ########.fr       */
+/*   Updated: 2024/09/04 12:59:09 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,29 +107,10 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
   else if (!strncmp(contentType.c_str(), "application/x-www-form-urlencoded",
                     33))
   {
-		if(client.req.URIpath == "/signup-form")
-		{
-			body = extractBody();
-			// if (!name.empty() && !password.empty())
-			// check if name already in db, if yes return error
-			// save in db
-			// return page sign up successful or not			
-		}
-		if(client.req.URIpath == "/login-form")
-		{
-			body = extractBody();
-			// if (!name.empty() && !password.empty())
-			// check if name already in db, if no return error
-			// add sessionid of client to container of logged in users
-			// return page sign up successful or not			
-		}
-		else 
-		{
-			body = extractBody();
-			formValues = formValuestoMap(body);
-			saveInLogFile(formValues);
-			client.response = createPostOkResponse(formValues, client.req);
-  	}
+    body = extractBody();
+    formValues = formValuestoMap(body);
+    saveInLogFile(formValues);
+    client.response = createPostOkResponse(formValues, client.req);
     }
 	else if (!strncmp(contentType.c_str(), "plain/text", 9))
 	{
