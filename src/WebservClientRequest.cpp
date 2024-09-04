@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequest.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/03 18:57:02 by demre            ###   ########.fr       */
+/*   Updated: 2024/09/04 13:16:30 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,6 @@ bool isSocketOpen(int fd) { return fcntl(fd, F_GETFL) != -1 || errno != EBADF; }
 int Webserv::recvChunk(int sockfd, std::vector<char> &buffer,
                        size_t totalBytesReceived, size_t &i)
 {
-  (void)totalBytesReceived;
   char tempBuffer[BUFFER_SIZE];
   ssize_t bytesReceived = recv(sockfd, tempBuffer, BUFFER_SIZE - 1, 0);
   if (bytesReceived <= 0)
@@ -133,7 +132,6 @@ int Webserv::recvChunk(int sockfd, std::vector<char> &buffer,
     buffer.insert(buffer.end(), tempBuffer, tempBuffer + bytesReceived);
     totalBytesReceived += bytesReceived;
   }
-
   return (SUCCESS);
 }
 void Webserv::handleClientRequest(

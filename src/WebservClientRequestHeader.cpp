@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/02 13:06:54 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/04 13:18:07 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,29 @@ void Webserv::checkBodySize(ClientRequest &req, long long int maxBodySize,
   }
 }
 
+void Webserv::checkBodySize(ClientRequest &req, size_t &i, long long int maxBodySize)
+{
+	long long int contentLength
+      = std::strtol(req.fields["Content-Length"].c_str(), NULL, 10);
+		    // Convert bodyLength and maxBodySize from bytes to megabytes
+    double contentLengthMB = contentLength / (1024.0 * 1024.0);
+    double bodySizeMB = req.buffer.size() / (1024.0 * 1024.0);
+    double maxBodySizeMB = maxBodySize / (1024.0 * 1024.0);
+
+		    // Compare the body size to the max body size
+    if (maxBodySize > 0 && contentLength > maxBodySize)
+		{
+        fds[i].events &= ~POLLIN;
+        fds[i].events |= POLLOUT;
+        req.bodyTooLarge = true;
+        std::cout << ORANGE << "Body size " << contentLengthMB << " exceeds the maximum allowed size " << maxBodySizeMB << RESET << std::endl;
+    }
+		else
+		{
+        std::cout << YELLOW << "Bytes received = " << bodySizeMB << " MB / " << contentLengthMB << " MB." << RESET << std::endl;
+    }
+}
+
 void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
                                  size_t &i, bool &isError)
 {
@@ -107,12 +130,14 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
       break;
     }
   }
-  long long int bodyLength
+  /* long long int bodyLength
       = std::strtol(req.fields["Content-Length"].c_str(), NULL, 10);
+	
   if (maxBodySize > 0 && bodyLength > maxBodySize)
   {
     fds[i].events &= ~POLLIN;
     fds[i].events |= POLLOUT;
     req.bodyTooLarge = true;
-  }
+  } */
+ checkBodySize(req, i, maxBodySize);
 }

@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:11:45 by demre             #+#    #+#             */
-/*   Updated: 2024/09/03 17:49:40 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/04 12:52:36 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,8 @@ public:
 
   // Checks if the connection should be closed because of the reponse
   bool checkCloseConnectionResp(std::vector<char> response);
+
+	void checkBodySize(ClientRequest &req, size_t &i, long long int maxBodySize);
 
   void handleClientResponse(size_t &index);
 
