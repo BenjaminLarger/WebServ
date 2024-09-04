@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cookies.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:51:42 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/03 18:47:43 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/04 11:41:08 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ std::string findSessionID(std::string request)
         std::istringstream _stream(sessionId);
         _stream >> sessionId;
         sessionId = trimLastChar(sessionId, ';');
+        sessionId = trimLastChar(sessionId, 13);
         return (sessionId);
       }
       return ("");
@@ -164,6 +165,7 @@ void saveSessionIdClient(std::map<std::string, SessionData> &sessions,
 
   if (_sessionId.empty())
   {
+    std::cout << ORANGE << "Session id not found " << RESET << std::endl;
     clientReq.sessionId = generateSessionID();
     SessionData _session;
     _session.connectionStart = std::time(NULL);
@@ -172,12 +174,17 @@ void saveSessionIdClient(std::map<std::string, SessionData> &sessions,
   }
   else if (clientReq.sessionId != _sessionId)
   {
+    std::cout << "_sessionId = " << _sessionId << ", size = " << _sessionId.size() << RESET << std::endl;
+    std::cout << ORANGE << "Session id != clientreq.sessionId " << RESET << std::endl;
     clientReq.sessionId = _sessionId;
     SessionData _session;
     _session.connectionStart = std::time(NULL);
     sessions[_sessionId] = _session;
     logConnectionStartTime(_sessionId);
   }
+  else
+    std::cout << ORANGE << "Session id found " << RESET << std::endl;
+
 }
 
 std::string getCookieRequestLine(ClientRequest &clientReq)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POSTutils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/03 18:02:36 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/04 11:58:03 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -260,7 +260,7 @@ std::map<std::string, std::string> POST::formValuestoMap(std::string body)
       formValues[key] = value;
     }
   }
-  formValues["ID"] = generateClientID();
+  formValues["ID"] = clientID;
   return (formValues);
 }
 
@@ -350,7 +350,7 @@ void POST::handleBody(const std::string &line, int index)
     _formValues["name"] = line;
   else if (index == 1)
     _formValues["age"] = line;
-  _formValues["ID"] = generateClientID();
+  _formValues["ID"] = clientID;
   contentMap[index].HasBody = true;
 }
 

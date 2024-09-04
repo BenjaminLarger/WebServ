@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/09/03 18:02:26 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/04 11:57:08 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ POST::POST(Webserv &webserv, ClientInfo &client, int clientFD,
            std::string &_boundary)
     : clientInputVector(clientInput),
       clientInputString(clientInput.begin(), clientInput.end()),
-      contentLength(0), ClientFD(clientFD), serverConfig(serverConfig)
+      contentLength(0), ClientFD(clientFD), serverConfig(serverConfig), clientID(client.req.sessionId)
 {
   std::string body;
   std::map<std::string, std::string> formValues;

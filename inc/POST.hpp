@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POST.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:56:16 by demre             #+#    #+#             */
-/*   Updated: 2024/09/03 18:03:34 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/04 11:57:42 by isporras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ private:
 	std::map<std::string, std::string> _formValues;
   const ServerConfig &serverConfig;
 	std::vector<char>	fileContentBinary;
+  std::string clientID;
 
   //Util
   void extractFirstLine();
