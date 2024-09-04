@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   POSTutils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isporras <isporras@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 16:20:52 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/04 13:10:29 by isporras         ###   ########.fr       */
+/*   Updated: 2024/09/04 14:36:23 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,10 +309,6 @@ int POST::extractValues(std::string line, std::map<int, Content> &myMap,
 {
   std::string values;
 
-  /* if (contentMap[index].HasBody == true)
-	{
-		throw HttpException(400, "Bad request: body appears before content disposition.");
-	} */
   values = line.substr(key.size() + 1);
   if (content == "Content disposition")
     myMap[index].contentDisposition = values;
