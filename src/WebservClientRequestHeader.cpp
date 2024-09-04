@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebservClientRequestHeader.cpp                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 20:07:09 by demre             #+#    #+#             */
-/*   Updated: 2024/09/04 13:18:07 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/04 14:50:12 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,27 +60,31 @@ void Webserv::checkBodySize(ClientRequest &req, long long int maxBodySize,
   }
 }
 
-void Webserv::checkBodySize(ClientRequest &req, size_t &i, long long int maxBodySize)
+void Webserv::checkBodySize(ClientRequest &req, size_t &i,
+                            long long int maxBodySize)
 {
-	long long int contentLength
+  long long int contentLength
       = std::strtol(req.fields["Content-Length"].c_str(), NULL, 10);
-		    // Convert bodyLength and maxBodySize from bytes to megabytes
-    double contentLengthMB = contentLength / (1024.0 * 1024.0);
-    double bodySizeMB = req.buffer.size() / (1024.0 * 1024.0);
-    double maxBodySizeMB = maxBodySize / (1024.0 * 1024.0);
+  // Convert bodyLength and maxBodySize from bytes to megabytes
+  double contentLengthKB = contentLength / (1024.0);
+  double bodySizeKB = req.buffer.size() / (1024.0);
+  double maxBodySizeKB = maxBodySize / (1024.0);
 
-		    // Compare the body size to the max body size
-    if (maxBodySize > 0 && contentLength > maxBodySize)
-		{
-        fds[i].events &= ~POLLIN;
-        fds[i].events |= POLLOUT;
-        req.bodyTooLarge = true;
-        std::cout << ORANGE << "Body size " << contentLengthMB << " exceeds the maximum allowed size " << maxBodySizeMB << RESET << std::endl;
-    }
-		else
-		{
-        std::cout << YELLOW << "Bytes received = " << bodySizeMB << " MB / " << contentLengthMB << " MB." << RESET << std::endl;
-    }
+  // Compare the body size to the max body size
+  if (maxBodySize > 0 && contentLength > maxBodySize)
+  {
+    fds[i].events &= ~POLLIN;
+    fds[i].events |= POLLOUT;
+    req.bodyTooLarge = true;
+    std::cout << ORANGE << "Body size " << contentLengthKB
+              << " kB exceeds the maximum allowed size " << maxBodySizeKB
+              << " kB" << RESET << std::endl;
+  }
+  else
+  {
+    std::cout << YELLOW << "Bytes received = " << bodySizeKB << " kB" << RESET
+              << std::endl;
+  }
 }
 
 void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
@@ -99,12 +103,12 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
     lineStream >> req.HTTPversion;
     if ((req.method != "GET" && req.method != "POST" && req.method != "DELETE")
         || req.HTTPversion != "HTTP/1.1")
-	      isError = true;
+      isError = true;
     req.URIpath = urlDecode(req.URIpath);
     extractQueryString(req);
   }
   else
-	   isError = true;
+    isError = true;
 
   // Parse the remaining header fields
   while (std::getline(iss, line))
@@ -139,5 +143,5 @@ void Webserv::parseClientRequest(ClientRequest &req, long long int maxBodySize,
     fds[i].events |= POLLOUT;
     req.bodyTooLarge = true;
   } */
- checkBodySize(req, i, maxBodySize);
+  checkBodySize(req, i, maxBodySize);
 }

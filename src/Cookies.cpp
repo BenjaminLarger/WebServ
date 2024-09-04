@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cookies.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
+/*   By: demre <demre@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:51:42 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/04 13:17:08 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/04 14:38:37 by demre            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,29 +55,6 @@ static std::string trimLastChar(std::string &str, char c)
   return (str);
 }
 
-void Webserv::parseCookies(ClientRequest req)
-{
-  std::cout << YELLOW;
-  std::string line;
-  std::string key1;
-  std::string key2;
-  std::map<std::string, std::string> cookieMap;
-
-  std::istringstream stream(getCookieRequestLine(req.buffer));
-  std::getline(stream, line, ' '); //skip cookie
-  std::cout << line;
-  while (std::getline(stream, line, ';'))
-  {
-    std::istringstream lineStream(line);
-    std::getline(lineStream, key1, '=');
-    lineStream >> key2;
-    key2 = trimLastChar(key2, ';');
-    cookieMap[key1] = key2;
-  }
-
-  std::cout << std::endl << RESET;
-}
-
 std::string generateSessionID()
 {
   static const char alphanum[] = "0123456789"
@@ -122,7 +99,6 @@ std::string findSessionID(std::string request)
 void logConnectionCloseTime(const std::string &sessionId)
 {
   std::string filePath = std::string(LOG_DIR_PATH) + "cookies.log";
-  std::string time = getLogDate();
 
   std::ofstream outputFile(filePath.c_str(), std::ios::app);
   if (!outputFile)
@@ -132,6 +108,7 @@ void logConnectionCloseTime(const std::string &sessionId)
   }
   else
   {
+    std::string time = getLogDate();
     outputFile << sessionId << ", " << time << ", endConnection" << std::endl;
     outputFile.close();
   }
@@ -140,7 +117,6 @@ void logConnectionCloseTime(const std::string &sessionId)
 static void logConnectionStartTime(const std::string &sessionId)
 {
   std::string filePath = std::string(LOG_DIR_PATH) + "cookies.log";
-  std::cout << YELLOW << "sessionId : " << sessionId << RESET << std::endl;
 
   std::ofstream outputFile(filePath.c_str(),
                            std::ofstream::out | std::ofstream::app);
@@ -158,8 +134,7 @@ static void logConnectionStartTime(const std::string &sessionId)
 }
 
 void saveSessionIdClient(std::map<std::string, SessionData> &sessions,
-                          const std::string &reqBuffer,
-                          ClientRequest &clientReq)
+                         const std::string &reqBuffer, ClientRequest &clientReq)
 {
   std::string _sessionId = findSessionID(reqBuffer);
 
@@ -179,7 +154,6 @@ void saveSessionIdClient(std::map<std::string, SessionData> &sessions,
     sessions[_sessionId] = _session;
     logConnectionStartTime(_sessionId);
   }
-
 }
 
 std::string getCookieRequestLine(ClientRequest &clientReq)
