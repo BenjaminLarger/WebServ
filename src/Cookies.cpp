@@ -6,7 +6,7 @@
 /*   By: blarger <blarger@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:51:42 by blarger           #+#    #+#             */
-/*   Updated: 2024/09/04 13:17:08 by blarger          ###   ########.fr       */
+/*   Updated: 2024/09/04 14:34:54 by blarger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,7 +179,6 @@ void saveSessionIdClient(std::map<std::string, SessionData> &sessions,
     sessions[_sessionId] = _session;
     logConnectionStartTime(_sessionId);
   }
-
 }
 
 std::string getCookieRequestLine(ClientRequest &clientReq)
